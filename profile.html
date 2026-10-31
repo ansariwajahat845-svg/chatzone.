@@ -130,19 +130,35 @@ async function toggleFollow(){if(!profileUser||isOwner)return;const btn=$("follo
  if(isPrivate&&!isFollowing){$("privateText").textContent="Follow request pending. Approval ke baad profile details aur posts dekh sakoge.";$("privateBox").style.display="block"}
  }catch(e){alert("Follow action nahi ho saki:\n"+e.message)}finally{btn.disabled=false}}
 async function loadPrivateRequestStatus(){
- if(isOwner)return;
+ if(isOwner)return "none";
+ // Always read the latest row. The Private page's Leave action deletes the pair's
+ // private_requests row, so a later visit/click must become requestable again.
  const {data,error}=await supabaseClient.from("private_requests").select("id,status,sender_id,receiver_id,created_at").or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${profileUser.id}),and(sender_id.eq.${profileUser.id},receiver_id.eq.${currentUser.id})`).order("created_at",{ascending:false}).limit(1).maybeSingle();
- if(error){console.warn("1-on-1 request status:",error.message);updatePrivateButton();return}
- if(data){const status=String(data.status||"pending").toLowerCase();privateRequestStatus=status==="accepted"?"accepted":(status==="pending"?"pending":"none")}
- updatePrivateButton()
+ if(error){console.warn("1-on-1 request status:",error.message);updatePrivateButton();throw error}
+ const status=String(data?.status||"").trim().toLowerCase();
+ // Only a current pending or accepted request locks the button. A deleted,
+ // declined, rejected, cancelled, left, or ended request can be sent again.
+ privateRequestStatus=["accepted","approved","confirmed","active"].includes(status)?"accepted":(["pending","requested","sent"].includes(status)?"pending":"none");
+ updatePrivateButton();return privateRequestStatus;
 }
-function updatePrivateButton(){const b=$("chatBtn");if(privateRequestStatus==="accepted"){b.textContent="💬 Open Chat";b.disabled=false}else if(privateRequestStatus==="pending"){b.textContent="⏳ Request Sent";b.disabled=true}else{b.textContent="💬 1-on-1";b.disabled=false}}
+function updatePrivateButton(){const b=$("chatBtn");if(!b)return;if(privateRequestStatus==="accepted"){b.textContent="💬 Open Chat";b.disabled=false}else if(privateRequestStatus==="pending"){b.textContent="⏳ Request Sent";b.disabled=true}else{b.textContent="💬 1-on-1 Request";b.disabled=false}}
 async function openPrivateChat(){if(!profileUser||isOwner)return;
- // Don't allow a chat request unless an existing accepted follow relationship exists for a private profile.
- if(isPrivate&&!isFollowing){alert("🔒 Pehle follow request bhejein aur profile owner ki approval ka wait karein.");return}
- if(privateRequestStatus==="accepted"){location.href="private-chat.html?user="+encodeURIComponent(profileUser.id);return}
- if(privateRequestStatus==="pending"){alert("⏳ 1-on-1 request already pending hai.");return}
- const btn=$("chatBtn");btn.disabled=true;btn.textContent="Sending...";try{const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});if(error)throw error;privateRequestStatus="pending";updatePrivateButton();alert("✅ 1-on-1 request sent!")}catch(e){btn.disabled=false;updatePrivateButton();alert("Request send nahi ho saki:\n"+e.message)}}
+ const btn=$("chatBtn");btn.disabled=true;btn.textContent="Checking...";
+ try{
+  // Refresh before acting: if the other member used Leave while this profile
+  // was open, the old accepted status is cleared and a fresh request is sent.
+  await loadPrivateRequestStatus();
+  // Private profiles still require an approved follow before starting a chat.
+  if(isPrivate&&!isFollowing){updatePrivateButton();alert("🔒 Pehle follow request bhejein aur profile owner ki approval ka wait karein.");return}
+  if(privateRequestStatus==="accepted"){location.href="private-chat.html?user_id="+encodeURIComponent(profileUser.id);return}
+  if(privateRequestStatus==="pending"){updatePrivateButton();alert("⏳ 1-on-1 request already pending hai.");return}
+  btn.disabled=true;btn.textContent="Sending...";
+  const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});
+  if(error)throw error;
+  privateRequestStatus="pending";updatePrivateButton();alert("✅ 1-on-1 request sent!");
+ }catch(e){updatePrivateButton();alert("Request send nahi ho saki:\n"+e.message)}
+ finally{if(privateRequestStatus!=="pending")btn.disabled=false}
+}
 async function loadStats(){
  const [posts,followers,following]=await Promise.all([
   supabaseClient.from("posts").select("id",{count:"exact",head:true}).eq("user_id",profileUser.id),
