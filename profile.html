@@ -150,7 +150,7 @@ async function openPrivateChat(){if(!profileUser||isOwner)return;
   await loadPrivateRequestStatus();
   // Private profiles still require an approved follow before starting a chat.
   if(isPrivate&&!isFollowing){updatePrivateButton();alert("🔒 Pehle follow request bhejein aur profile owner ki approval ka wait karein.");return}
-  if(privateRequestStatus==="accepted"){location.href="private-chat.html?user_id="+encodeURIComponent(profileUser.id);return}
+  if(privateRequestStatus==="accepted"){location.href="chat.html?user_id="+encodeURIComponent(profileUser.id);return}
   if(privateRequestStatus==="pending"){updatePrivateButton();alert("⏳ 1-on-1 request already pending hai.");return}
   btn.disabled=true;btn.textContent="Sending...";
   const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});
