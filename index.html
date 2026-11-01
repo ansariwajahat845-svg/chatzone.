@@ -32,19 +32,29 @@ textarea,input,select{width:100%;background:var(--surface);color:var(--text);bor
 .story-add .story-avatar{color:var(--accent-text);font-size:27px}
 .story-upload-action{width:100%;padding:12px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:bold;margin-top:8px}
 .story-video{width:100%;max-height:65vh;background:#090909;border-radius:12px;object-fit:contain}
-.story-viewer-content{max-width:500px;padding:12px}
-.story-progress{height:4px;background:#ffffff55;border-radius:8px;overflow:hidden;margin-bottom:10px}
+.story-viewer-content{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:10px 14px calc(18px + env(safe-area-inset-bottom))!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;display:flex;flex-direction:column;overflow:hidden}
+#storyViewerPopup{padding:0!important;background:#000!important;z-index:110!important}
+.story-progress{height:4px;background:#ffffff55;border-radius:8px;overflow:hidden;margin:0 0 12px;flex:0 0 auto}
 .story-progress-fill{height:100%;width:0;background:#fff}
-.story-viewer-top{display:flex;align-items:center;justify-content:space-between;color:#fff;gap:8px;margin-bottom:9px}
-.story-viewer-top button{border:0;border-radius:9px;background:#ffffff28;color:#fff;padding:8px 10px}
-.story-viewer-stage{position:relative;background:#090909;border-radius:14px;overflow:hidden}
-.story-nav{position:absolute;top:0;bottom:0;width:32%;border:0;background:transparent;color:transparent}
+.story-viewer-top{display:flex;align-items:center;justify-content:space-between;color:#fff;gap:10px;margin:0 0 12px;flex:0 0 auto;min-height:48px}
+.story-viewer-top button{border:0;border-radius:9px;background:transparent;color:#fff;padding:8px 10px;font-size:25px}
+.story-user-head{display:flex;align-items:center;gap:10px;min-width:0}
+.story-owner-avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;border:3px solid #8b5cf6;flex:0 0 46px;background:#222}
+.story-user-details{min-width:0;display:flex;flex-direction:column;gap:3px}
+.story-user-details b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:65vw}
+.story-count{font-size:12px;color:#bbb}
+.story-viewer-actions{display:flex;align-items:center;gap:10px}
+.story-viewer-stage{position:relative;background:#000;border-radius:0;overflow:hidden;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
+.story-viewer-stage .story-video{width:100%;height:100%;max-height:none;object-fit:contain;border-radius:0;background:#000}
+.story-nav{position:absolute;top:0;bottom:0;width:28%;border:0;background:transparent;color:transparent;z-index:2}
 .story-nav.prev{left:0}.story-nav.next{right:0}
-.story-count{font-size:12px;color:#fff}
-.story-caption{color:#fff;text-align:center;font-size:15px;font-weight:700;padding:9px 12px;white-space:pre-wrap;overflow-wrap:anywhere}
-.story-reactions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:8px 0}
-.story-reactions button{border:1px solid #ffffff40;background:#ffffff18;color:#fff;border-radius:22px;padding:7px 11px;font-size:17px}
-.story-reactions button.active{background:#8b5cf6;border-color:#c4b5fd}
+.story-caption{color:#fff;text-align:center;font-size:17px;font-weight:700;padding:15px 8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;flex:0 0 auto}
+.story-reactions{display:flex;justify-content:space-around;align-items:center;gap:5px;flex-wrap:nowrap;padding:12px 0 14px;flex:0 0 auto}
+.story-reactions button{border:0;background:transparent;color:#fff;border-radius:50%;padding:2px;font-size:36px;line-height:1.2}
+.story-reactions button.active{background:#ffffff20;transform:scale(1.12)}
+.story-owner-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;flex:0 0 auto}
+.story-delete-button{background:#dc2626!important;color:#fff!important}
+@media(max-width:400px){.story-viewer-content{padding-left:12px!important;padding-right:12px!important}.story-reactions button{font-size:32px}}
 .story-delete-button{background:#dc2626!important;color:#fff!important}
 .story-upload-caption{margin-top:10px;min-height:64px}
 @media(max-width:400px){.stories-section{padding:10px}.story-tile{min-width:61px;width:61px}.story-ring{width:58px;height:58px;flex-basis:58px}}
@@ -82,10 +92,16 @@ textarea,input,select{width:100%;background:var(--surface);color:var(--text);bor
 </div></div>
 
 <!-- Story viewer -->
-<div id="storyViewerPopup" class="popup" style="padding-top:7vh">
-  <div class="popup-content story-viewer-content" style="background:#100d18;border-color:#35264a">
+<div id="storyViewerPopup" class="popup" style="padding:0">
+  <div class="popup-content story-viewer-content">
     <div class="story-progress"><div id="storyProgressFill" class="story-progress-fill"></div></div>
-    <div class="story-viewer-top"><div><b id="storyViewerName">Story</b><div id="storyViewerCount" class="story-count"></div></div><div style="display:flex;gap:6px"><button id="storyMuteButton" onclick="toggleStoryMute()">🔇</button><button onclick="closeStoryViewer()">✕</button></div></div>
+    <div class="story-viewer-top">
+      <div class="story-user-head">
+        <img id="storyViewerAvatar" class="story-owner-avatar" src="" alt="Profile">
+        <div class="story-user-details"><b id="storyViewerName">Story</b><div id="storyViewerCount" class="story-count"></div></div>
+      </div>
+      <div class="story-viewer-actions"><button id="storyMuteButton" onclick="toggleStoryMute()" aria-label="Mute">⚙</button><button onclick="closeStoryViewer()" aria-label="Close" style="font-size:34px">×</button></div>
+    </div>
     <div class="story-viewer-stage">
       <video id="storyViewerVideo" class="story-video" playsinline autoplay></video>
       <button class="story-nav prev" aria-label="Previous story" onclick="previousStory()">Previous</button>
@@ -93,8 +109,7 @@ textarea,input,select{width:100%;background:var(--surface);color:var(--text);bor
     </div>
     <div id="storyViewerCaption" class="story-caption"></div>
     <div id="storyReactionBar" class="story-reactions"></div>
-    <div id="storyOwnerViews" class="story-count" style="padding:5px 2px"></div>
-    <div id="storyOwnerDelete" style="text-align:right"></div>
+    <div class="story-owner-bottom"><div id="storyOwnerViews" class="story-count"></div><div id="storyOwnerDelete"></div></div>
   </div>
 </div>
 
@@ -170,7 +185,7 @@ $("storyVideoInput").addEventListener("change",function(){const f=this.files?.[0
 async function publishStory(){if(!currentUser)return alert("Please login again.");const f=$("storyVideoInput").files?.[0],button=$("publishStoryButton");if(!f)return alert("Pehle video select karein.");if(!f.type.startsWith("video/")||f.size>STORY_MAX_SIZE)return alert("Video format ya size sahi nahi. Maximum 50 MB.");button.disabled=true;button.textContent="Uploading…";try{const probe=document.createElement("video"),url=URL.createObjectURL(f);const duration=await new Promise((resolve,reject)=>{probe.preload="metadata";probe.onloadedmetadata=()=>resolve(probe.duration);probe.onerror=()=>reject(Error("Video read nahi ho saki."));probe.src=url});URL.revokeObjectURL(url);if(!Number.isFinite(duration)||duration>STORY_MAX_SECONDS)throw Error("Video maximum 1 minute ki honi chahiye.");const ext=(f.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4",path=currentUser.id+"/"+Date.now()+"."+ext;const upload=await timeout(supabaseClient.storage.from("stories").upload(path,f,{upsert:false,contentType:f.type}),60000);if(upload.error)throw upload.error;const videoUrl=supabaseClient.storage.from("stories").getPublicUrl(path).data.publicUrl;const expiresAt=new Date(Date.now()+STORY_LIFETIME_HOURS*60*60*1000).toISOString();const caption=$("storyCaptionInput").value.trim();const inserted=await timeout(supabaseClient.from("stories").insert({user_id:currentUser.id,video_url:videoUrl,caption,expires_at:expiresAt}),15000);if(inserted.error)throw inserted.error;closeStoryUpload();await loadStories();alert("Story publish ho gayi! 💜")}catch(e){alert("Story upload failed: "+(e.message||e))}finally{button.disabled=false;button.textContent="📤 Publish Story"}}
 async function loadStories(){if(!currentUser)return;const rail=$("storiesRail");try{const now=new Date().toISOString();const result=await timeout(supabaseClient.from("stories").select("id,user_id,video_url,caption,created_at,expires_at").gt("expires_at",now).order("created_at",{ascending:true}).limit(150),12000);if(result.error)throw result.error;storyRows=result.data||[];const ids=[...new Set(storyRows.map(s=>s.user_id))],profiles={};if(ids.length){const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000);if(p.error)throw p.error;(p.data||[]).forEach(x=>profiles[x.id]=x)}let viewed=new Set();if(storyRows.length){const v=await timeout(supabaseClient.from("story_views").select("story_id").eq("viewer_id",currentUser.id).in("story_id",storyRows.map(s=>s.id)),10000);if(!v.error)(v.data||[]).forEach(x=>viewed.add(String(x.story_id)))}const grouped=new Map();storyRows.forEach(s=>{if(!grouped.has(s.user_id))grouped.set(s.user_id,[]);grouped.get(s.user_id).push(s)});storyGroups=[...grouped.entries()].map(([userId,items])=>({userId,items,profile:profiles[userId]||{}}));rail.innerHTML='<button class="story-tile story-add" onclick="openStoryUpload()"><span class="story-ring"><span class="story-avatar">＋</span></span><span class="story-label">Your story</span></button>'+storyGroups.map((g,i)=>{const p=g.profile,name=p.name||p.username||"Member",avatar=p.avatar_url||"",allSeen=g.items.every(s=>viewed.has(String(s.id)));return '<button class="story-tile" onclick="openStoryGroup('+i+')"><span class="story-ring '+(allSeen?'seen':'')+'">'+(avatar?'<img class="story-avatar" src="'+esc(avatar)+'" alt="">':'<span class="story-avatar">👤</span>')+'</span><span class="story-label">'+esc(name)+'</span></button>'}).join("")}catch(e){console.warn("Load stories:",e);rail.innerHTML='<button class="story-tile story-add" onclick="openStoryUpload()"><span class="story-ring"><span class="story-avatar">＋</span></span><span class="story-label">Add story</span></button><span class="points-note" style="align-self:center">Stories load nahi huin</span>'}}
 async function openStoryGroup(index){if(index<0||index>=storyGroups.length)return;storyGroupIndex=index;storyItemIndex=0;$("storyViewerPopup").style.display="block";await showCurrentStory()}
-async function showCurrentStory(){clearStoryProgress();const group=storyGroups[storyGroupIndex];if(!group){closeStoryViewer();return}const story=group.items[storyItemIndex];if(!story){nextStoryGroup();return}const profile=group.profile||{},video=$("storyViewerVideo");$("storyViewerName").textContent=profile.name||profile.username||"Member";$("storyViewerCount").textContent=(storyItemIndex+1)+" / "+group.items.length;$("storyOwnerViews").innerHTML="";$("storyViewerCaption").textContent=story.caption||"";$("storyOwnerDelete").innerHTML=group.userId===currentUser.id?'<button class="story-view-count-button story-delete-button" onclick="deleteCurrentStory()">🗑 Delete story</button>':"";video.pause();video.src=story.video_url;video.muted=storyMuted;video.currentTime=0;$("storyMuteButton").textContent=storyMuted?"🔇":"🔊";try{await video.play()}catch(e){console.warn("Story autoplay:",e)}if(group.userId===currentUser.id)loadStoryViewCount(story.id);else recordStoryView(story.id);loadStoryReactions(story.id);video.onended=()=>nextStory();video.onloadedmetadata=()=>startStoryProgress(Math.min(60,video.duration||15));if(video.readyState>=1)startStoryProgress(Math.min(60,video.duration||15))}
+async function showCurrentStory(){clearStoryProgress();const group=storyGroups[storyGroupIndex];if(!group){closeStoryViewer();return}const story=group.items[storyItemIndex];if(!story){nextStoryGroup();return}const profile=group.profile||{},video=$("storyViewerVideo");$("storyViewerName").textContent=profile.name||profile.username||"Member";$("storyViewerAvatar").src=profile.avatar_url||("https://ui-avatars.com/api/?name="+encodeURIComponent(profile.name||profile.username||"User")+"&background=292929&color=fff");$("storyViewerCount").textContent=(story.created_at?new Date(story.created_at).toLocaleString():"Story") ;$("storyOwnerViews").innerHTML="";$("storyViewerCaption").textContent=story.caption||"";$("storyOwnerDelete").innerHTML=group.userId===currentUser.id?'<button class="story-view-count-button story-delete-button" onclick="deleteCurrentStory()">🗑 Delete story</button>':"";video.pause();video.src=story.video_url;video.muted=storyMuted;video.currentTime=0;$("storyMuteButton").textContent=storyMuted?"🔇":"🔊";try{await video.play()}catch(e){console.warn("Story autoplay:",e)}if(group.userId===currentUser.id)loadStoryViewCount(story.id);else recordStoryView(story.id);loadStoryReactions(story.id);video.onended=()=>nextStory();video.onloadedmetadata=()=>startStoryProgress(Math.min(60,video.duration||15));if(video.readyState>=1)startStoryProgress(Math.min(60,video.duration||15))}
 function startStoryProgress(seconds){clearStoryProgress();const fill=$("storyProgressFill");fill.style.width="0%";storyProgressStarted=Date.now();storyProgressElapsed=0;const total=Math.max(5,seconds)*1000;storyProgressTimer=setInterval(()=>{const pct=Math.min(100,((Date.now()-storyProgressStarted+storyProgressElapsed)/total)*100);fill.style.width=pct+"%";if(pct>=100)nextStory()},100)}
 function clearStoryProgress(){if(storyProgressTimer){clearInterval(storyProgressTimer);storyProgressTimer=null}}
 function nextStory(){clearStoryProgress();const group=storyGroups[storyGroupIndex];if(!group)return;if(storyItemIndex<group.items.length-1){storyItemIndex++;showCurrentStory()}else nextStoryGroup()}
