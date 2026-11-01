@@ -311,69 +311,110 @@ function moveToken(index){
 }
 
 const TRACK=[];
-for(let i=0;i<13;i++)TRACK.push([80+i*36,62]);
-for(let i=0;i<13;i++)TRACK.push([548,80+i*36]);
-for(let i=0;i<13;i++)TRACK.push([520-i*36,548]);
-for(let i=0;i<13;i++)TRACK.push([62,520-i*36]);
+const BASE_TRACK=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,7],[1,8],[2,8]];
+function rotateCell([r,c],n){
+ let p=[r,c];
+ for(let i=0;i<n;i++)p=[p[1],14-p[0]];
+ return p;
+}
+for(let side=0;side<4;side++){
+ BASE_TRACK.forEach(cell=>{
+  const [r,c]=rotateCell(cell,side);
+  TRACK.push([c*40+20,r*40+20]);
+ });
+}
 
 function homeCoord(color,step){
  const lanes=[
-  [[300,98],[300,132],[300,166],[300,200],[300,234],[300,268]],
-  [[502,300],[468,300],[434,300],[400,300],[366,300],[332,300]],
-  [[300,502],[300,468],[300,434],[300,400],[300,366],[300,332]],
-  [[98,300],[132,300],[166,300],[200,300],[234,300],[268,300]]
+  [[60,340],[100,340],[140,340],[180,340],[220,340],[260,340]], // Red
+  [[260,60],[260,100],[260,140],[260,180],[260,220],[260,260]], // Green
+  [[340,60],[340,100],[340,140],[340,180],[340,220],[340,260]], // Yellow
+  [[540,260],[500,260],[460,260],[420,260],[380,260],[340,260]]  // Blue
  ];
  return lanes[color][Math.max(0,Math.min(5,step-52))];
 }
-
 function tokenCoord(player,token){
  const pos=player.tokens[token],c=player.colorIndex;
  if(pos===-1){
   const bases=[
-   [[125,125],[185,125],[125,185],[185,185]],
-   [[415,125],[475,125],[415,185],[475,185]],
-   [[415,415],[475,415],[415,475],[475,475]],
-   [[125,415],[185,415],[125,475],[185,475]]
+   [[105,425],[175,425],[105,495],[175,495]], // Red bottom-left
+   [[105,105],[175,105],[105,175],[175,175]], // Green top-left
+   [[425,105],[495,105],[425,175],[495,175]], // Yellow top-right
+   [[425,425],[495,425],[425,495],[495,495]]  // Blue bottom-right
   ];
   return bases[c][token];
  }
  if(pos>=52)return homeCoord(c,pos);
  return TRACK[(c*13+pos)%52];
 }
-
 function drawBoard(){
  const svg=$("board");
- let out=`<rect x="8" y="8" width="584" height="584" rx="18" fill="#fafafa" stroke="#ddd" stroke-width="3"/>`;
- const bases=[
-  {x:28,y:28,c:COLORS[0]},
-  {x:392,y:28,c:COLORS[1]},
-  {x:392,y:392,c:COLORS[2]},
-  {x:28,y:392,c:COLORS[3]}
+ const cell=40;
+ let out=`<defs>
+  <linearGradient id="gotired" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff8a80"/><stop offset="48%" stop-color="#e53935"/><stop offset="100%" stop-color="#9f1717"/></linearGradient>
+  <linearGradient id="gotigreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8dffad"/><stop offset="48%" stop-color="#22a447"/><stop offset="100%" stop-color="#086b2a"/></linearGradient>
+  <linearGradient id="gotiyellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff59d"/><stop offset="48%" stop-color="#f2c230"/><stop offset="100%" stop-color="#b27a00"/></linearGradient>
+  <linearGradient id="gotiblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9bd5ff"/><stop offset="48%" stop-color="#2878e5"/><stop offset="100%" stop-color="#10428e"/></linearGradient>
+ </defs>
+ <rect x="2" y="2" width="596" height="596" rx="18" fill="#8b552e" stroke="#603a22" stroke-width="5"/>`;
+ // Four large home quarters
+ const homes=[
+  {x:12,y:12,c:COLORS[1]},   // green top-left
+  {x:348,y:12,c:COLORS[2]},  // yellow top-right
+  {x:12,y:348,c:COLORS[0]},  // red bottom-left
+  {x:348,y:348,c:COLORS[3]}  // blue bottom-right
  ];
- bases.forEach(b=>{
-  out+=`<rect x="${b.x}" y="${b.y}" width="180" height="180" rx="14" fill="${b.c}" opacity=".18" stroke="${b.c}" stroke-width="5"/>`;
-  out+=`<rect x="${b.x+28}" y="${b.y+28}" width="124" height="124" rx="12" fill="#fff" stroke="${b.c}" stroke-width="3"/>`;
+ homes.forEach(h=>{
+  out+=`<rect x="${h.x}" y="${h.y}" width="240" height="240" fill="${h.c}" stroke="#222" stroke-width="2"/>`;
+  out+=`<circle cx="${h.x+120}" cy="${h.y+120}" r="91" fill="${h.c}" opacity=".72"/>`;
+  const spots=[[h.x+80,h.y+80],[h.x+160,h.y+80],[h.x+80,h.y+160],[h.x+160,h.y+160]];
+  spots.forEach(([x,y])=>{
+   out+=`<circle cx="${x}" cy="${y}" r="22" fill="#fff" opacity=".16" stroke="#fff" stroke-width="2"/>`;
+  });
  });
- TRACK.forEach((pt,i)=>{
-  const safe=[0,8,13,21,26,34,39,47].includes(i);
-  out+=`<circle cx="${pt[0]}" cy="${pt[1]}" r="14" fill="${safe?"#fff3c4":"#fff"}" stroke="${safe?"#d5a900":"#bbb"}" stroke-width="2"/>`;
+ // White central-cross track cells with dark grid borders
+ const cells=new Set();
+ for(let r=0;r<6;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
+ for(let r=9;r<15;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
+ for(let r=6;r<=8;r++)for(let c=0;c<6;c++)cells.add(`${r},${c}`);
+ for(let r=6;r<=8;r++)for(let c=9;c<15;c++)cells.add(`${r},${c}`);
+ cells.forEach(key=>{
+  const [r,c]=key.split(",").map(Number);
+  out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#fff" stroke="#222" stroke-width="1.5"/>`;
  });
- [0,1,2,3].forEach(c=>{
-  for(let j=0;j<6;j++){
-   const [x,y]=homeCoord(c,52+j);
-   out+=`<circle cx="${x}" cy="${y}" r="14" fill="${COLORS[c]}" opacity=".23" stroke="${COLORS[c]}" stroke-width="2"/>`;
-  }
+ // Coloured home lanes
+ const laneCells=[
+  {cells:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]],color:COLORS[0]},
+  {cells:[[1,6],[2,6],[3,6],[4,6],[5,6],[6,6]],color:COLORS[1]},
+  {cells:[[1,8],[2,8],[3,8],[4,8],[5,8],[6,8]],color:COLORS[2]},
+  {cells:[[8,13],[8,12],[8,11],[8,10],[8,9],[8,8]],color:COLORS[3]}
+ ];
+ laneCells.forEach(l=>l.cells.forEach(([r,c])=>{
+  out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="${l.color}" stroke="#222" stroke-width="1.5"/>`;
+ }));
+ // Entry / safe squares
+ const safeCells=[[6,1],[2,6],[1,8],[8,13],[8,2],[6,12],[12,8],[13,6]];
+ safeCells.forEach(([r,c],i)=>{
+  const x=c*cell+20,y=r*cell+20;
+  out+=`<text x="${x}" y="${y+10}" text-anchor="middle" font-size="29" fill="#777">★</text>`;
  });
- out+=`<path d="M300 260 L340 300 L300 340 L260 300 Z" fill="#6c5ce7" stroke="#4932c9" stroke-width="2"/><text x="300" y="306" text-anchor="middle" font-size="18" fill="white">CZ</text>`;
-
+ // Four-colour centre
+ out+=`<path d="M240 240 L360 240 L300 300 Z" fill="${COLORS[2]}" stroke="#222" stroke-width="1.5"/>`;
+ out+=`<path d="M360 240 L360 360 L300 300 Z" fill="${COLORS[3]}" stroke="#222" stroke-width="1.5"/>`;
+ out+=`<path d="M360 360 L240 360 L300 300 Z" fill="${COLORS[0]}" stroke="#222" stroke-width="1.5"/>`;
+ out+=`<path d="M240 360 L240 240 L300 300 Z" fill="${COLORS[1]}" stroke="#222" stroke-width="1.5"/>`;
+ // Token pieces
  if(room?.state?.players){
   room.state.players.forEach(p=>p.tokens.forEach((v,i)=>{
    const [x,y]=tokenCoord(p,i),isMine=p.id===me.id;
    const selectable=isMine&&p.id===playerTurn()?.id&&room.state.rolled&&(v===-1?room.state.dice===6:v+room.state.dice<=57);
    out+=`<g class="token-hit" data-player="${esc(p.id)}" data-token="${i}">
-    <circle cx="${x}" cy="${y}" r="13" fill="${COLORS[p.colorIndex]}" stroke="#fff" stroke-width="3"/>
-    <text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">${i+1}</text>
-    ${selectable?`<circle cx="${x}" cy="${y}" r="19" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="3 3"/>`:""}
+    <circle cx="${x}" cy="${y+2}" r="19" fill="#000" opacity=".22"/>
+    <circle cx="${x}" cy="${y}" r="18" fill="${["url(#gotired)","url(#gotigreen)","url(#gotiyellow)","url(#gotiblue)"][p.colorIndex]}" stroke="#fff" stroke-width="3.5"/>
+    <ellipse cx="${x-5}" cy="${y-7}" rx="6" ry="4" fill="#fff" opacity=".55"/>
+    <circle cx="${x}" cy="${y}" r="8" fill="#fff" opacity=".12"/>
+    <text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff" stroke="#333" stroke-width=".35">${i+1}</text>
+    ${selectable?`<circle cx="${x}" cy="${y}" r="23" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="4 3"/>`:""}
    </g>`;
   }));
  }
@@ -384,7 +425,6 @@ function drawBoard(){
   });
  });
 }
-
 $("createBtn").addEventListener("click",createRoom);
 $("joinToggle").addEventListener("click",()=>$("joinArea").classList.toggle("hidden"));
 $("joinBtn").addEventListener("click",joinRoom);
