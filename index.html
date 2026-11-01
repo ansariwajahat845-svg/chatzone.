@@ -180,7 +180,34 @@ function toggleStoryMute(){storyMuted=!storyMuted;$("storyViewerVideo").muted=st
 function closeStoryViewer(){clearStoryProgress();const v=$("storyViewerVideo");v.pause();v.removeAttribute("src");v.load();v.onended=null;$("storyViewerPopup").style.display="none";loadStories().catch(()=>{})}
 async function recordStoryView(storyId){if(!currentUser)return;try{const r=await timeout(supabaseClient.from("story_views").upsert({story_id:storyId,viewer_id:currentUser.id},{onConflict:"story_id,viewer_id",ignoreDuplicates:true}),8000);if(r.error)console.warn("Story view record:",r.error.message)}catch(e){console.warn("Story view record:",e.message)}}
 async function loadStoryViewCount(storyId){try{const r=await timeout(supabaseClient.from("story_views").select("id",{count:"exact",head:true}).eq("story_id",storyId),8000);if(r.error)throw r.error;$("storyOwnerViews").innerHTML='<button class="story-view-count-button" onclick="openStoryViewList()">👁 '+(r.count||0)+' views · View list</button>';storyViewListId=storyId}catch(e){$("storyOwnerViews").textContent="Views unavailable";console.warn("Story view count:",e.message)}}
-async function openStoryViewList(){if(!storyViewListId||!currentUser)return;const group=storyGroups[storyGroupIndex];if(!group||group.userId!==currentUser.id)return;$("storyViewsPopup").style.display="block";$("storyViewsList").textContent="Loading viewers…";try{const r=await timeout(supabaseClient.from("story_views").select("viewer_id,viewed_at").eq("story_id",storyViewListId).order("viewed_at",{ascending:false}).limit(500),10000);if(r.error)throw r.error;const rows=r.data||[];if(!rows.length){$("storyViewsList").textContent="Abhi tak kisi ne ye story nahi dekhi.";return}const ids=[...new Set(rows.map(x=>x.viewer_id))],p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000);if(p.error)throw p.error;const profiles={};(p.data||[]).forEach(x=>profiles[x.id]=x);$("storyViewsList").innerHTML=rows.map(x=>{const u=profiles[x.viewer_id]||{},name=u.name||u.username||"Member",avatar=u.avatar_url||"",time=x.viewed_at?new Date(x.viewed_at).toLocaleString():"Viewed";return '<div class="story-view-row" onclick="openProfile(\''+escJs(x.viewer_id)+'\')">'+(avatar?'<img class="story-view-avatar" src="'+esc(avatar)+'" alt="">':'<span class="story-view-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="story-view-meta"><span class="story-view-name">'+esc(name)+'</span><div class="story-view-time">@'+esc(u.username||"member")+' · '+esc(time)+'</div></span></div>'}).join("")}catch(e){$("storyViewsList").textContent="Viewers load nahi huay: "+(e.message||e)}}
+async function openStoryViewList(){
+ if(!storyViewListId||!currentUser)return;
+ const group=storyGroups[storyGroupIndex];
+ if(!group||group.userId!==currentUser.id)return;
+ $("storyViewsPopup").style.display="block";
+ $("storyViewsList").textContent="Loading viewers…";
+ try{
+  const storyId=storyViewListId;
+  const [r,rx]=await Promise.all([
+   timeout(supabaseClient.from("story_views").select("viewer_id,viewed_at").eq("story_id",storyId).order("viewed_at",{ascending:false}).limit(500),10000),
+   timeout(supabaseClient.from("story_reactions").select("user_id,emoji").eq("story_id",storyId),10000)
+  ]);
+  if(r.error)throw r.error;
+  if(rx.error)throw rx.error;
+  const rows=r.data||[];
+  if(!rows.length){$("storyViewsList").textContent="Abhi tak kisi ne ye story nahi dekhi.";return}
+  const ids=[...new Set(rows.map(x=>x.viewer_id).filter(Boolean))];
+  const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000);
+  if(p.error)throw p.error;
+  const profiles={},reactionMap={};
+  (p.data||[]).forEach(x=>profiles[x.id]=x);
+  (rx.data||[]).forEach(x=>reactionMap[x.user_id]=x.emoji);
+  $("storyViewsList").innerHTML=rows.map(x=>{
+   const u=profiles[x.viewer_id]||{},name=u.name||u.username||"Member",avatar=u.avatar_url||"",time=x.viewed_at?new Date(x.viewed_at).toLocaleString():"Viewed",emoji=reactionMap[x.viewer_id];
+   return '<div class="story-view-row" onclick="openProfile(\''+escJs(x.viewer_id)+'\')">'+(avatar?'<img class="story-view-avatar" src="'+esc(avatar)+'" alt="">':'<span class="story-view-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="story-view-meta"><span class="story-view-name">'+esc(name)+'</span><div class="story-view-time">@'+esc(u.username||"member")+' · '+esc(time)+'</div><div class="story-view-time">'+(emoji?'Reacted: '+esc(emoji):'👀 Seen only')+'</div></span></div>'
+  }).join("");
+ }catch(e){$("storyViewsList").textContent="Viewers/reactions load nahi huay: "+(e.message||e);console.warn("Story view list:",e)}
+}
 const STORY_EMOJIS=["❤️","😂","😍","🔥","👏","😮"];
 async function loadStoryReactions(storyId){const bar=$("storyReactionBar");bar.innerHTML="Loading reactions…";try{const r=await timeout(supabaseClient.from("story_reactions").select("user_id,emoji").eq("story_id",storyId),8000);if(r.error)throw r.error;const rows=r.data||[],counts={};rows.forEach(x=>counts[x.emoji]=(counts[x.emoji]||0)+1);const mine=rows.find(x=>x.user_id===currentUser.id);bar.innerHTML=STORY_EMOJIS.map(e=>'<button class="'+(mine?.emoji===e?'active':'')+'" onclick="reactToStory(\''+escJs(storyId)+'\',\''+e+'\')">'+e+' <small>'+ (counts[e]||0)+'</small></button>').join("")}catch(e){bar.textContent="Reactions unavailable";console.warn("Story reactions:",e.message)}}
 async function reactToStory(storyId,emoji){if(!currentUser)return alert("Please login again.");try{const q=await timeout(supabaseClient.from("story_reactions").select("id,emoji").eq("story_id",storyId).eq("user_id",currentUser.id).maybeSingle(),8000);if(q.error)throw q.error;if(q.data?.emoji===emoji){const d=await timeout(supabaseClient.from("story_reactions").delete().eq("id",q.data.id),8000);if(d.error)throw d.error}else if(q.data){const u=await timeout(supabaseClient.from("story_reactions").update({emoji}).eq("id",q.data.id),8000);if(u.error)throw u.error}else{const i=await timeout(supabaseClient.from("story_reactions").insert({story_id:storyId,user_id:currentUser.id,emoji}),8000);if(i.error)throw i.error}await loadStoryReactions(storyId)}catch(e){alert("Reaction nahi ho saki: "+e.message)}}
