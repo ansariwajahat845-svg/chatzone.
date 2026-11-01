@@ -23,6 +23,12 @@ main{max-width:760px;margin:auto;height:calc(100dvh - 64px);display:flex;flex-di
 .reply-quote{border-left:3px solid #7c3aed;background:#ede9fe;border-radius:5px;padding:5px 7px;margin-bottom:6px;font-size:11px;color:#4c1d95;white-space:normal}
 .reply-bar{display:none;align-items:center;gap:8px;padding:7px 12px;background:#ede9fe;border-top:1px solid #c4b5fd;font-size:12px;color:#4c1d95}.reply-bar.show{display:flex}.reply-preview{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .image-message{max-width:100%;max-height:280px;border-radius:6px;display:block;margin-bottom:5px}
+/* Story reply preview card */
+.story-reply-card{display:block;width:min(230px,100%);margin:0 0 7px;padding:0;border:0;border-radius:16px;overflow:hidden;background:#080808;color:#fff;text-align:left;cursor:pointer;box-shadow:0 2px 8px #0003}
+.story-reply-card video{display:block;width:100%;height:190px;object-fit:cover;background:#080808;pointer-events:none}
+.story-reply-card .story-preview-label{display:flex;align-items:center;gap:6px;padding:8px 10px;font-size:11px;font-weight:700;color:#fff;background:#17121f}
+.story-reply-card .story-preview-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#ffffffd9;color:#111;font-size:22px}
+.story-reply-card .story-preview-media{position:relative;display:block}
 #composerWrap{position:fixed;bottom:0;left:0;right:0;z-index:10;max-width:760px;width:100%;margin:auto;background:#f3e8ff;padding-bottom:env(safe-area-inset-bottom)}
 .composer{display:flex;align-items:flex-end;gap:6px;padding:9px;background:#f3e8ff;border:2px solid #7c3aed;border-radius:16px}
 #messageInput{flex:1;resize:none;max-height:120px;min-height:42px;border:0;outline:0;border-radius:22px;padding:12px 15px;font-size:15px;font-family:inherit;background:#fff}
@@ -42,12 +48,11 @@ html[data-theme="dark"] body,html[data-theme="dark"] main{background:#111018;col
 <form class="composer" id="sendForm"><button class="tool-btn" type="button" id="emojiBtn">😀</button><button class="tool-btn" type="button" id="imageBtn">📷</button><input id="imageInput" type="file" accept="image/*" hidden><textarea id="messageInput" rows="1" placeholder="Message" autocomplete="off"></textarea><button class="tool-btn" type="button" id="voiceBtn">🎤</button><button id="send" type="submit">➤</button></form></div></main>
 <script>
 "use strict";
-/* ChatZone v2: database/table/bucket retained. */
+/* ChatZone v2: database/table/bucket retained. Story replies render as clickable story cards. */
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},realtime:{params:{eventsPerSecond:20},heartbeatIntervalMs:25000,reconnectAfterMs:tries=>Math.min(1000*Math.pow(2,tries),15000)}});
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
-// Accept every parameter name used by older and newer ChatZone profile links.
 const otherId=params.get("user_id")||params.get("user")||params.get("id")||params.get("receiver_id");
 const PAGE=50;
 let me=null,other=null,chatReady=false,rows=[],pending=new Map(),replyTarget=null;
@@ -67,9 +72,18 @@ function online(){return !!(other?.last_seen&&Date.now()-Date.parse(other.last_s
 function snippet(r){return txt(r).trim()||(r.message_type==="image"?"📷 Photo":r.message_type==="voice"?"🎤 Voice message":"Message")}
 function bubble(r){
  const mine=r.sender_id===me.id,pend=String(r.id).startsWith("local-"),type=r.message_type||"text";let body="";
- if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":safe(other?.name||other?.username||"User")}</b><br>${safe(r.reply_to_content)}</div>`;
- if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${safe(r.media_url)}" alt="Image message">`+(txt(r)?`<div>${safe(txt(r))}</div>`:"");
- else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${safe(r.media_url)}" style="max-width:220px;width:100%"></audio>`;else body+=safe(txt(r));
+ const storyMatch=type==="video"&&r.reply_to_content?String(r.reply_to_content).match(/Story ID:\s*([0-9a-f-]{36})/i):null;
+ if(storyMatch&&r.media_url){
+  const storyId=storyMatch[1];
+  const storyTitle=String(r.reply_to_content).replace(/^.*?:\s*/,"").replace(/\s*·\s*Story ID:\s*[0-9a-f-]{36}/i,"").trim()||"Video Story";
+  body+=`<button class="story-reply-card" type="button" data-story-open="${safe(storyId)}"><span class="story-preview-media"><video muted playsinline preload="metadata" src="${safe(r.media_url)}"></video><span class="story-preview-play">▶</span></span><span class="story-preview-label">📹 ${safe(storyTitle)} · Tap to view Story</span></button>`;
+  body+=`<div>${safe(txt(r))}</div>`;
+ }else{
+  if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":safe(other?.name||other?.username||"User")}</b><br>${safe(r.reply_to_content)}</div>`;
+  if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${safe(r.media_url)}" alt="Image message">`+(txt(r)?`<div>${safe(txt(r))}</div>`:"");
+  else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${safe(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
+  else body+=safe(txt(r));
+ }
  const ticks=mine?`<span class="ticks ${r.seen_at?"seen":""}" title="${pend?"Sending":r.seen_at?"Seen":r.delivered_at?"Delivered":"Sent"}">${pend?"◷":r.seen_at?"✓✓":r.delivered_at?"✓✓":"✓"}</span>`:"";
  return `<div class="bubble ${mine?"mine":"theirs"} ${pend?"pending":""}" data-id="${safe(r.id)}">${body}<div class="message-footer"><span class="time">${time(r.created_at)}</span>${ticks}<button class="reply-msg" data-reply="${safe(r.id)}" type="button">↩ Reply</button>${mine&&!pend?`<button class="delete-msg" data-delete="${safe(r.id)}" type="button">Delete</button>`:""}</div></div>`;
 }
@@ -93,7 +107,7 @@ async function startPresence(){if(presence||!me)return;const ch=db.channel("chat
 async function stopPresence(){const c=presence;presence=null;if(c){try{await c.untrack()}catch(e){}try{await db.removeChannel(c)}catch(e){}}}
 function setReply(id){const r=rows.find(x=>String(x.id)===String(id));if(!r||String(r.id).startsWith("local-"))return;replyTarget=r;$("replyPreview").textContent=`Replying to ${r.sender_id===me.id?"yourself":other?.name||other?.username||"message"}: ${snippet(r)}`;$("replyBar").classList.add("show");$("messageInput").focus()}
 function cancelReply(){replyTarget=null;$("replyBar").classList.remove("show");$("replyPreview").textContent=""}
-$("messages").addEventListener("click",e=>{const rb=e.target.closest("[data-reply]");if(rb){setReply(rb.dataset.reply);return}const del=e.target.closest("[data-delete]");if(del)deleteMessage(del.dataset.delete,del)});
+$("messages").addEventListener("click",e=>{const story=e.target.closest("[data-story-open]");if(story){location.href="index.html?story_id="+encodeURIComponent(story.dataset.storyOpen);return}const rb=e.target.closest("[data-reply]");if(rb){setReply(rb.dataset.reply);return}const del=e.target.closest("[data-delete]");if(del)deleteMessage(del.dataset.delete,del)});
 async function deleteMessage(id,btn){if(!confirm("Delete this message for both people?"))return;btn.disabled=true;try{const{error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);if(error)throw error;removeRow(id);status("")}catch(e){status("Message delete nahi hua. DELETE RLS policy check karein.");btn.disabled=false}}
 $("clearBtn").onclick=async()=>{if(!confirm("Clear this entire conversation for BOTH users? All messages from both sides will be permanently deleted."))return;$("clearBtn").disabled=true;status("Clearing conversation for both users…");try{const{error}=await db.from("private_messages").delete().or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`);if(error)throw error;rows=[];pending.clear();loaded=0;hasMore=false;cancelReply();render();status("")}catch(e){console.error(e);status("Chat clear nahi hui. Supabase DELETE RLS policy check karein.")}finally{$("clearBtn").disabled=false}};
 $("leaveBtn").onclick=()=>{if(!confirm("Leave this chat and return to Private Chat list? Messages will not be deleted."))return;try{const k="chatzone_hidden_private_chats_"+me.id,a=JSON.parse(localStorage.getItem(k)||"[]");if(!a.includes(otherId))a.push(otherId);localStorage.setItem(k,JSON.stringify(a))}catch(e){}location.href="private.html"};
