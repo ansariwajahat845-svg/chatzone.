@@ -214,7 +214,7 @@ async function sendStoryReply(){
   // The quote shows which Story the message was replying to.
   let privateChatError=null;
   try{
-   const chatRow={sender_id:currentUser.id,receiver_id:group.userId,content:"↩️ Story Reply: "+message,message_type:"text",reply_to_content:"Story: "+(story.caption||"Video Story"),reply_to_sender_id:group.userId};
+   const chatRow={sender_id:currentUser.id,receiver_id:group.userId,content:"↩️ Story Reply: "+message,message_type:"text",reply_to_content:"📹 Story: "+(story.caption||"Video Story")+" · Story ID: "+story.id,reply_to_sender_id:group.userId};
    const chatResult=await timeout(supabaseClient.from("private_messages").insert(chatRow),10000);
    if(chatResult.error)throw chatResult.error;
   }catch(chatErr){privateChatError=chatErr;console.error("Story reply private-chat delivery:",chatErr)}
