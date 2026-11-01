@@ -205,10 +205,32 @@ async function loadStoryReactions(storyId){const bar=$("storyReactionBar");bar.i
 async function reactToStory(storyId,emoji){if(!currentUser)return alert("Please login again.");try{const q=await timeout(supabaseClient.from("story_reactions").select("id,emoji").eq("story_id",storyId).eq("user_id",currentUser.id).maybeSingle(),8000);if(q.error)throw q.error;if(q.data?.emoji===emoji){const d=await timeout(supabaseClient.from("story_reactions").delete().eq("id",q.data.id),8000);if(d.error)throw d.error}else if(q.data){const u=await timeout(supabaseClient.from("story_reactions").update({emoji}).eq("id",q.data.id),8000);if(u.error)throw u.error}else{const i=await timeout(supabaseClient.from("story_reactions").insert({story_id:storyId,user_id:currentUser.id,emoji}),8000);if(i.error)throw i.error}await loadStoryReactions(storyId)}catch(e){alert("Reaction nahi ho saki: "+e.message)}}
 async function sendStoryReply(){
  if(!currentUser)return alert("Please login again.");const group=storyGroups[storyGroupIndex],story=group?.items?.[storyItemIndex],input=$("storyReplyInput"),message=input.value.trim();if(!story||!group||group.userId===currentUser.id)return;if(!message)return;const button=$("storyReplySend");button.disabled=true;
- try{const row={story_id:story.id,sender_id:currentUser.id,receiver_id:group.userId,message};const r=await timeout(supabaseClient.from("story_replies").insert(row).select("id").single(),10000);if(r.error)throw r.error;
- const n=await timeout(supabaseClient.from("notifications").insert({user_id:group.userId,sender_id:currentUser.id,type:"story_reply",story_id:story.id,message:"replied to your story: "+message,is_read:false}),10000);if(n.error)throw n.error;
- input.value="";alert("Private story reply sent 💜");
- }catch(e){alert("Reply send nahi hua: "+e.message+". SQL setup run karein.")}finally{button.disabled=false}
+ try{
+  // Keep the existing Story Reply record exactly as before.
+  const row={story_id:story.id,sender_id:currentUser.id,receiver_id:group.userId,message};
+  const r=await timeout(supabaseClient.from("story_replies").insert(row).select("id").single(),10000);if(r.error)throw r.error;
+
+  // Also deliver it as a normal message in the existing Private Chat.
+  // The quote shows which Story the message was replying to.
+  let privateChatError=null;
+  try{
+   const chatRow={sender_id:currentUser.id,receiver_id:group.userId,content:"↩️ Story Reply: "+message,message_type:"text",reply_to_content:"Story: "+(story.caption||"Video Story"),reply_to_sender_id:group.userId};
+   const chatResult=await timeout(supabaseClient.from("private_messages").insert(chatRow),10000);
+   if(chatResult.error)throw chatResult.error;
+  }catch(chatErr){privateChatError=chatErr;console.error("Story reply private-chat delivery:",chatErr)}
+
+  // Preserve the existing notification behavior independently of chat delivery.
+  let notificationError=null;
+  try{
+   const n=await timeout(supabaseClient.from("notifications").insert({user_id:group.userId,sender_id:currentUser.id,type:"story_reply",story_id:story.id,message:"replied to your story: "+message,is_read:false}),10000);
+   if(n.error)throw n.error;
+  }catch(notificationErr){notificationError=notificationErr;console.warn("Story reply notification:",notificationErr)}
+
+  input.value="";
+  if(privateChatError)alert("Story reply save ho gaya, lekin Private Chat mein deliver nahi hua: "+(privateChatError.message||"Check private_messages RLS policy."));
+  else if(notificationError)alert("Story reply Private Chat mein bhej diya 💜 Notification nahi bhej saki: "+(notificationError.message||""));
+  else alert("Story reply Private Chat mein bhej diya 💜");
+ }catch(e){alert("Reply send nahi hua: "+e.message+". SQL setup/RLS check karein.")}finally{button.disabled=false}
 }
 function switchStoryList(mode){storyListMode=mode;$("storyViewersTab").classList.toggle("active",mode==="views");$("storyRepliesTab").classList.toggle("active",mode==="replies");if(mode==="views")renderStoryViewers();else renderStoryReplies()}
 let cachedStoryViewRows=[],cachedStoryReplyRows=[];
