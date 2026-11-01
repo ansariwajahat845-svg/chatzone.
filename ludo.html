@@ -32,7 +32,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .game-info{text-align:center}
 .dice{font-size:52px;line-height:1.2;margin:6px}
 .small{font-size:12px;color:#777}
-.token-hit{cursor:pointer}
 .token-hit:focus{outline:none}
 footer{text-align:center;color:#fff;font-size:12px;margin:16px}
 html[data-theme="dark"] body{background:#171222;color:#eee}
@@ -326,10 +325,10 @@ for(let side=0;side<4;side++){
 
 function homeCoord(color,step){
  const lanes=[
-  [[60,340],[100,340],[140,340],[180,340],[220,340],[260,340]], // Red
-  [[260,60],[260,100],[260,140],[260,180],[260,220],[260,260]], // Green
-  [[340,60],[340,100],[340,140],[340,180],[340,220],[340,260]], // Yellow
-  [[540,260],[500,260],[460,260],[420,260],[380,260],[340,260]]  // Blue
+  [[60,340],[100,340],[140,340],[180,340],[220,340],[260,340]],
+  [[260,60],[260,100],[260,140],[260,180],[260,220],[260,260]],
+  [[340,60],[340,100],[340,140],[340,180],[340,220],[340,260]],
+  [[540,260],[500,260],[460,260],[420,260],[380,260],[340,260]]
  ];
  return lanes[color][Math.max(0,Math.min(5,step-52))];
 }
@@ -337,16 +336,17 @@ function tokenCoord(player,token){
  const pos=player.tokens[token],c=player.colorIndex;
  if(pos===-1){
   const bases=[
-   [[105,425],[175,425],[105,495],[175,495]], // Red bottom-left
-   [[105,105],[175,105],[105,175],[175,175]], // Green top-left
-   [[425,105],[495,105],[425,175],[495,175]], // Yellow top-right
-   [[425,425],[495,425],[425,495],[495,495]]  // Blue bottom-right
+   [[105,425],[175,425],[105,495],[175,495]],
+   [[105,105],[175,105],[105,175],[175,175]],
+   [[425,105],[495,105],[425,175],[495,175]],
+   [[425,425],[495,425],[425,495],[495,495]]
   ];
   return bases[c][token];
  }
  if(pos>=52)return homeCoord(c,pos);
  return TRACK[(c*13+pos)%52];
 }
+
 function drawBoard(){
  const svg=$("board");
  const cell=40;
@@ -357,12 +357,11 @@ function drawBoard(){
   <linearGradient id="gotiblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9bd5ff"/><stop offset="48%" stop-color="#2878e5"/><stop offset="100%" stop-color="#10428e"/></linearGradient>
  </defs>
  <rect x="2" y="2" width="596" height="596" rx="18" fill="#8b552e" stroke="#603a22" stroke-width="5"/>`;
- // Four large home quarters
  const homes=[
-  {x:12,y:12,c:COLORS[1]},   // green top-left
-  {x:348,y:12,c:COLORS[2]},  // yellow top-right
-  {x:12,y:348,c:COLORS[0]},  // red bottom-left
-  {x:348,y:348,c:COLORS[3]}  // blue bottom-right
+  {x:12,y:12,c:COLORS[1]},
+  {x:348,y:12,c:COLORS[2]},
+  {x:12,y:348,c:COLORS[0]},
+  {x:348,y:348,c:COLORS[3]}
  ];
  homes.forEach(h=>{
   out+=`<rect x="${h.x}" y="${h.y}" width="240" height="240" fill="${h.c}" stroke="#222" stroke-width="2"/>`;
@@ -372,7 +371,6 @@ function drawBoard(){
    out+=`<circle cx="${x}" cy="${y}" r="22" fill="#fff" opacity=".16" stroke="#fff" stroke-width="2"/>`;
   });
  });
- // White central-cross track cells with dark grid borders
  const cells=new Set();
  for(let r=0;r<6;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
  for(let r=9;r<15;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
@@ -382,7 +380,6 @@ function drawBoard(){
   const [r,c]=key.split(",").map(Number);
   out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#fff" stroke="#222" stroke-width="1.5"/>`;
  });
- // Coloured home lanes
  const laneCells=[
   {cells:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]],color:COLORS[0]},
   {cells:[[1,6],[2,6],[3,6],[4,6],[5,6],[6,6]],color:COLORS[1]},
@@ -392,22 +389,55 @@ function drawBoard(){
  laneCells.forEach(l=>l.cells.forEach(([r,c])=>{
   out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="${l.color}" stroke="#222" stroke-width="1.5"/>`;
  }));
- // Entry / safe squares
  const safeCells=[[6,1],[2,6],[1,8],[8,13],[8,2],[6,12],[12,8],[13,6]];
- safeCells.forEach(([r,c],i)=>{
+ safeCells.forEach(([r,c])=>{
   const x=c*cell+20,y=r*cell+20;
   out+=`<text x="${x}" y="${y+10}" text-anchor="middle" font-size="29" fill="#777">★</text>`;
  });
- // Four-colour centre
  out+=`<path d="M240 240 L360 240 L300 300 Z" fill="${COLORS[2]}" stroke="#222" stroke-width="1.5"/>`;
  out+=`<path d="M360 240 L360 360 L300 300 Z" fill="${COLORS[3]}" stroke="#222" stroke-width="1.5"/>`;
  out+=`<path d="M360 360 L240 360 L300 300 Z" fill="${COLORS[0]}" stroke="#222" stroke-width="1.5"/>`;
  out+=`<path d="M240 360 L240 240 L300 300 Z" fill="${COLORS[1]}" stroke="#222" stroke-width="1.5"/>`;
- // Token pieces
- if(room?.state?.players){
-  room.state.players.forEach(p=>p.tokens.forEach((v,i)=>{
+
+ // One clickable dice for each player's side of the board.
+ // Dice are placed in the outer corners so they do not cover home tokens.
+ const diceSpots=[
+  [48,552],  // Red - bottom-left
+  [48,48],   // Green - top-left
+  [552,48],  // Yellow - top-right
+  [552,552]  // Blue - bottom-right
+ ];
+ const dicePips={
+  1:[[0,0]],
+  2:[[-9,-9],[9,9]],
+  3:[[-9,-9],[0,0],[9,9]],
+  4:[[-9,-9],[9,-9],[-9,9],[9,9]],
+  5:[[-9,-9],[9,-9],[0,0],[-9,9],[9,9]],
+  6:[[-9,-10],[9,-10],[-9,0],[9,0],[-9,10],[9,10]]
+ };
+ const gameState=room?.state;
+ if(gameState?.players){
+  gameState.players.forEach((p,i)=>{
+   const [x,y]=diceSpots[i];
+   const active=i===gameState.turn&&!gameState.rolled&&!gameState.winner;
+   const face=(i===gameState.turn&&gameState.dice)?gameState.dice:1;
+   const dots=dicePips[face].map(([dx,dy])=>
+    `<circle cx="${x+dx}" cy="${y+dy}" r="3.5" fill="${COLORS[i]}"/>`
+   ).join("");
+   out+=`<g class="die-hit" data-player="${esc(p.id)}" style="cursor:pointer">
+    ${active?`<rect x="${x-29}" y="${y-29}" width="58" height="58" rx="13" fill="none" stroke="${COLORS[i]}" stroke-width="4" stroke-dasharray="5 3"/>`:""}
+    <rect x="${x-23}" y="${y-23}" width="46" height="46" rx="10" fill="#fff" stroke="${COLORS[i]}" stroke-width="4"/>
+    ${dots}
+    <text x="${x}" y="${y+39}" text-anchor="middle" font-size="11" font-weight="bold" fill="${COLORS[i]}">${COLOR_NAMES[i]}</text>
+   </g>`;
+  });
+ }
+
+ // Player tokens
+ if(gameState?.players){
+  gameState.players.forEach(p=>p.tokens.forEach((v,i)=>{
    const [x,y]=tokenCoord(p,i),isMine=p.id===me.id;
-   const selectable=isMine&&p.id===playerTurn()?.id&&room.state.rolled&&(v===-1?room.state.dice===6:v+room.state.dice<=57);
+   const selectable=isMine&&p.id===playerTurn()?.id&&gameState.rolled&&(v===-1?gameState.dice===6:v+gameState.dice<=57);
    out+=`<g class="token-hit" data-player="${esc(p.id)}" data-token="${i}">
     <circle cx="${x}" cy="${y+2}" r="19" fill="#000" opacity=".22"/>
     <circle cx="${x}" cy="${y}" r="18" fill="${["url(#gotired)","url(#gotigreen)","url(#gotiyellow)","url(#gotiblue)"][p.colorIndex]}" stroke="#fff" stroke-width="3.5"/>
@@ -419,12 +449,22 @@ function drawBoard(){
   }));
  }
  svg.innerHTML=out;
+
+ // Clicking your own active-side dice rolls the same shared game dice.
+ svg.querySelectorAll(".die-hit").forEach(el=>{
+  el.addEventListener("click",()=>{
+   if(el.dataset.player===me.id&&playerTurn()?.id===me.id){
+    rollDice();
+   }
+  });
+ });
  svg.querySelectorAll(".token-hit").forEach(el=>{
   el.addEventListener("click",()=>{
    if(el.dataset.player===me.id)moveToken(Number(el.dataset.token));
   });
  });
 }
+
 $("createBtn").addEventListener("click",createRoom);
 $("joinToggle").addEventListener("click",()=>$("joinArea").classList.toggle("hidden"));
 $("joinBtn").addEventListener("click",joinRoom);
