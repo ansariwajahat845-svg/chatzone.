@@ -3,62 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#6c5ce7">
+<meta name="theme-color" content="#260052">
 <title>Ludo - ChatZone 💬</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:#211a2c;min-height:100vh;padding-bottom:25px}
-header{background:#fff;padding:15px;text-align:center;box-shadow:0 2px 10px #0002;position:sticky;top:0;z-index:5}
-header h1{margin:0;color:#6c5ce7;font-size:23px}
-header a{position:absolute;left:14px;top:19px;color:#6c5ce7;text-decoration:none;font-weight:bold}
-.wrap{max-width:760px;width:94%;margin:16px auto}
-.panel{background:#fff;border-radius:17px;padding:16px;margin-bottom:14px;box-shadow:0 5px 18px #0002}
-h2{font-size:18px;margin:0 0 12px}
-.muted{color:#777;font-size:13px;line-height:1.5}
-input{width:100%;padding:13px;border:1px solid #ddd;border-radius:11px;font-size:16px;margin:6px 0 10px}
-button{border:0;border-radius:11px;padding:12px 15px;background:#6c5ce7;color:#fff;font-weight:bold;font-size:14px;cursor:pointer}
-button:disabled{opacity:.45;cursor:not-allowed}
-.secondary{background:#eee;color:#493b68}
-.row{display:flex;gap:9px;flex-wrap:wrap}
-.row>*{flex:1}
-.hidden{display:none!important}
-#notice{font-size:13px;margin-top:10px;line-height:1.5}
-.players{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.player{padding:8px 10px;border-radius:20px;background:#f2efff;font-size:12px;font-weight:bold}
-.player.active{outline:2px solid #6c5ce7}
-#board{width:100%;max-width:540px;display:block;margin:10px auto;border-radius:12px;background:#fff;touch-action:manipulation}
-.game-layout{display:grid;grid-template-columns:1fr;gap:12px}
-.game-info{text-align:center}
-.dice{font-size:52px;line-height:1.2;margin:6px}
-.small{font-size:12px;color:#777}
-footer{text-align:center;color:#fff;font-size:12px;margin:16px}
-html[data-theme="dark"] body{background:#171222;color:#eee}
-html[data-theme="dark"] header,html[data-theme="dark"] .panel{background:#241c33;color:#f2edf9}
-html[data-theme="dark"] header h1,html[data-theme="dark"] header a{color:#b8a2ff}
-html[data-theme="dark"] .muted,html[data-theme="dark"] .small{color:#c2b6d2}
-html[data-theme="dark"] input{background:#352747;border-color:#554568;color:#fff}
-html[data-theme="dark"] .secondary{background:#40344f;color:#eee}
-html[data-theme="dark"] .player{background:#40344f;color:#eee}
-
-/* Full-screen premium purple game shell */
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:#211a2c;min-height:100vh;padding-bottom:25px}
+header{background:#fff;padding:15px;text-align:center;box-shadow:0 2px 10px #0002;position:sticky;top:0;z-index:5}header h1{margin:0;color:#6c5ce7;font-size:23px}header a{position:absolute;left:14px;top:19px;color:#6c5ce7;text-decoration:none;font-weight:bold}
+.wrap{max-width:760px;width:94%;margin:16px auto}.panel{background:#fff;border-radius:17px;padding:16px;margin-bottom:14px;box-shadow:0 5px 18px #0002}h2{font-size:18px;margin:0 0 12px}.muted{color:#777;font-size:13px;line-height:1.5}input{width:100%;padding:13px;border:1px solid #ddd;border-radius:11px;font-size:16px;margin:6px 0 10px}button{border:0;border-radius:11px;padding:12px 15px;background:#6c5ce7;color:#fff;font-weight:bold;font-size:14px;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.secondary{background:#eee;color:#493b68}.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1}.hidden{display:none!important}#notice{font-size:13px;margin-top:10px;line-height:1.5}.players{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.player{padding:8px 10px;border-radius:20px;background:#f2efff;font-size:12px;font-weight:bold}.player.active{outline:2px solid #6c5ce7}.small{font-size:12px;color:#777}#board{width:100%;max-width:540px;display:block;margin:10px auto;border-radius:12px;background:#fff;touch-action:manipulation}.game-layout{display:grid;grid-template-columns:1fr;gap:12px}.game-info{text-align:center}.dice{font-size:52px;line-height:1.2;margin:6px}footer{text-align:center;color:#fff;font-size:12px;margin:16px}
+html[data-theme="dark"] body{background:#171222;color:#eee}html[data-theme="dark"] header,html[data-theme="dark"] .panel{background:#241c33;color:#f2edf9}html[data-theme="dark"] header h1,html[data-theme="dark"] header a{color:#b8a2ff}html[data-theme="dark"] .muted,html[data-theme="dark"] .small{color:#c2b6d2}html[data-theme="dark"] input{background:#352747;border-color:#554568;color:#fff}html[data-theme="dark"] .secondary{background:#40344f;color:#eee}html[data-theme="dark"] .player{background:#40344f;color:#eee}
 body.game-fullscreen{overflow:hidden!important;padding:0!important}
-#gamePanel.fullscreen-game{
- position:fixed!important;inset:0!important;z-index:9999!important;
- width:100vw!important;height:100vh!important;height:100dvh!important;
- max-width:none!important;margin:0!important;padding:8px 12px max(12px,env(safe-area-inset-bottom))!important;
- border-radius:0!important;overflow:auto!important;display:block!important;
- background:radial-gradient(ellipse at 50% 42%,#421080 0%,#21004e 58%,#10002d 100%)!important;
- color:#fff!important;
-}
-#gamePanel.fullscreen-game:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:radial-gradient(#b46aff 1px,transparent 1.5px);background-size:19px 19px;mask-image:linear-gradient(90deg,#000,transparent 35%,transparent 65%,#000)}
+#gamePanel.fullscreen-game{position:fixed!important;inset:0!important;z-index:9999!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;margin:0!important;padding:8px 12px max(12px,env(safe-area-inset-bottom))!important;border-radius:0!important;overflow:auto!important;display:block!important;background:radial-gradient(ellipse at 50% 42%,#421080 0%,#21004e 58%,#10002d 100%)!important;color:#fff!important}
+#gamePanel.fullscreen-game:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:radial-gradient(#b46aff 1px,transparent 1.5px);background-size:19px 19px}
 #gamePanel.fullscreen-game .game-topbar{height:auto;position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:760px;margin:0 auto 8px}
 #gamePanel.fullscreen-game .brand-title{flex:1;text-align:center;font-size:clamp(15px,4vw,22px);font-weight:900;padding:11px 8px;border:2px solid #9d28ff;border-radius:18px;background:linear-gradient(135deg,#31006e,#18003d);box-shadow:0 0 16px #8d19ff;color:#fff}
-#gamePanel.fullscreen-game .top-icon{width:44px;height:44px;padding:0;border:2px solid #a72cff;border-radius:14px;background:linear-gradient(145deg,#7700d9,#310078);font-size:22px;box-shadow:0 4px 12px #0008}
-#gamePanel.fullscreen-game #exitFullBtn{position:static;flex:0 0 44px;width:44px;height:44px;padding:0;border:2px solid #a72cff;border-radius:14px;background:linear-gradient(145deg,#7700d9,#310078);font-size:22px;box-shadow:0 4px 12px #0008}
+#gamePanel.fullscreen-game .top-icon,#gamePanel.fullscreen-game #exitFullBtn{width:44px;height:44px;flex:0 0 44px;padding:0;border:2px solid #a72cff;border-radius:14px;background:linear-gradient(145deg,#7700d9,#310078);font-size:22px;box-shadow:0 4px 12px #0008}
 #gamePanel.fullscreen-game .game-layout{position:relative;z-index:1;width:100%;min-height:calc(100% - 54px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-#gamePanel.fullscreen-game .board-stage{width:min(94vw,62vh,680px);max-width:100%;margin:clamp(36px,6vh,72px) auto;background:linear-gradient(145deg,#c45bff,#5c00b9 42%,#260052);border:5px solid #bd5aff;border-radius:26px;box-shadow:0 12px 0 #26004f,0 0 0 3px #6c16bc,0 0 28px #a52cff,0 18px 38px #000b;flex:0 0 auto}
-#gamePanel.fullscreen-game #board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;margin:0;border-radius:19px;box-shadow:inset 0 0 18px #fff5}
+#gamePanel.fullscreen-game .board-stage{width:min(94vw,62vh,680px);max-width:100%;margin:clamp(12px,3vh,32px) auto;background:linear-gradient(145deg,#ffbd62,#8c3a0a 45%,#3b1609);border:7px solid #a84e16;border-radius:30px;box-shadow:inset 0 0 0 4px #ffcb75,0 10px 0 #431900,0 0 0 3px #d77b27,0 0 28px #a52cff,0 18px 38px #000b;flex:0 0 auto;padding:8px}
+#gamePanel.fullscreen-game #board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;margin:0;border-radius:18px;box-shadow:inset 0 0 18px #fff5}
 #gamePanel.fullscreen-game .game-info{width:100%;max-width:680px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:6px 2px}
 #gamePanel.fullscreen-game .game-info h2{margin:0;font-size:clamp(14px,3.8vw,19px);text-align:left;color:#fff}
 #gamePanel.fullscreen-game .dice{font-size:38px;margin:0;filter:drop-shadow(0 3px 4px #0008)}
@@ -68,330 +29,92 @@ body.game-fullscreen{overflow:hidden!important;padding:0!important}
 #gamePanel.fullscreen-game .player{background:#30006c;color:#fff;border:1px solid #a94bff}
 #gamePanel.fullscreen-game .player.active{outline:2px solid #ffe36e;box-shadow:0 0 12px #b84cff}
 #gamePanel.fullscreen-game #backLobbyBtn{grid-column:1/-1;justify-self:center;background:#3b1764;color:#fff}
-.board-stage{position:relative;width:min(94vw,540px);aspect-ratio:1;margin:65px auto;background:linear-gradient(145deg,#c45bff,#260052);border:5px solid #bd5aff;border-radius:24px;box-shadow:0 12px 0 #26004f,0 0 0 3px #6c16bc,0 0 28px #a52cff,0 18px 38px #000b}
+.board-stage{position:relative;width:min(94vw,540px);aspect-ratio:1;margin:65px auto;background:#9a4817;border:7px solid #d27b2c;border-radius:28px;box-shadow:0 12px 0 #26004f,0 0 0 3px #6c16bc,0 0 28px #a52cff,0 18px 38px #000b;padding:7px}
 .board-stage #board{width:100%;height:100%;margin:0;border-radius:17px}
-.player-dice-row{position:absolute;inset:0;pointer-events:none}
-.player-die{position:absolute;width:clamp(48px,12vw,68px);min-height:clamp(48px,12vw,68px);border:3px solid var(--die-color);border-radius:16px;background:linear-gradient(145deg,#fff,#ded3f4);color:#241633;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:0 7px 15px #0008,inset 0 2px 5px #fff;pointer-events:auto;font-size:9px;font-weight:bold;transition:.2s;padding:3px}
-.player-die-face{font-size:clamp(25px,7vw,36px);line-height:1.05;color:var(--die-color);text-shadow:0 3px 3px #0004}
-.player-die.active{border-color:#fff;box-shadow:0 0 0 3px var(--die-color),0 0 25px var(--die-color)}
-.player-die.empty{opacity:.45}
-/* Four player dice sit at the four corners of the board. */
-.player-die:nth-child(1){left:7px;top:7px}
-.player-die:nth-child(2){right:7px;top:7px}
-.player-die:nth-child(3){right:7px;bottom:7px}
-.player-die:nth-child(4){left:7px;bottom:7px}
-@keyframes diceRoll{0%{transform:rotate(0) scale(1)}30%{transform:rotate(100deg) scale(1.2)}65%{transform:rotate(250deg) scale(.9)}100%{transform:rotate(360deg) scale(1)}}
-.player-die.rolling .player-die-face{animation:diceRoll .6s ease}
-.token-hit{cursor:pointer}
-.token-hit.selectable circle:first-child{stroke:#fff;stroke-width:4;stroke-dasharray:5 3}
+.player-dice-row{position:absolute;inset:0;pointer-events:none}.player-die{position:absolute;width:clamp(48px,12vw,68px);min-height:clamp(48px,12vw,68px);border:3px solid var(--die-color);border-radius:16px;background:linear-gradient(145deg,#fff,#ded3f4);color:#241633;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:0 7px 15px #0008,inset 0 2px 5px #fff;pointer-events:auto;font-size:9px;font-weight:bold;transition:.2s;padding:3px}
+.player-die-face{font-size:clamp(25px,7vw,36px);line-height:1.05;color:var(--die-color);text-shadow:0 3px 3px #0004}.player-die.active{border-color:#fff;box-shadow:0 0 0 3px var(--die-color),0 0 25px var(--die-color)}.player-die.empty{opacity:.45}
+.player-die:nth-child(1){left:7px;top:7px}.player-die:nth-child(2){right:7px;top:7px}.player-die:nth-child(3){right:7px;bottom:7px}.player-die:nth-child(4){left:7px;bottom:7px}
+.token-hit{cursor:pointer}.token-hit.selectable circle:first-child{stroke:#fff;stroke-width:4;stroke-dasharray:5 3}
 @media(max-width:400px){#gamePanel.fullscreen-game{padding-left:8px!important;padding-right:8px!important}.board-stage{width:94vw}}
-@media(orientation:landscape) and (max-height:520px){
- #gamePanel.fullscreen-game .game-layout{flex-direction:row;gap:12px}
- #gamePanel.fullscreen-game .board-stage{width:min(82vh,calc(100vw - 230px));margin:20px auto}
- #gamePanel.fullscreen-game .game-info{width:210px;display:flex;flex-direction:column;align-items:stretch}
- #gamePanel.fullscreen-game .game-info h2,#gamePanel.fullscreen-game #gameMessage{text-align:center}
-}
+@media(orientation:landscape) and (max-height:520px){#gamePanel.fullscreen-game .game-layout{flex-direction:row;gap:12px}#gamePanel.fullscreen-game .board-stage{width:min(82vh,calc(100vw - 230px));margin:20px auto}#gamePanel.fullscreen-game .game-info{width:210px;display:flex;flex-direction:column;align-items:stretch}#gamePanel.fullscreen-game .game-info h2,#gamePanel.fullscreen-game #gameMessage{text-align:center}}
 </style>
 </head>
 <body>
 <header><a href="more.html">‹ More</a><h1>🎲 ChatZone Ludo</h1></header>
 <main class="wrap">
-<section class="panel" id="lobby">
- <h2>Play Ludo with Friends</h2>
- <p class="muted">Create a private room and share its code with 1–3 friends. All players must be logged in to ChatZone.</p>
- <label class="small" for="displayName">Your game name</label>
- <input id="displayName" maxlength="18" placeholder="Your name">
- <div class="row"><button id="createBtn">＋ Create Room</button><button class="secondary" id="joinToggle">Join Room</button></div>
- <div id="joinArea" class="hidden"><input id="roomCode" maxlength="6" placeholder="Enter 6-character room code" autocapitalize="characters"><button id="joinBtn">Join Game</button></div>
- <div id="notice" role="status">Connecting to ChatZone...</div>
-</section>
-<section class="panel hidden" id="roomPanel">
- <div class="row" style="align-items:center"><div><h2>Room <span id="roomCodeLabel"></span></h2><div class="muted">Share this code with your friends</div></div><button id="copyBtn" class="secondary">Copy Code</button></div>
- <div class="players" id="playersList"></div>
- <div class="row" id="roomActions"><button id="startBtn">Start Game</button><button id="leaveBtn" class="secondary">Leave Room</button></div>
- <p class="muted" id="roomHint">Waiting for players. The host can start when at least 2 players have joined.</p>
-</section>
-<section class="panel hidden" id="gamePanel">
- <div class="game-topbar"><button id="exitFullBtn" type="button" aria-label="Back">‹</button><div class="brand-title">👑 Ludo - <span style="color:#ffd52e">ChatZone</span> 💬</div><button class="top-icon" id="themeBtn" type="button" aria-label="Toggle theme">☾</button></div>
- <div class="game-layout">
-  <div class="board-stage">
-   <svg id="board" viewBox="0 0 600 600" aria-label="Ludo board"></svg>
-   <div class="player-dice-row" id="playerDiceRow"></div>
-  </div>
-  <div class="game-info">
-   <h2 id="turnLabel">Game</h2><div class="dice" id="diceFace">🎲</div>
-   <button id="rollBtn">Roll Dice</button>
-   <p class="muted" id="gameMessage">Roll the dice when it is your turn.</p>
-   <div class="players" id="gamePlayers"></div>
-   <button id="backLobbyBtn" class="secondary hidden">Back to Room</button>
-  </div>
- </div>
-</section>
-</main>
-<footer>ChatZone • Connect • Share • Enjoy</footer>
-
+<section class="panel" id="lobby"><h2>Play Ludo with Friends</h2><p class="muted">Create a private room and share its code with 1–3 friends. All players must be logged in to ChatZone.</p><label class="small" for="displayName">Your game name</label><input id="displayName" maxlength="18" placeholder="Your name"><div class="row"><button id="createBtn">＋ Create Room</button><button class="secondary" id="joinToggle">Join Room</button></div><div id="joinArea" class="hidden"><input id="roomCode" maxlength="6" placeholder="Enter 6-character room code" autocapitalize="characters"><button id="joinBtn">Join Game</button></div><div id="notice" role="status">Connecting to ChatZone...</div></section>
+<section class="panel hidden" id="roomPanel"><div class="row" style="align-items:center"><div><h2>Room <span id="roomCodeLabel"></span></h2><div class="muted">Share this code with your friends</div></div><button id="copyBtn" class="secondary">Copy Code</button></div><div class="players" id="playersList"></div><div class="row" id="roomActions"><button id="startBtn">Start Game</button><button id="leaveBtn" class="secondary">Leave Room</button></div><p class="muted" id="roomHint">Waiting for players. The host can start when at least 2 players have joined.</p></section>
+<section class="panel hidden" id="gamePanel"><div class="game-topbar"><button id="exitFullBtn" type="button" aria-label="Back">‹</button><div class="brand-title">👑 Ludo - <span style="color:#ffd52e">ChatZone</span> 💬</div><button class="top-icon" id="themeBtn" type="button" aria-label="Toggle theme">☾</button></div><div class="game-layout"><div class="board-stage"><svg id="board" viewBox="0 0 600 600" aria-label="Ludo board"></svg><div class="player-dice-row" id="playerDiceRow"></div></div><div class="game-info"><h2 id="turnLabel">Game</h2><div class="dice" id="diceFace">🎲</div><button id="rollBtn">Roll Dice</button><p class="muted" id="gameMessage">Roll the dice when it is your turn.</p><div class="players" id="gamePlayers"></div><button id="backLobbyBtn" class="secondary hidden">Back to Room</button></div></div></section>
+</main><footer>ChatZone • Connect • Share • Enjoy</footer>
 <script>
 "use strict";
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-const $=id=>document.getElementById(id);
-const COLORS=["#e53935","#22a447","#f2c230","#2878e5"];
-const COLOR_NAMES=["Red","Green","Yellow","Blue"];
-const DICE=["⚀","⚁","⚂","⚃","⚄","⚅"];
+const $=id=>document.getElementById(id),COLORS=["#e53935","#22a447","#f2c230","#2878e5"],COLOR_NAMES=["Red","Green","Yellow","Blue"],DICE=["⚀","⚁","⚂","⚃","⚄","⚅"];
 let me=null,meName="Player",room=null,channel=null,roomPoll=null,busy=false,gameState=null;
-
-(function(){
- let t="light";
- try{const v=localStorage.getItem("chatzone-theme");if(v==="dark"||v==="light")t=v}catch(e){}
- document.documentElement.dataset.theme=t;
- window.addEventListener("storage",e=>{if(e.key==="chatzone-theme")document.documentElement.dataset.theme=e.newValue==="dark"?"dark":"light"});
-})();
-function notice(s,bad=false){$("notice").textContent=s;$("notice").style.color=bad?"#d33":""}
-function say(s){$("gameMessage").textContent=s}
+(function(){let t="light";try{const v=localStorage.getItem("chatzone-theme");if(v==="dark"||v==="light")t=v}catch(e){}document.documentElement.dataset.theme=t;window.addEventListener("storage",e=>{if(e.key==="chatzone-theme")document.documentElement.dataset.theme=e.newValue==="dark"?"dark":"light"})})();
+function notice(s,bad=false){$("notice").textContent=s;$("notice").style.color=bad?"#d33":""}function say(s){$("gameMessage").textContent=s}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
-async function init(){
- const {data,error}=await db.auth.getSession();
- if(error||!data.session){location.replace("login.html");return}
- me=data.session.user;
- const {data:p}=await db.from("profiles").select("username,name").eq("id",me.id).maybeSingle();
- meName=(p?.username||p?.name||me.email?.split("@")[0]||"Player").slice(0,18);
- $("displayName").value=meName;
- notice("Ready! Create a room or join a friend's room.");
-}
+async function init(){const {data,error}=await db.auth.getSession();if(error||!data.session){location.replace("login.html");return}me=data.session.user;const {data:p}=await db.from("profiles").select("username,name").eq("id",me.id).maybeSingle();meName=(p?.username||p?.name||me.email?.split("@")[0]||"Player").slice(0,18);$("displayName").value=meName;notice("Ready! Create a room or join a friend's room.")}
 function newState(players){return {players:players.map((p,i)=>({...p,colorIndex:i,tokens:[-1,-1,-1,-1]})),turn:0,dice:null,rolled:false,winner:null,started:false,log:"Game ready. Red starts."}}
-
-async function createRoom(){
- if(busy)return;busy=true;$("createBtn").disabled=true;
- try{
-  meName=$("displayName").value.trim().slice(0,18)||meName;
-  const code=Math.random().toString(36).slice(2,8).toUpperCase().padEnd(6,"X");
-  const player={id:me.id,name:meName};
-  const {data,error}=await db.rpc("ludo_create_room",{p_code:code,p_player:player});
-  if(error)throw error;setRoom(data);
- }catch(e){notice("Room create nahi hua: "+e.message,true)}
- finally{busy=false;$("createBtn").disabled=false}
-}
-async function joinRoom(){
- const code=$("roomCode").value.trim().toUpperCase();
- if(code.length!==6){notice("6-character room code enter karo.",true);return}
- if(busy)return;busy=true;$("joinBtn").disabled=true;
- try{
-  meName=$("displayName").value.trim().slice(0,18)||meName;
-  const {data,error}=await db.rpc("ludo_join_room",{p_code:code,p_player:{id:me.id,name:meName}});
-  if(error)throw error;setRoom(data);
- }catch(e){notice("Room join nahi hua: "+e.message,true)}
- finally{busy=false;$("joinBtn").disabled=false}
-}
-function setRoom(data){
- room=data;
- $("lobby").classList.add("hidden");$("roomPanel").classList.remove("hidden");
- $("roomCodeLabel").textContent=data.code;
- renderRoom();subscribeRoom();
- if(data.state?.started)showGame();
-}
-function renderRoom(){
- if(!room)return;
- const players=room.state.players||[];
- $("playersList").innerHTML=players.map((p,i)=>`<span class="player">${COLOR_NAMES[i]||"Player"}: ${esc(p.name)}${p.id===room.host_id?" 👑":""}</span>`).join("");
- const isHost=room.host_id===me.id;
- $("startBtn").classList.toggle("hidden",!isHost||room.state.started);
- $("startBtn").disabled=players.length<2;
- $("roomHint").textContent=players.length<2?"At least 2 players are needed. Share the room code with a friend.":(isHost?"You are host. Start when everyone is ready.":"Waiting for the host to start the game.");
-}
-function subscribeRoom(){
- if(channel)db.removeChannel(channel);
- channel=db.channel("ludo-room-"+room.id)
-  .on("postgres_changes",{event:"UPDATE",schema:"public",table:"ludo_rooms",filter:"id=eq."+room.id},payload=>{
-   if(payload.new){room=payload.new;renderRoom();if(room.state?.started)showGame();renderGame()}
-  }).subscribe();
- if(roomPoll)clearInterval(roomPoll);
- roomPoll=setInterval(async()=>{
-  if(!room)return;
-  const {data}=await db.from("ludo_rooms").select("*").eq("id",room.id).maybeSingle();
-  if(data){room=data;renderRoom();if(room.state?.started)showGame();renderGame()}
- },5000);
-}
-async function saveState(next){
- const {data,error}=await db.rpc("ludo_update_state",{p_code:room.code,p_state:next});
- if(error)throw error;
- room=data;renderRoom();renderGame();
-}
-async function startGame(){
- if(room.host_id!==me.id||room.state.players.length<2)return;
- const next=newState(room.state.players);next.started=true;
- try{await saveState(next);showGame()}catch(e){alert("Game start error: "+e.message)}
-}
-function showGame(){
- $("gamePanel").classList.remove("hidden");$("gamePanel").classList.add("fullscreen-game");
- document.body.classList.add("game-fullscreen");renderGame();
-}
+async function createRoom(){if(busy)return;busy=true;$("createBtn").disabled=true;try{meName=$("displayName").value.trim().slice(0,18)||meName;const code=Math.random().toString(36).slice(2,8).toUpperCase().padEnd(6,"X");const {data,error}=await db.rpc("ludo_create_room",{p_code:code,p_player:{id:me.id,name:meName}});if(error)throw error;setRoom(data)}catch(e){notice("Room create nahi hua: "+e.message,true)}finally{busy=false;$("createBtn").disabled=false}}
+async function joinRoom(){const code=$("roomCode").value.trim().toUpperCase();if(code.length!==6){notice("6-character room code enter karo.",true);return}if(busy)return;busy=true;$("joinBtn").disabled=true;try{meName=$("displayName").value.trim().slice(0,18)||meName;const {data,error}=await db.rpc("ludo_join_room",{p_code:code,p_player:{id:me.id,name:meName}});if(error)throw error;setRoom(data)}catch(e){notice("Room join nahi hua: "+e.message,true)}finally{busy=false;$("joinBtn").disabled=false}}
+function setRoom(data){room=data;$("lobby").classList.add("hidden");$("roomPanel").classList.remove("hidden");$("roomCodeLabel").textContent=data.code;renderRoom();subscribeRoom();if(data.state?.started)showGame()}
+function renderRoom(){if(!room)return;const players=room.state.players||[];$("playersList").innerHTML=players.map((p,i)=>`<span class="player">${COLOR_NAMES[i]||"Player"}: ${esc(p.name)}${p.id===room.host_id?" 👑":""}</span>`).join("");const isHost=room.host_id===me.id;$("startBtn").classList.toggle("hidden",!isHost||room.state.started);$("startBtn").disabled=players.length<2;$("roomHint").textContent=players.length<2?"At least 2 players are needed. Share the room code with a friend.":(isHost?"You are host. Start when everyone is ready.":"Waiting for the host to start the game.")}
+function subscribeRoom(){if(channel)db.removeChannel(channel);channel=db.channel("ludo-room-"+room.id).on("postgres_changes",{event:"UPDATE",schema:"public",table:"ludo_rooms",filter:"id=eq."+room.id},payload=>{if(payload.new){room=payload.new;renderRoom();if(room.state?.started)showGame();renderGame()}}).subscribe();if(roomPoll)clearInterval(roomPoll);roomPoll=setInterval(async()=>{if(!room)return;const {data}=await db.from("ludo_rooms").select("*").eq("id",room.id).maybeSingle();if(data){room=data;renderRoom();if(room.state?.started)showGame();renderGame()}},5000)}
+async function saveState(next){const {data,error}=await db.rpc("ludo_update_state",{p_code:room.code,p_state:next});if(error)throw error;room=data;renderRoom();renderGame()}
+async function startGame(){if(room.host_id!==me.id||room.state.players.length<2)return;const next=newState(room.state.players);next.started=true;try{await saveState(next);showGame()}catch(e){alert("Game start error: "+e.message)}}
+function showGame(){$("gamePanel").classList.remove("hidden");$("gamePanel").classList.add("fullscreen-game");document.body.classList.add("game-fullscreen");renderGame()}
 function playerTurn(){return room?.state?.players?.[room.state.turn]}
-function renderGame(){
- if(!room||!room.state?.started)return;
- const s=room.state,players=s.players||[],current=playerTurn();
- gameState=s;
- $("turnLabel").textContent=s.winner?("🏆 "+s.winner.name+" Wins!"):(current?current.name+"'s turn":"Ludo");
- $("diceFace").textContent=s.dice?DICE[s.dice-1]:"🎲";
- $("rollBtn").disabled=!!s.winner||current?.id!==me.id||s.rolled;
- $("rollBtn").textContent=s.rolled?"Choose a token":"Roll Dice";
- $("gamePlayers").innerHTML=players.map((p,i)=>`<span class="player ${i===s.turn&&!s.winner?"active":""}">${COLOR_NAMES[i]} · ${esc(p.name)}</span>`).join("");
- $("playerDiceRow").innerHTML=Array.from({length:4},(_,i)=>{
-  const p=players[i],active=!!p&&i===s.turn&&!s.winner;
-  const face=p&&i===s.turn&&s.dice?DICE[s.dice-1]:"⚀";
-  return `<button type="button" class="player-die ${active?"active":""} ${p?"":"empty"}" data-index="${i}" style="--die-color:${COLORS[i]}" ${!p||p.id!==me.id||!active||s.rolled||s.winner?"disabled":""}>
-   <div class="player-die-face">${face}</div><span>${p?esc(p.name):COLOR_NAMES[i]}</span></button>`;
- }).join("");
- $("playerDiceRow").querySelectorAll(".player-die").forEach(el=>el.addEventListener("click",()=>{if(!el.disabled)rollDice()}));
- say(s.log||"Roll the dice.");
- drawBoard();
-}
-function rollDice(){
- if(!room||busy)return;
- const s=structuredClone(room.state),p=s.players[s.turn];
- if(!p||p.id!==me.id||s.rolled||s.winner)return;
- const dice=1+Math.floor(Math.random()*6);s.dice=dice;s.rolled=true;
- const movable=p.tokens.map((v,i)=>({v,i})).filter(x=>x.v===-1?dice===6:x.v<57&&x.v+dice<=57);
- if(!movable.length){
-  s.log=`${p.name} rolled ${dice}. No token can move.`;
-  s.rolled=false;s.dice=dice;s.turn=(s.turn+1)%s.players.length;
- }else{s.log=`${p.name} rolled ${dice}. Tap one of your highlighted tokens.`}
- busy=true;saveState(s).catch(e=>alert(e.message)).finally(()=>busy=false);
-}
-function moveToken(index){
- if(!room||busy)return;
- const s=structuredClone(room.state),p=s.players[s.turn],dice=s.dice;
- if(!p||p.id!==me.id||!s.rolled||!dice||s.winner)return;
- let pos=p.tokens[index];
- if(pos===-1){if(dice!==6)return;pos=0}else{if(pos+dice>57)return;pos+=dice}
- p.tokens[index]=pos;
- let captured=0;
- if(pos>=0&&pos<=51){
-  const global=(p.colorIndex*13+pos)%52,safe=[0,8,13,21,26,34,39,47];
-  if(!safe.includes(global)){
-   s.players.forEach((other,oi)=>{
-    if(oi===s.turn)return;
-    other.tokens=other.tokens.map(t=>{if(t>=0&&t<=51&&(other.colorIndex*13+t)%52===global){captured++;return -1}return t});
-   });
-  }
- }
- const finished=p.tokens.every(t=>t===57);
- if(finished){s.winner=p;s.log=`${p.name} wins the game! 🎉`}
- else{
-  const extra=dice===6||captured>0;
-  if(!extra)s.turn=(s.turn+1)%s.players.length;
-  s.log=`${p.name} moved a token.${captured?" Captured "+captured+" token(s)!":""}${extra?" Roll again!":""}`;
- }
- s.dice=null;s.rolled=false;
- busy=true;saveState(s).catch(e=>alert(e.message)).finally(()=>busy=false);
-}
-
-const TRACK=[];
-const BASE_TRACK=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,7],[1,8],[2,8]];
-function rotateCell([r,c],n){let p=[r,c];for(let i=0;i<n;i++)p=[p[1],14-p[0]];return p}
-for(let side=0;side<4;side++)BASE_TRACK.forEach(cell=>{const [r,c]=rotateCell(cell,side);TRACK.push([c*40+20,r*40+20])});
-function homeCoord(color,step){
- const lanes=[
-  [[60,340],[100,340],[140,340],[180,340],[220,340],[260,340]],
-  [[260,60],[260,100],[260,140],[260,180],[260,220],[260,260]],
-  [[340,60],[340,100],[340,140],[340,180],[340,220],[340,260]],
-  [[540,260],[500,260],[460,260],[420,260],[380,260],[340,260]]
- ];
- return lanes[color][Math.max(0,Math.min(5,step-52))]
-}
-function tokenCoord(player,token){
- const pos=player.tokens[token],c=player.colorIndex;
- if(pos===-1){
-  const bases=[
-   [[105,425],[175,425],[105,495],[175,495]],
-   [[105,105],[175,105],[105,175],[175,175]],
-   [[425,105],[495,105],[425,175],[495,175]],
-   [[425,425],[495,425],[425,495],[495,495]]
-  ];return bases[c][token]
- }
- if(pos>=52)return homeCoord(c,pos);
- return TRACK[(c*13+pos)%52]
-}
+function renderGame(){if(!room||!room.state?.started)return;const s=room.state,players=s.players||[],current=playerTurn();gameState=s;$("turnLabel").textContent=s.winner?("🏆 "+s.winner.name+" Wins!"):(current?current.name+"'s turn":"Ludo");$("diceFace").textContent=s.dice?DICE[s.dice-1]:"🎲";$("rollBtn").disabled=!!s.winner||current?.id!==me.id||s.rolled;$("rollBtn").textContent=s.rolled?"Choose a token":"Roll Dice";$("gamePlayers").innerHTML=players.map((p,i)=>`<span class="player ${i===s.turn&&!s.winner?"active":""}">${COLOR_NAMES[i]} · ${esc(p.name)}</span>`).join("");$("playerDiceRow").innerHTML=Array.from({length:4},(_,i)=>{const p=players[i],active=!!p&&i===s.turn&&!s.winner,face=p&&i===s.turn&&s.dice?DICE[s.dice-1]:"⚀";return `<button type="button" class="player-die ${active?"active":""} ${p?"":"empty"}" data-index="${i}" style="--die-color:${COLORS[i]}" ${!p||p.id!==me.id||!active||s.rolled||s.winner?"disabled":""}><div class="player-die-face">${face}</div><span>${p?esc(p.name):COLOR_NAMES[i]}</span></button>`}).join("");$("playerDiceRow").querySelectorAll(".player-die").forEach(el=>el.addEventListener("click",()=>{if(!el.disabled)rollDice()}));say(s.log||"Roll the dice.");drawBoard()}
+function rollDice(){if(!room||busy)return;const s=structuredClone(room.state),p=s.players[s.turn];if(!p||p.id!==me.id||s.rolled||s.winner)return;const dice=1+Math.floor(Math.random()*6);s.dice=dice;s.rolled=true;const movable=p.tokens.map((v,i)=>({v,i})).filter(x=>x.v===-1?dice===6:x.v<57&&x.v+dice<=57);if(!movable.length){s.log=`${p.name} rolled ${dice}. No token can move.`;s.rolled=false;s.dice=dice;s.turn=(s.turn+1)%s.players.length}else{s.log=`${p.name} rolled ${dice}. Tap one of your highlighted tokens.`}busy=true;saveState(s).catch(e=>alert(e.message)).finally(()=>busy=false)}
+function moveToken(index){if(!room||busy)return;const s=structuredClone(room.state),p=s.players[s.turn],dice=s.dice;if(!p||p.id!==me.id||!s.rolled||!dice||s.winner)return;let pos=p.tokens[index];if(pos===-1){if(dice!==6)return;pos=0}else{if(pos+dice>57)return;pos+=dice}p.tokens[index]=pos;let captured=0;if(pos>=0&&pos<=51){const global=(p.colorIndex*13+pos)%52,safe=[0,8,13,21,26,34,39,47];if(!safe.includes(global)){s.players.forEach((other,oi)=>{if(oi===s.turn)return;other.tokens=other.tokens.map(t=>{if(t>=0&&t<=51&&(other.colorIndex*13+t)%52===global){captured++;return -1}return t})})}}const finished=p.tokens.every(t=>t===57);if(finished){s.winner=p;s.log=`${p.name} wins the game! 🎉`}else{const extra=dice===6||captured>0;if(!extra)s.turn=(s.turn+1)%s.players.length;s.log=`${p.name} moved a token.${captured?" Captured "+captured+" token(s)!":""}${extra?" Roll again!":""}`}s.dice=null;s.rolled=false;busy=true;saveState(s).catch(e=>alert(e.message)).finally(()=>busy=false)}
+const TRACK=[],BASE_TRACK=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,7],[1,8],[2,8]];
+function rotateCell([r,c],n){let p=[r,c];for(let i=0;i<n;i++)p=[p[1],14-p[0]];return p}for(let side=0;side<4;side++)BASE_TRACK.forEach(cell=>{const [r,c]=rotateCell(cell,side);TRACK.push([c*40+20,r*40+20])});
+function homeCoord(color,step){const lanes=[[[60,340],[100,340],[140,340],[180,340],[220,340],[260,340]],[[260,60],[260,100],[260,140],[260,180],[260,220],[260,260]],[[340,60],[340,100],[340,140],[340,180],[340,220],[340,260]],[[540,260],[500,260],[460,260],[420,260],[380,260],[340,260]]];return lanes[color][Math.max(0,Math.min(5,step-52))]}
+function tokenCoord(player,token){const pos=player.tokens[token],c=player.colorIndex;if(pos===-1){const bases=[[[105,425],[175,425],[105,495],[175,495]],[[105,105],[175,105],[105,175],[175,175]],[[425,105],[495,105],[425,175],[495,175]],[[425,425],[495,425],[425,495],[495,495]]];return bases[c][token]}if(pos>=52)return homeCoord(c,pos);return TRACK[(c*13+pos)%52]}
 function drawBoard(){
- const svg=$("board"),cell=40;
- let out=`<defs>
- <linearGradient id="gotired" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff8a80"/><stop offset="48%" stop-color="#e53935"/><stop offset="100%" stop-color="#9f1717"/></linearGradient>
- <linearGradient id="gotigreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8dffad"/><stop offset="48%" stop-color="#22a447"/><stop offset="100%" stop-color="#086b2a"/></linearGradient>
- <linearGradient id="gotiyellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff59d"/><stop offset="48%" stop-color="#f2c230"/><stop offset="100%" stop-color="#b27a00"/></linearGradient>
- <linearGradient id="gotiblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9bd5ff"/><stop offset="48%" stop-color="#2878e5"/><stop offset="100%" stop-color="#10428e"/></linearGradient>
- </defs>
- <rect x="2" y="2" width="596" height="596" rx="24" fill="#30105b" stroke="#8e27d7" stroke-width="8"/>
- <rect x="9" y="9" width="582" height="582" rx="20" fill="none" stroke="#e5a8ff" stroke-width="3"/>`;
- const homes=[{x:12,y:12,c:COLORS[1]},{x:348,y:12,c:COLORS[2]},{x:12,y:348,c:COLORS[0]},{x:348,y:348,c:COLORS[3]}];
- homes.forEach(h=>{
-  out+=`<rect x="${h.x}" y="${h.y}" width="240" height="240" fill="${h.c}" stroke="#222" stroke-width="2"/>`;
-  out+=`<circle cx="${h.x+120}" cy="${h.y+120}" r="96" fill="#000" opacity=".16"/>`;
-  [[h.x+80,h.y+80],[h.x+160,h.y+80],[h.x+80,h.y+160],[h.x+160,h.y+160]].forEach(([x,y])=>{out+=`<circle cx="${x}" cy="${y}" r="22" fill="#fff" opacity=".16" stroke="#fff" stroke-width="2"/>`});
- });
- const cells=new Set();
- for(let r=0;r<6;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
- for(let r=9;r<15;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
- for(let r=6;r<=8;r++)for(let c=0;c<6;c++)cells.add(`${r},${c}`);
- for(let r=6;r<=8;r++)for(let c=9;c<15;c++)cells.add(`${r},${c}`);
- cells.forEach(key=>{const [r,c]=key.split(",").map(Number);out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#fff" stroke="#222" stroke-width="1.5"/>`});
- // Home lanes match the supplied reference screenshot:
- // left = GREEN, top = YELLOW, right = BLUE, bottom = RED.
- const laneCells=[
-  {cells:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]],color:COLORS[1]},
-  {cells:[[1,6],[2,6],[3,6],[4,6],[5,6],[6,6]],color:COLORS[2]},
-  {cells:[[1,8],[2,8],[3,8],[4,8],[5,8],[6,8]],color:COLORS[3]},
-  {cells:[[8,13],[8,12],[8,11],[8,10],[8,9],[8,8]],color:COLORS[0]}
- ];
- laneCells.forEach(l=>l.cells.forEach(([r,c])=>{out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="${l.color}" stroke="#222" stroke-width="1.5"/>`}));
- [[6,1],[2,6],[1,8],[8,13],[8,2],[6,12],[12,8],[13,6]].forEach(([r,c])=>{out+=`<text x="${c*cell+20}" y="${r*cell+30}" text-anchor="middle" font-size="29" fill="#777">★</text>`});
- out+=`<path d="M240 240 L360 240 L300 300 Z" fill="${COLORS[2]}" stroke="#222" stroke-width="1.5"/>
- <path d="M360 240 L360 360 L300 300 Z" fill="${COLORS[3]}" stroke="#222" stroke-width="1.5"/>
- <path d="M360 360 L240 360 L300 300 Z" fill="${COLORS[0]}" stroke="#222" stroke-width="1.5"/>
- <path d="M240 360 L240 240 L300 300 Z" fill="${COLORS[1]}" stroke="#222" stroke-width="1.5"/>`;
- if(gameState?.players){
-  gameState.players.forEach(p=>p.tokens.forEach((v,i)=>{
-   const [x,y]=tokenCoord(p,i),isMine=p.id===me.id;
-   const selectable=isMine&&p.id===playerTurn()?.id&&gameState.rolled&&(v===-1?gameState.dice===6:v+gameState.dice<=57);
-   const grad=["url(#gotired)","url(#gotigreen)","url(#gotiyellow)","url(#gotiblue)"][p.colorIndex];
-   out+=`<g class="token-hit ${selectable?"selectable":""}" data-player="${esc(p.id)}" data-token="${i}">
-    <circle cx="${x}" cy="${y+2}" r="19" fill="#000" opacity=".22"/>
-    <circle cx="${x}" cy="${y}" r="18" fill="${grad}" stroke="#fff" stroke-width="3.5"/>
-    <ellipse cx="${x-5}" cy="${y-7}" rx="6" ry="4" fill="#fff" opacity=".55"/>
-    <circle cx="${x}" cy="${y}" r="8" fill="#fff" opacity=".12"/>
-    <text x="${x}" y="${y+6}" text-anchor="middle" font-size="21" font-weight="bold" fill="#fff">♛</text>
-    ${selectable?`<circle cx="${x}" cy="${y}" r="23" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="4 3"/>`:""}
-   </g>`;
-  }));
- }
- svg.innerHTML=out;
- svg.querySelectorAll(".token-hit").forEach(el=>el.addEventListener("click",()=>{if(el.dataset.player===me.id)moveToken(Number(el.dataset.token))}));
+ const svg=$("board"),C=40;let out=`<defs>
+ <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd18a"/><stop offset=".45" stop-color="#a84b13"/><stop offset="1" stop-color="#5b260d"/></linearGradient>
+ <linearGradient id="redToken" x2="0" y2="1"><stop stop-color="#ffb0a5"/><stop offset=".5" stop-color="#ed2922"/><stop offset="1" stop-color="#8b0808"/></linearGradient>
+ <linearGradient id="greenToken" x2="0" y2="1"><stop stop-color="#b6ffb9"/><stop offset=".5" stop-color="#00b83e"/><stop offset="1" stop-color="#006321"/></linearGradient>
+ <linearGradient id="yellowToken" x2="0" y2="1"><stop stop-color="#fff7a6"/><stop offset=".5" stop-color="#ffc400"/><stop offset="1" stop-color="#a96800"/></linearGradient>
+ <linearGradient id="blueToken" x2="0" y2="1"><stop stop-color="#a9e5ff"/><stop offset=".5" stop-color="#087ee8"/><stop offset="1" stop-color="#06418c"/></linearGradient>
+ <filter id="shadow"><feGaussianBlur stdDeviation="3"/></filter></defs>
+ <rect x="0" y="0" width="600" height="600" rx="20" fill="#fff"/>`;
+ // Four home quadrants: Green, Yellow, Red, Blue, matching the supplied board reference.
+ const homes=[{x:0,y:0,c:COLORS[1]},{x:360,y:0,c:COLORS[2]},{x:0,y:360,c:COLORS[0]},{x:360,y:360,c:COLORS[3]}];
+ homes.forEach(h=>{out+=`<rect x="${h.x}" y="${h.y}" width="240" height="240" fill="${h.c}" stroke="#191919" stroke-width="2"/>`;out+=`<circle cx="${h.x+120}" cy="${h.y+120}" r="99" fill="#000" opacity=".19"/>`;});
+ // Grid cells around the four arms of the cross.
+ const cells=new Set();for(let r=0;r<6;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);for(let r=9;r<15;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);for(let r=6;r<=8;r++)for(let c=0;c<6;c++)cells.add(`${r},${c}`);for(let r=6;r<=8;r++)for(let c=9;c<15;c++)cells.add(`${r},${c}`);
+ cells.forEach(k=>{const [r,c]=k.split(",").map(Number);out+=`<rect x="${c*C}" y="${r*C}" width="${C}" height="${C}" fill="#fff" stroke="#181818" stroke-width="1.6"/>`});
+ // The six-square colored home lanes.
+ const lanes=[{a:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]],c:COLORS[1]},{a:[[1,6],[2,6],[3,6],[4,6],[5,6],[6,6]],c:COLORS[2]},{a:[[1,8],[2,8],[3,8],[4,8],[5,8],[6,8]],c:COLORS[3]},{a:[[8,13],[8,12],[8,11],[8,10],[8,9],[8,8]],c:COLORS[0]}];
+ lanes.forEach(l=>l.a.forEach(([r,c])=>out+=`<rect x="${c*C}" y="${r*C}" width="${C}" height="${C}" fill="${l.c}" stroke="#171717" stroke-width="1.6"/>`));
+ // Safe squares and entry markers.
+ [[6,1],[2,6],[1,8],[8,13],[8,2],[6,12],[12,8],[13,6]].forEach(([r,c],i)=>{out+=`<rect x="${c*C}" y="${r*C}" width="${C}" height="${C}" fill="#d5d5dc" stroke="#222" stroke-width="1.5"/><text x="${c*C+20}" y="${r*C+29}" text-anchor="middle" font-size="28" fill="#666">★</text>`});
+ // Colored start/entry globes on each side.
+ [[80,500,COLORS[1]],[500,80,COLORS[2]],[300,500,COLORS[0]],[500,300,COLORS[3]]].forEach(([x,y,c])=>out+=`<circle cx="${x}" cy="${y}" r="15" fill="${c}" stroke="#222" stroke-width="2"/><text x="${x}" y="${y+7}" text-anchor="middle" font-size="20" fill="#143">✦</text>`);
+ // Center is exactly four large colored triangles, meeting at the middle.
+ out+=`<path d="M240 240 L360 240 L300 300 Z" fill="${COLORS[2]}" stroke="#191919" stroke-width="1.5"/>
+ <path d="M360 240 L360 360 L300 300 Z" fill="${COLORS[3]}" stroke="#191919" stroke-width="1.5"/>
+ <path d="M360 360 L240 360 L300 300 Z" fill="${COLORS[0]}" stroke="#191919" stroke-width="1.5"/>
+ <path d="M240 360 L240 240 L300 300 Z" fill="${COLORS[1]}" stroke="#191919" stroke-width="1.5"/>`;
+ // Four home circles and four raised crown pieces per color.
+ const bases=[[[105,425],[175,425],[105,495],[175,495]],[[105,105],[175,105],[105,175],[175,175]],[[425,105],[495,105],[425,175],[495,175]],[[425,425],[495,425],[425,495],[495,495]]];
+ const gradients=["url(#redToken)","url(#greenToken)","url(#yellowToken)","url(#blueToken)"];
+ bases.forEach((arr,ci)=>arr.forEach(([x,y])=>{out+=`<circle cx="${x}" cy="${y+4}" r="23" fill="#000" opacity=".3" filter="url(#shadow)"/><circle cx="${x}" cy="${y}" r="21" fill="${gradients[ci]}" stroke="#fff4" stroke-width="2.5"/><circle cx="${x}" cy="${y}" r="14" fill="none" stroke="#ffe6a0" stroke-width="2" opacity=".8"/><text x="${x}" y="${y+8}" text-anchor="middle" font-size="24" fill="#fff2a6" stroke="#7b4500" stroke-width=".7">♛</text>`}));
+ // Active game pieces overlay their home positions when moved.
+ if(gameState?.players)gameState.players.forEach(p=>p.tokens.forEach((v,i)=>{if(v===-1)return;const [x,y]=tokenCoord(p,i),mine=p.id===me.id,selectable=mine&&p.id===playerTurn()?.id&&gameState.rolled&&(v<57&&v+gameState.dice<=57);out+=`<g class="token-hit ${selectable?"selectable":""}" data-player="${esc(p.id)}" data-token="${i}"><circle cx="${x}" cy="${y+4}" r="19" fill="#000" opacity=".35"/><circle cx="${x}" cy="${y}" r="18" fill="${gradients[p.colorIndex]}" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+7}" text-anchor="middle" font-size="22" fill="#fff2a6">♛</text>${selectable?`<circle cx="${x}" cy="${y}" r="23" fill="none" stroke="#111" stroke-width="3" stroke-dasharray="4 3"/>`:""}</g>`}));
+ svg.innerHTML=out;svg.querySelectorAll(".token-hit").forEach(el=>el.addEventListener("click",()=>{if(el.dataset.player===me.id)moveToken(Number(el.dataset.token))}));
 }
-$("createBtn").addEventListener("click",createRoom);
-$("joinToggle").addEventListener("click",()=>$("joinArea").classList.toggle("hidden"));
-$("joinBtn").addEventListener("click",joinRoom);
-$("copyBtn").addEventListener("click",async()=>{
- try{await navigator.clipboard.writeText(room.code);$("copyBtn").textContent="Copied!"}
- catch(e){prompt("Copy room code:",room.code)}
-});
-$("startBtn").addEventListener("click",startGame);
-$("rollBtn").addEventListener("click",rollDice);
-$("leaveBtn").addEventListener("click",async()=>{
- if(!confirm("Room se leave karna hai?"))return;
- if(channel)await db.removeChannel(channel);if(roomPoll)clearInterval(roomPoll);
- room=null;$("roomPanel").classList.add("hidden");$("gamePanel").classList.add("hidden");$("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("lobby").classList.remove("hidden");notice("You left the room.");
-});
-$("exitFullBtn").addEventListener("click",()=>{
- $("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("roomPanel").scrollIntoView({behavior:"smooth"});
-});
-$("themeBtn").addEventListener("click",()=>{
- const next=document.documentElement.dataset.theme==="dark"?"light":"dark";
- document.documentElement.dataset.theme=next;
- try{localStorage.setItem("chatzone-theme",next)}catch(e){}
- $("themeBtn").textContent=next==="dark"?"☀":"☾";
-});
-$("backLobbyBtn").addEventListener("click",()=>$("roomPanel").scrollIntoView({behavior:"smooth"}));
-init().catch(e=>notice(e.message,true));
+$("createBtn").addEventListener("click",createRoom);$("joinToggle").addEventListener("click",()=>$("joinArea").classList.toggle("hidden"));$("joinBtn").addEventListener("click",joinRoom);
+$("copyBtn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(room.code);$("copyBtn").textContent="Copied!"}catch(e){prompt("Copy room code:",room.code)}});
+$("startBtn").addEventListener("click",startGame);$("rollBtn").addEventListener("click",rollDice);
+$("leaveBtn").addEventListener("click",async()=>{if(!confirm("Room se leave karna hai?"))return;if(channel)await db.removeChannel(channel);if(roomPoll)clearInterval(roomPoll);room=null;$("roomPanel").classList.add("hidden");$("gamePanel").classList.add("hidden");$("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("lobby").classList.remove("hidden");notice("You left the room.")});
+$("exitFullBtn").addEventListener("click",()=>{$("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("roomPanel").scrollIntoView({behavior:"smooth"})});
+$("themeBtn").addEventListener("click",()=>{const next=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=next;try{localStorage.setItem("chatzone-theme",next)}catch(e){}$("themeBtn").textContent=next==="dark"?"☀":"☾"});
+$("backLobbyBtn").addEventListener("click",()=>$("roomPanel").scrollIntoView({behavior:"smooth"}));init().catch(e=>notice(e.message,true));
 </script>
-</body>
-</html>
+</body></html>
