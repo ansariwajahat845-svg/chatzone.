@@ -41,51 +41,53 @@ html[data-theme="dark"] input{background:#352747;border-color:#554568;color:#fff
 html[data-theme="dark"] .secondary{background:#40344f;color:#eee}
 html[data-theme="dark"] .player{background:#40344f;color:#eee}
 
-/* Full-screen game */
+/* Full-screen premium purple game shell */
 body.game-fullscreen{overflow:hidden!important;padding:0!important}
 #gamePanel.fullscreen-game{
  position:fixed!important;inset:0!important;z-index:9999!important;
  width:100vw!important;height:100vh!important;height:100dvh!important;
- max-width:none!important;margin:0!important;padding:12px 10px 18px!important;
+ max-width:none!important;margin:0!important;padding:8px 12px max(12px,env(safe-area-inset-bottom))!important;
  border-radius:0!important;overflow:auto!important;display:block!important;
- background:repeating-linear-gradient(55deg,#35105f 0 42px,#46147a 42px 84px,#2b0c50 84px 126px)!important;
+ background:radial-gradient(ellipse at 50% 42%,#421080 0%,#21004e 58%,#10002d 100%)!important;
  color:#fff!important;
 }
-#gamePanel.fullscreen-game .game-layout{width:100%;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-#gamePanel.fullscreen-game .board-stage{width:min(76vw,62vh,540px);max-width:100%;margin:55px auto;flex:0 0 auto}
-#gamePanel.fullscreen-game #board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;margin:0;border-radius:15px;box-shadow:0 8px 25px #0008}
-#gamePanel.fullscreen-game .game-info{width:100%;max-width:620px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:7px;padding:4px 2px}
-#gamePanel.fullscreen-game .game-info h2{margin:0;font-size:16px;text-align:left}
-#gamePanel.fullscreen-game .dice{font-size:38px;margin:0}
-#gamePanel.fullscreen-game #rollBtn{min-width:112px;padding:12px 15px}
-#gamePanel.fullscreen-game #gameMessage{grid-column:1/-1;margin:0;font-size:12px}
+#gamePanel.fullscreen-game:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:radial-gradient(#b46aff 1px,transparent 1.5px);background-size:19px 19px;mask-image:linear-gradient(90deg,#000,transparent 35%,transparent 65%,#000)}
+#gamePanel.fullscreen-game .game-topbar{height:auto;position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:760px;margin:0 auto 8px}
+#gamePanel.fullscreen-game .brand-title{flex:1;text-align:center;font-size:clamp(15px,4vw,22px);font-weight:900;padding:11px 8px;border:2px solid #9d28ff;border-radius:18px;background:linear-gradient(135deg,#31006e,#18003d);box-shadow:0 0 16px #8d19ff;color:#fff}
+#gamePanel.fullscreen-game .top-icon{width:44px;height:44px;padding:0;border:2px solid #a72cff;border-radius:14px;background:linear-gradient(145deg,#7700d9,#310078);font-size:22px;box-shadow:0 4px 12px #0008}
+#gamePanel.fullscreen-game #exitFullBtn{position:static;flex:0 0 44px;width:44px;height:44px;padding:0;border:2px solid #a72cff;border-radius:14px;background:linear-gradient(145deg,#7700d9,#310078);font-size:22px;box-shadow:0 4px 12px #0008}
+#gamePanel.fullscreen-game .game-layout{position:relative;z-index:1;width:100%;min-height:calc(100% - 54px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+#gamePanel.fullscreen-game .board-stage{width:min(94vw,62vh,680px);max-width:100%;margin:clamp(36px,6vh,72px) auto;background:linear-gradient(145deg,#c45bff,#5c00b9 42%,#260052);border:5px solid #bd5aff;border-radius:26px;box-shadow:0 12px 0 #26004f,0 0 0 3px #6c16bc,0 0 28px #a52cff,0 18px 38px #000b;flex:0 0 auto}
+#gamePanel.fullscreen-game #board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;margin:0;border-radius:19px;box-shadow:inset 0 0 18px #fff5}
+#gamePanel.fullscreen-game .game-info{width:100%;max-width:680px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:6px 2px}
+#gamePanel.fullscreen-game .game-info h2{margin:0;font-size:clamp(14px,3.8vw,19px);text-align:left;color:#fff}
+#gamePanel.fullscreen-game .dice{font-size:38px;margin:0;filter:drop-shadow(0 3px 4px #0008)}
+#gamePanel.fullscreen-game #rollBtn{min-width:118px;padding:13px 15px;border:2px solid #c77aff;border-radius:18px;background:linear-gradient(145deg,#a900ff,#5200b8);box-shadow:0 5px 0 #30006e,0 0 18px #9b21ff;font-size:15px}
+#gamePanel.fullscreen-game #gameMessage{grid-column:1/-1;margin:2px 0;color:#e8d5ff;font-size:12px;text-align:center}
 #gamePanel.fullscreen-game #gamePlayers{grid-column:1/-1;justify-content:center;margin:0}
-#gamePanel.fullscreen-game #backLobbyBtn{grid-column:1/-1;justify-self:center}
-#exitFullBtn{position:fixed;top:max(8px,env(safe-area-inset-top));right:10px;z-index:10001;border-radius:30px;padding:9px 13px;background:#241c33;box-shadow:0 2px 10px #0003}
-.game-topbar{height:0}
-
-/* Premium 3D table and four side dice */
-.board-stage{position:relative;width:min(94vw,540px);aspect-ratio:1;margin:65px auto;background:linear-gradient(145deg,#6b3d91,#25103e);border:5px solid #d5a34c;border-radius:20px;box-shadow:0 12px 30px #0008,inset 0 0 15px #fff3}
-.board-stage #board{width:100%;height:100%;margin:0;border-radius:15px}
+#gamePanel.fullscreen-game .player{background:#30006c;color:#fff;border:1px solid #a94bff}
+#gamePanel.fullscreen-game .player.active{outline:2px solid #ffe36e;box-shadow:0 0 12px #b84cff}
+#gamePanel.fullscreen-game #backLobbyBtn{grid-column:1/-1;justify-self:center;background:#3b1764;color:#fff}
+.board-stage{position:relative;width:min(94vw,540px);aspect-ratio:1;margin:65px auto;background:linear-gradient(145deg,#c45bff,#260052);border:5px solid #bd5aff;border-radius:24px;box-shadow:0 12px 0 #26004f,0 0 0 3px #6c16bc,0 0 28px #a52cff,0 18px 38px #000b}
+.board-stage #board{width:100%;height:100%;margin:0;border-radius:17px}
 .player-dice-row{position:absolute;inset:0;pointer-events:none}
-.player-die{position:absolute;width:82px;min-height:82px;border:3px solid var(--die-color);border-radius:18px;background:linear-gradient(145deg,#fff,#e8e3f3);color:#241633;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-shadow:0 7px 15px #0007,inset 0 2px 5px #fff;pointer-events:auto;font-size:11px;font-weight:bold;transition:.2s;padding:4px}
-.player-die-face{font-size:40px;line-height:1.1;color:var(--die-color);text-shadow:0 3px 3px #0004}
-.player-die.active{border-color:#fff;box-shadow:0 0 0 4px var(--die-color),0 0 25px var(--die-color)}
-.player-die.empty{opacity:.55}
-.player-die:nth-child(1){left:-35px;top:50%;transform:translateY(-50%)}
-.player-die:nth-child(2){top:-48px;left:50%;transform:translateX(-50%)}
-.player-die:nth-child(3){right:-35px;top:50%;transform:translateY(-50%)}
-.player-die:nth-child(4){bottom:-48px;left:50%;transform:translateX(-50%)}
-.player-die.active:nth-child(1),.player-die.active:nth-child(3){transform:translateY(-50%) scale(1.08)}
-.player-die.active:nth-child(2),.player-die.active:nth-child(4){transform:translateX(-50%) scale(1.08)}
+.player-die{position:absolute;width:clamp(48px,12vw,68px);min-height:clamp(48px,12vw,68px);border:3px solid var(--die-color);border-radius:16px;background:linear-gradient(145deg,#fff,#ded3f4);color:#241633;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:0 7px 15px #0008,inset 0 2px 5px #fff;pointer-events:auto;font-size:9px;font-weight:bold;transition:.2s;padding:3px}
+.player-die-face{font-size:clamp(25px,7vw,36px);line-height:1.05;color:var(--die-color);text-shadow:0 3px 3px #0004}
+.player-die.active{border-color:#fff;box-shadow:0 0 0 3px var(--die-color),0 0 25px var(--die-color)}
+.player-die.empty{opacity:.45}
+/* Four player dice sit at the four corners of the board. */
+.player-die:nth-child(1){left:7px;top:7px}
+.player-die:nth-child(2){right:7px;top:7px}
+.player-die:nth-child(3){right:7px;bottom:7px}
+.player-die:nth-child(4){left:7px;bottom:7px}
 @keyframes diceRoll{0%{transform:rotate(0) scale(1)}30%{transform:rotate(100deg) scale(1.2)}65%{transform:rotate(250deg) scale(.9)}100%{transform:rotate(360deg) scale(1)}}
 .player-die.rolling .player-die-face{animation:diceRoll .6s ease}
 .token-hit{cursor:pointer}
 .token-hit.selectable circle:first-child{stroke:#fff;stroke-width:4;stroke-dasharray:5 3}
-@media(max-width:400px){.player-die{width:66px;min-height:68px}.player-die-face{font-size:32px}.board-stage{width:90vw}}
+@media(max-width:400px){#gamePanel.fullscreen-game{padding-left:8px!important;padding-right:8px!important}.board-stage{width:94vw}}
 @media(orientation:landscape) and (max-height:520px){
  #gamePanel.fullscreen-game .game-layout{flex-direction:row;gap:12px}
- #gamePanel.fullscreen-game .board-stage{width:min(76vh,calc(100vw - 230px));margin:35px auto}
+ #gamePanel.fullscreen-game .board-stage{width:min(82vh,calc(100vw - 230px));margin:20px auto}
  #gamePanel.fullscreen-game .game-info{width:210px;display:flex;flex-direction:column;align-items:stretch}
  #gamePanel.fullscreen-game .game-info h2,#gamePanel.fullscreen-game #gameMessage{text-align:center}
 }
@@ -110,7 +112,7 @@ body.game-fullscreen{overflow:hidden!important;padding:0!important}
  <p class="muted" id="roomHint">Waiting for players. The host can start when at least 2 players have joined.</p>
 </section>
 <section class="panel hidden" id="gamePanel">
- <div class="game-topbar"><button id="exitFullBtn" type="button">✕ Exit</button></div>
+ <div class="game-topbar"><button id="exitFullBtn" type="button" aria-label="Back">‹</button><div class="brand-title">👑 Ludo - <span style="color:#ffd52e">ChatZone</span> 💬</div><button class="top-icon" id="themeBtn" type="button" aria-label="Toggle theme">☾</button></div>
  <div class="game-layout">
   <div class="board-stage">
    <svg id="board" viewBox="0 0 600 600" aria-label="Ludo board"></svg>
@@ -319,8 +321,8 @@ function drawBoard(){
  <linearGradient id="gotiyellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff59d"/><stop offset="48%" stop-color="#f2c230"/><stop offset="100%" stop-color="#b27a00"/></linearGradient>
  <linearGradient id="gotiblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9bd5ff"/><stop offset="48%" stop-color="#2878e5"/><stop offset="100%" stop-color="#10428e"/></linearGradient>
  </defs>
- <rect x="2" y="2" width="596" height="596" rx="24" fill="#9b5728" stroke="#5b2d12" stroke-width="8"/>
- <rect x="9" y="9" width="582" height="582" rx="20" fill="none" stroke="#d68a42" stroke-width="3"/>`;
+ <rect x="2" y="2" width="596" height="596" rx="24" fill="#30105b" stroke="#8e27d7" stroke-width="8"/>
+ <rect x="9" y="9" width="582" height="582" rx="20" fill="none" stroke="#e5a8ff" stroke-width="3"/>`;
  const homes=[{x:12,y:12,c:COLORS[1]},{x:348,y:12,c:COLORS[2]},{x:12,y:348,c:COLORS[0]},{x:348,y:348,c:COLORS[3]}];
  homes.forEach(h=>{
   out+=`<rect x="${h.x}" y="${h.y}" width="240" height="240" fill="${h.c}" stroke="#222" stroke-width="2"/>`;
@@ -378,8 +380,13 @@ $("leaveBtn").addEventListener("click",async()=>{
  room=null;$("roomPanel").classList.add("hidden");$("gamePanel").classList.add("hidden");$("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("lobby").classList.remove("hidden");notice("You left the room.");
 });
 $("exitFullBtn").addEventListener("click",()=>{
- if(!confirm("Game screen se bahar jana hai? Room mein wapas chale jayenge."))return;
  $("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("roomPanel").scrollIntoView({behavior:"smooth"});
+});
+$("themeBtn").addEventListener("click",()=>{
+ const next=document.documentElement.dataset.theme==="dark"?"light":"dark";
+ document.documentElement.dataset.theme=next;
+ try{localStorage.setItem("chatzone-theme",next)}catch(e){}
+ $("themeBtn").textContent=next==="dark"?"☀":"☾";
 });
 $("backLobbyBtn").addEventListener("click",()=>$("roomPanel").scrollIntoView({behavior:"smooth"}));
 init().catch(e=>notice(e.message,true));
