@@ -32,7 +32,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .game-info{text-align:center}
 .dice{font-size:52px;line-height:1.2;margin:6px}
 .small{font-size:12px;color:#777}
-.token-hit:focus{outline:none}
 footer{text-align:center;color:#fff;font-size:12px;margin:16px}
 html[data-theme="dark"] body{background:#171222;color:#eee}
 html[data-theme="dark"] header,html[data-theme="dark"] .panel{background:#241c33;color:#f2edf9}
@@ -41,9 +40,8 @@ html[data-theme="dark"] .muted,html[data-theme="dark"] .small{color:#c2b6d2}
 html[data-theme="dark"] input{background:#352747;border-color:#554568;color:#fff}
 html[data-theme="dark"] .secondary{background:#40344f;color:#eee}
 html[data-theme="dark"] .player{background:#40344f;color:#eee}
-@media(min-width:650px){.game-layout{grid-template-columns:1fr 220px;align-items:start}}
 
-/* FULL-SCREEN GAME MODE */
+/* Full-screen game */
 body.game-fullscreen{overflow:hidden!important;padding:0!important}
 #gamePanel.fullscreen-game{
  position:fixed!important;inset:0!important;z-index:9999!important;
@@ -53,46 +51,48 @@ body.game-fullscreen{overflow:hidden!important;padding:0!important}
  background:repeating-linear-gradient(55deg,#35105f 0 42px,#46147a 42px 84px,#2b0c50 84px 126px)!important;
  color:#fff!important;
 }
-#gamePanel.fullscreen-game .game-layout{
- width:100%;min-height:100%;display:flex;flex-direction:column;
- align-items:center;justify-content:center;gap:8px;
-}
-#gamePanel.fullscreen-game .game-layout>div:first-child{
- width:min(94vw,62vh,620px);max-width:100%;flex:0 0 auto;
-}
-#gamePanel.fullscreen-game #board{
- width:100%;max-width:none;height:auto;aspect-ratio:1/1;
- margin:0 auto;border-radius:10px;box-shadow:0 4px 20px #0002;
-}
-#gamePanel.fullscreen-game .game-info{
- width:100%;max-width:620px;display:grid;
- grid-template-columns:1fr auto auto;align-items:center;gap:7px;padding:4px 2px;
-}
+#gamePanel.fullscreen-game .game-layout{width:100%;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+#gamePanel.fullscreen-game .board-stage{width:min(76vw,62vh,540px);max-width:100%;margin:55px auto;flex:0 0 auto}
+#gamePanel.fullscreen-game #board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;margin:0;border-radius:15px;box-shadow:0 8px 25px #0008}
+#gamePanel.fullscreen-game .game-info{width:100%;max-width:620px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:7px;padding:4px 2px}
 #gamePanel.fullscreen-game .game-info h2{margin:0;font-size:16px;text-align:left}
 #gamePanel.fullscreen-game .dice{font-size:38px;margin:0}
 #gamePanel.fullscreen-game #rollBtn{min-width:112px;padding:12px 15px}
 #gamePanel.fullscreen-game #gameMessage{grid-column:1/-1;margin:0;font-size:12px}
 #gamePanel.fullscreen-game #gamePlayers{grid-column:1/-1;justify-content:center;margin:0}
 #gamePanel.fullscreen-game #backLobbyBtn{grid-column:1/-1;justify-self:center}
-#gamePanel.fullscreen-game #exitFullBtn{
- position:fixed;top:max(8px,env(safe-area-inset-top));right:10px;
- z-index:10001;border-radius:30px;padding:9px 13px;
- background:#241c33;box-shadow:0 2px 10px #0003;
-}
+#exitFullBtn{position:fixed;top:max(8px,env(safe-area-inset-top));right:10px;z-index:10001;border-radius:30px;padding:9px 13px;background:#241c33;box-shadow:0 2px 10px #0003}
+.game-topbar{height:0}
+
+/* Premium 3D table and four side dice */
+.board-stage{position:relative;width:min(94vw,540px);aspect-ratio:1;margin:65px auto;background:linear-gradient(145deg,#6b3d91,#25103e);border:5px solid #d5a34c;border-radius:20px;box-shadow:0 12px 30px #0008,inset 0 0 15px #fff3}
+.board-stage #board{width:100%;height:100%;margin:0;border-radius:15px}
+.player-dice-row{position:absolute;inset:0;pointer-events:none}
+.player-die{position:absolute;width:82px;min-height:82px;border:3px solid var(--die-color);border-radius:18px;background:linear-gradient(145deg,#fff,#e8e3f3);color:#241633;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-shadow:0 7px 15px #0007,inset 0 2px 5px #fff;pointer-events:auto;font-size:11px;font-weight:bold;transition:.2s;padding:4px}
+.player-die-face{font-size:40px;line-height:1.1;color:var(--die-color);text-shadow:0 3px 3px #0004}
+.player-die.active{border-color:#fff;box-shadow:0 0 0 4px var(--die-color),0 0 25px var(--die-color)}
+.player-die.empty{opacity:.55}
+.player-die:nth-child(1){left:-35px;top:50%;transform:translateY(-50%)}
+.player-die:nth-child(2){top:-48px;left:50%;transform:translateX(-50%)}
+.player-die:nth-child(3){right:-35px;top:50%;transform:translateY(-50%)}
+.player-die:nth-child(4){bottom:-48px;left:50%;transform:translateX(-50%)}
+.player-die.active:nth-child(1),.player-die.active:nth-child(3){transform:translateY(-50%) scale(1.08)}
+.player-die.active:nth-child(2),.player-die.active:nth-child(4){transform:translateX(-50%) scale(1.08)}
+@keyframes diceRoll{0%{transform:rotate(0) scale(1)}30%{transform:rotate(100deg) scale(1.2)}65%{transform:rotate(250deg) scale(.9)}100%{transform:rotate(360deg) scale(1)}}
+.player-die.rolling .player-die-face{animation:diceRoll .6s ease}
+.token-hit{cursor:pointer}
+.token-hit.selectable circle:first-child{stroke:#fff;stroke-width:4;stroke-dasharray:5 3}
+@media(max-width:400px){.player-die{width:66px;min-height:68px}.player-die-face{font-size:32px}.board-stage{width:90vw}}
 @media(orientation:landscape) and (max-height:520px){
  #gamePanel.fullscreen-game .game-layout{flex-direction:row;gap:12px}
- #gamePanel.fullscreen-game .game-layout>div:first-child{width:min(88vh,calc(100vw - 230px))}
- #gamePanel.fullscreen-game .game-info{
-  width:210px;display:flex;flex-direction:column;align-items:stretch;
- }
- #gamePanel.fullscreen-game .game-info h2,
- #gamePanel.fullscreen-game #gameMessage{text-align:center}
+ #gamePanel.fullscreen-game .board-stage{width:min(76vh,calc(100vw - 230px));margin:35px auto}
+ #gamePanel.fullscreen-game .game-info{width:210px;display:flex;flex-direction:column;align-items:stretch}
+ #gamePanel.fullscreen-game .game-info h2,#gamePanel.fullscreen-game #gameMessage{text-align:center}
 }
 </style>
 </head>
 <body>
 <header><a href="more.html">‹ More</a><h1>🎲 ChatZone Ludo</h1></header>
-
 <main class="wrap">
 <section class="panel" id="lobby">
  <h2>Play Ludo with Friends</h2>
@@ -103,22 +103,19 @@ body.game-fullscreen{overflow:hidden!important;padding:0!important}
  <div id="joinArea" class="hidden"><input id="roomCode" maxlength="6" placeholder="Enter 6-character room code" autocapitalize="characters"><button id="joinBtn">Join Game</button></div>
  <div id="notice" role="status">Connecting to ChatZone...</div>
 </section>
-
 <section class="panel hidden" id="roomPanel">
  <div class="row" style="align-items:center"><div><h2>Room <span id="roomCodeLabel"></span></h2><div class="muted">Share this code with your friends</div></div><button id="copyBtn" class="secondary">Copy Code</button></div>
  <div class="players" id="playersList"></div>
  <div class="row" id="roomActions"><button id="startBtn">Start Game</button><button id="leaveBtn" class="secondary">Leave Room</button></div>
  <p class="muted" id="roomHint">Waiting for players. The host can start when at least 2 players have joined.</p>
 </section>
-
 <section class="panel hidden" id="gamePanel">
- <div class="game-topbar">
-  <button id="exitFullBtn" type="button">✕ Exit</button>
-  <div class="top-player"><span class="chat-mark">▣</span><span id="topPlayerName">Player 2</span><span style="display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#fff;color:#888;border:4px solid #ffd400;font-size:20px">●</span></div>
- </div>
+ <div class="game-topbar"><button id="exitFullBtn" type="button">✕ Exit</button></div>
  <div class="game-layout">
-  <div><svg id="board" viewBox="0 0 600 600" aria-label="Ludo board"></svg></div>
-  <div class="player-dice-row" id="playerDiceRow"></div>
+  <div class="board-stage">
+   <svg id="board" viewBox="0 0 600 600" aria-label="Ludo board"></svg>
+   <div class="player-dice-row" id="playerDiceRow"></div>
+  </div>
   <div class="game-info">
    <h2 id="turnLabel">Game</h2><div class="dice" id="diceFace">🎲</div>
    <button id="rollBtn">Roll Dice</button>
@@ -140,17 +137,14 @@ const $=id=>document.getElementById(id);
 const COLORS=["#e53935","#22a447","#f2c230","#2878e5"];
 const COLOR_NAMES=["Red","Green","Yellow","Blue"];
 const DICE=["⚀","⚁","⚂","⚃","⚄","⚅"];
-let me=null,meName="Player",room=null,channel=null,roomPoll=null,busy=false;
+let me=null,meName="Player",room=null,channel=null,roomPoll=null,busy=false,gameState=null;
 
 (function(){
  let t="light";
  try{const v=localStorage.getItem("chatzone-theme");if(v==="dark"||v==="light")t=v}catch(e){}
  document.documentElement.dataset.theme=t;
- window.addEventListener("storage",e=>{
-  if(e.key==="chatzone-theme")document.documentElement.dataset.theme=e.newValue==="dark"?"dark":"light";
- });
+ window.addEventListener("storage",e=>{if(e.key==="chatzone-theme")document.documentElement.dataset.theme=e.newValue==="dark"?"dark":"light"});
 })();
-
 function notice(s,bad=false){$("notice").textContent=s;$("notice").style.color=bad?"#d33":""}
 function say(s){$("gameMessage").textContent=s}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -164,14 +158,12 @@ async function init(){
  $("displayName").value=meName;
  notice("Ready! Create a room or join a friend's room.");
 }
-
-function newState(players){
- return {players:players.map((p,i)=>({...p,colorIndex:i,tokens:[-1,-1,-1,-1]})),turn:0,dice:null,rolled:false,winner:null,started:false,log:"Game ready. Red starts."}
-}
+function newState(players){return {players:players.map((p,i)=>({...p,colorIndex:i,tokens:[-1,-1,-1,-1]})),turn:0,dice:null,rolled:false,winner:null,started:false,log:"Game ready. Red starts."}}
 
 async function createRoom(){
  if(busy)return;busy=true;$("createBtn").disabled=true;
  try{
+  meName=$("displayName").value.trim().slice(0,18)||meName;
   const code=Math.random().toString(36).slice(2,8).toUpperCase().padEnd(6,"X");
   const player={id:me.id,name:meName};
   const {data,error}=await db.rpc("ludo_create_room",{p_code:code,p_player:player});
@@ -179,109 +171,84 @@ async function createRoom(){
  }catch(e){notice("Room create nahi hua: "+e.message,true)}
  finally{busy=false;$("createBtn").disabled=false}
 }
-
 async function joinRoom(){
  const code=$("roomCode").value.trim().toUpperCase();
  if(code.length!==6){notice("6-character room code enter karo.",true);return}
  if(busy)return;busy=true;$("joinBtn").disabled=true;
  try{
+  meName=$("displayName").value.trim().slice(0,18)||meName;
   const {data,error}=await db.rpc("ludo_join_room",{p_code:code,p_player:{id:me.id,name:meName}});
   if(error)throw error;setRoom(data);
  }catch(e){notice("Room join nahi hua: "+e.message,true)}
  finally{busy=false;$("joinBtn").disabled=false}
 }
-
 function setRoom(data){
  room=data;
- $("lobby").classList.add("hidden");
- $("roomPanel").classList.remove("hidden");
+ $("lobby").classList.add("hidden");$("roomPanel").classList.remove("hidden");
  $("roomCodeLabel").textContent=data.code;
  renderRoom();subscribeRoom();
  if(data.state?.started)showGame();
 }
-
 function renderRoom(){
  if(!room)return;
  const players=room.state.players||[];
- $("playersList").innerHTML=players.map((p,i)=>`<span class="player">${COLOR_NAMES[i]}: ${esc(p.name)}${p.id===room.host_id?" 👑":""}</span>`).join("");
+ $("playersList").innerHTML=players.map((p,i)=>`<span class="player">${COLOR_NAMES[i]||"Player"}: ${esc(p.name)}${p.id===room.host_id?" 👑":""}</span>`).join("");
  const isHost=room.host_id===me.id;
  $("startBtn").classList.toggle("hidden",!isHost||room.state.started);
  $("startBtn").disabled=players.length<2;
  $("roomHint").textContent=players.length<2?"At least 2 players are needed. Share the room code with a friend.":(isHost?"You are host. Start when everyone is ready.":"Waiting for the host to start the game.");
 }
-
 function subscribeRoom(){
  if(channel)db.removeChannel(channel);
  channel=db.channel("ludo-room-"+room.id)
   .on("postgres_changes",{event:"UPDATE",schema:"public",table:"ludo_rooms",filter:"id=eq."+room.id},payload=>{
-   if(payload.new){
-    room=payload.new;renderRoom();
-    if(room.state?.started)showGame();
-    renderGame();
-   }
+   if(payload.new){room=payload.new;renderRoom();if(room.state?.started)showGame();renderGame()}
   }).subscribe();
-
  if(roomPoll)clearInterval(roomPoll);
  roomPoll=setInterval(async()=>{
   if(!room)return;
   const {data}=await db.from("ludo_rooms").select("*").eq("id",room.id).maybeSingle();
-  if(data){
-   room=data;renderRoom();
-   if(room.state?.started)showGame();
-   renderGame();
-  }
+  if(data){room=data;renderRoom();if(room.state?.started)showGame();renderGame()}
  },5000);
 }
-
 async function saveState(next){
  const {data,error}=await db.rpc("ludo_update_state",{p_code:room.code,p_state:next});
  if(error)throw error;
  room=data;renderRoom();renderGame();
 }
-
 async function startGame(){
  if(room.host_id!==me.id||room.state.players.length<2)return;
  const next=newState(room.state.players);next.started=true;
- try{await saveState(next);showGame()}
- catch(e){alert("Game start error: "+e.message)}
+ try{await saveState(next);showGame()}catch(e){alert("Game start error: "+e.message)}
 }
-
 function showGame(){
- $("gamePanel").classList.remove("hidden");
- $("gamePanel").classList.add("fullscreen-game");
- document.body.classList.add("game-fullscreen");
- $("roomHint").textContent="Game in progress.";
- renderGame();
+ $("gamePanel").classList.remove("hidden");$("gamePanel").classList.add("fullscreen-game");
+ document.body.classList.add("game-fullscreen");renderGame();
 }
-
 function playerTurn(){return room?.state?.players?.[room.state.turn]}
-
 function renderGame(){
  if(!room||!room.state?.started)return;
  const s=room.state,players=s.players||[],current=playerTurn();
+ gameState=s;
  $("turnLabel").textContent=s.winner?("🏆 "+s.winner.name+" Wins!"):(current?current.name+"'s turn":"Ludo");
  $("diceFace").textContent=s.dice?DICE[s.dice-1]:"🎲";
  $("rollBtn").disabled=!!s.winner||current?.id!==me.id||s.rolled;
  $("rollBtn").textContent=s.rolled?"Choose a token":"Roll Dice";
  $("gamePlayers").innerHTML=players.map((p,i)=>`<span class="player ${i===s.turn&&!s.winner?"active":""}">${COLOR_NAMES[i]} · ${esc(p.name)}</span>`).join("");
- $("topPlayerName").textContent=players[1]?.name||"Player 2";
- const dieFaces=["⚀","⚁","⚂","⚃","⚄","⚅"];
  $("playerDiceRow").innerHTML=Array.from({length:4},(_,i)=>{
   const p=players[i],active=!!p&&i===s.turn&&!s.winner;
-  const face=(p&&i===s.turn&&s.dice)?dieFaces[s.dice-1]:"⚀";
-  return `<div class="player-die ${active?"active":""} ${p?"":"empty"}" style="--die-color:${COLORS[i]}">
-   <div class="player-die-face">${face}</div><span>${p?esc(p.name):COLOR_NAMES[i]}</span>
-  </div>`;
+  const face=p&&i===s.turn&&s.dice?DICE[s.dice-1]:"⚀";
+  return `<button type="button" class="player-die ${active?"active":""} ${p?"":"empty"}" data-index="${i}" style="--die-color:${COLORS[i]}" ${!p||p.id!==me.id||!active||s.rolled||s.winner?"disabled":""}>
+   <div class="player-die-face">${face}</div><span>${p?esc(p.name):COLOR_NAMES[i]}</span></button>`;
  }).join("");
- $("playerDiceRow").querySelectorAll(".player-die").forEach((el,i)=>{if(players[i]?.id===me.id)el.addEventListener("click",rollDice)});
+ $("playerDiceRow").querySelectorAll(".player-die").forEach(el=>el.addEventListener("click",()=>{if(!el.disabled)rollDice()}));
  say(s.log||"Roll the dice.");
  drawBoard();
 }
-
 function rollDice(){
  if(!room||busy)return;
  const s=structuredClone(room.state),p=s.players[s.turn];
- if(p.id!==me.id||s.rolled||s.winner)return;
+ if(!p||p.id!==me.id||s.rolled||s.winner)return;
  const dice=1+Math.floor(Math.random()*6);s.dice=dice;s.rolled=true;
  const movable=p.tokens.map((v,i)=>({v,i})).filter(x=>x.v===-1?dice===6:x.v<57&&x.v+dice<=57);
  if(!movable.length){
@@ -290,26 +257,20 @@ function rollDice(){
  }else{s.log=`${p.name} rolled ${dice}. Tap one of your highlighted tokens.`}
  busy=true;saveState(s).catch(e=>alert(e.message)).finally(()=>busy=false);
 }
-
 function moveToken(index){
  if(!room||busy)return;
  const s=structuredClone(room.state),p=s.players[s.turn],dice=s.dice;
- if(p.id!==me.id||!s.rolled||!dice||s.winner)return;
+ if(!p||p.id!==me.id||!s.rolled||!dice||s.winner)return;
  let pos=p.tokens[index];
- if(pos===-1){if(dice!==6)return;pos=0}
- else{if(pos+dice>57)return;pos+=dice}
+ if(pos===-1){if(dice!==6)return;pos=0}else{if(pos+dice>57)return;pos+=dice}
  p.tokens[index]=pos;
  let captured=0;
  if(pos>=0&&pos<=51){
-  const global=(p.colorIndex*13+pos)%52;
-  const safe=[0,8,13,21,26,34,39,47];
+  const global=(p.colorIndex*13+pos)%52,safe=[0,8,13,21,26,34,39,47];
   if(!safe.includes(global)){
    s.players.forEach((other,oi)=>{
     if(oi===s.turn)return;
-    other.tokens=other.tokens.map(t=>{
-     if(t>=0&&t<=51&&(other.colorIndex*13+t)%52===global){captured++;return -1}
-     return t;
-    });
+    other.tokens=other.tokens.map(t=>{if(t>=0&&t<=51&&(other.colorIndex*13+t)%52===global){captured++;return -1}return t});
    });
   }
  }
@@ -326,18 +287,8 @@ function moveToken(index){
 
 const TRACK=[];
 const BASE_TRACK=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,7],[1,8],[2,8]];
-function rotateCell([r,c],n){
- let p=[r,c];
- for(let i=0;i<n;i++)p=[p[1],14-p[0]];
- return p;
-}
-for(let side=0;side<4;side++){
- BASE_TRACK.forEach(cell=>{
-  const [r,c]=rotateCell(cell,side);
-  TRACK.push([c*40+20,r*40+20]);
- });
-}
-
+function rotateCell([r,c],n){let p=[r,c];for(let i=0;i<n;i++)p=[p[1],14-p[0]];return p}
+for(let side=0;side<4;side++)BASE_TRACK.forEach(cell=>{const [r,c]=rotateCell(cell,side);TRACK.push([c*40+20,r*40+20])});
 function homeCoord(color,step){
  const lanes=[
   [[60,340],[100,340],[140,340],[180,340],[220,340],[260,340]],
@@ -345,7 +296,7 @@ function homeCoord(color,step){
   [[340,60],[340,100],[340,140],[340,180],[340,220],[340,260]],
   [[540,260],[500,260],[460,260],[420,260],[380,260],[340,260]]
  ];
- return lanes[color][Math.max(0,Math.min(5,step-52))];
+ return lanes[color][Math.max(0,Math.min(5,step-52))]
 }
 function tokenCoord(player,token){
  const pos=player.tokens[token],c=player.colorIndex;
@@ -355,133 +306,82 @@ function tokenCoord(player,token){
    [[105,105],[175,105],[105,175],[175,175]],
    [[425,105],[495,105],[425,175],[495,175]],
    [[425,425],[495,425],[425,495],[495,495]]
-  ];
-  return bases[c][token];
+  ];return bases[c][token]
  }
  if(pos>=52)return homeCoord(c,pos);
- return TRACK[(c*13+pos)%52];
+ return TRACK[(c*13+pos)%52]
 }
-
 function drawBoard(){
- const svg=$("board");
- const cell=40;
+ const svg=$("board"),cell=40;
  let out=`<defs>
-  <linearGradient id="gotired" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff8a80"/><stop offset="48%" stop-color="#e53935"/><stop offset="100%" stop-color="#9f1717"/></linearGradient>
-  <linearGradient id="gotigreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8dffad"/><stop offset="48%" stop-color="#22a447"/><stop offset="100%" stop-color="#086b2a"/></linearGradient>
-  <linearGradient id="gotiyellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff59d"/><stop offset="48%" stop-color="#f2c230"/><stop offset="100%" stop-color="#b27a00"/></linearGradient>
-  <linearGradient id="gotiblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9bd5ff"/><stop offset="48%" stop-color="#2878e5"/><stop offset="100%" stop-color="#10428e"/></linearGradient>
+ <linearGradient id="gotired" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff8a80"/><stop offset="48%" stop-color="#e53935"/><stop offset="100%" stop-color="#9f1717"/></linearGradient>
+ <linearGradient id="gotigreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8dffad"/><stop offset="48%" stop-color="#22a447"/><stop offset="100%" stop-color="#086b2a"/></linearGradient>
+ <linearGradient id="gotiyellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff59d"/><stop offset="48%" stop-color="#f2c230"/><stop offset="100%" stop-color="#b27a00"/></linearGradient>
+ <linearGradient id="gotiblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9bd5ff"/><stop offset="48%" stop-color="#2878e5"/><stop offset="100%" stop-color="#10428e"/></linearGradient>
  </defs>
- <rect x="2" y="2" width="596" height="596" rx="24" fill="#9b5728" stroke="#5b2d12" stroke-width="8"/><rect x="9" y="9" width="582" height="582" rx="20" fill="none" stroke="#d68a42" stroke-width="3"/>`;
- const homes=[
-  {x:12,y:12,c:COLORS[1]},
-  {x:348,y:12,c:COLORS[2]},
-  {x:12,y:348,c:COLORS[0]},
-  {x:348,y:348,c:COLORS[3]}
- ];
+ <rect x="2" y="2" width="596" height="596" rx="24" fill="#9b5728" stroke="#5b2d12" stroke-width="8"/>
+ <rect x="9" y="9" width="582" height="582" rx="20" fill="none" stroke="#d68a42" stroke-width="3"/>`;
+ const homes=[{x:12,y:12,c:COLORS[1]},{x:348,y:12,c:COLORS[2]},{x:12,y:348,c:COLORS[0]},{x:348,y:348,c:COLORS[3]}];
  homes.forEach(h=>{
   out+=`<rect x="${h.x}" y="${h.y}" width="240" height="240" fill="${h.c}" stroke="#222" stroke-width="2"/>`;
   out+=`<circle cx="${h.x+120}" cy="${h.y+120}" r="96" fill="#000" opacity=".16"/>`;
-  const spots=[[h.x+80,h.y+80],[h.x+160,h.y+80],[h.x+80,h.y+160],[h.x+160,h.y+160]];
-  spots.forEach(([x,y])=>{
-   out+=`<circle cx="${x}" cy="${y}" r="22" fill="#fff" opacity=".16" stroke="#fff" stroke-width="2"/>`;
-  });
+  [[h.x+80,h.y+80],[h.x+160,h.y+80],[h.x+80,h.y+160],[h.x+160,h.y+160]].forEach(([x,y])=>{out+=`<circle cx="${x}" cy="${y}" r="22" fill="#fff" opacity=".16" stroke="#fff" stroke-width="2"/>`});
  });
  const cells=new Set();
  for(let r=0;r<6;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
  for(let r=9;r<15;r++)for(let c=6;c<=8;c++)cells.add(`${r},${c}`);
  for(let r=6;r<=8;r++)for(let c=0;c<6;c++)cells.add(`${r},${c}`);
  for(let r=6;r<=8;r++)for(let c=9;c<15;c++)cells.add(`${r},${c}`);
- cells.forEach(key=>{
-  const [r,c]=key.split(",").map(Number);
-  out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#fff" stroke="#222" stroke-width="1.5"/>`;
- });
+ cells.forEach(key=>{const [r,c]=key.split(",").map(Number);out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#fff" stroke="#222" stroke-width="1.5"/>`});
  const laneCells=[
   {cells:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]],color:COLORS[0]},
   {cells:[[1,6],[2,6],[3,6],[4,6],[5,6],[6,6]],color:COLORS[1]},
   {cells:[[1,8],[2,8],[3,8],[4,8],[5,8],[6,8]],color:COLORS[2]},
   {cells:[[8,13],[8,12],[8,11],[8,10],[8,9],[8,8]],color:COLORS[3]}
  ];
- laneCells.forEach(l=>l.cells.forEach(([r,c])=>{
-  out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="${l.color}" stroke="#222" stroke-width="1.5"/>`;
- }));
- const safeCells=[[6,1],[2,6],[1,8],[8,13],[8,2],[6,12],[12,8],[13,6]];
- safeCells.forEach(([r,c])=>{
-  const x=c*cell+20,y=r*cell+20;
-  out+=`<text x="${x}" y="${y+10}" text-anchor="middle" font-size="29" fill="#777">★</text>`;
- });
- out+=`<path d="M240 240 L360 240 L300 300 Z" fill="${COLORS[2]}" stroke="#222" stroke-width="1.5"/>`;
- out+=`<path d="M360 240 L360 360 L300 300 Z" fill="${COLORS[3]}" stroke="#222" stroke-width="1.5"/>`;
- out+=`<path d="M360 360 L240 360 L300 300 Z" fill="${COLORS[0]}" stroke="#222" stroke-width="1.5"/>`;
- out+=`<path d="M240 360 L240 240 L300 300 Z" fill="${COLORS[1]}" stroke="#222" stroke-width="1.5"/>`;
-
- // Player tokens
+ laneCells.forEach(l=>l.cells.forEach(([r,c])=>{out+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="${l.color}" stroke="#222" stroke-width="1.5"/>`}));
+ [[6,1],[2,6],[1,8],[8,13],[8,2],[6,12],[12,8],[13,6]].forEach(([r,c])=>{out+=`<text x="${c*cell+20}" y="${r*cell+30}" text-anchor="middle" font-size="29" fill="#777">★</text>`});
+ out+=`<path d="M240 240 L360 240 L300 300 Z" fill="${COLORS[2]}" stroke="#222" stroke-width="1.5"/>
+ <path d="M360 240 L360 360 L300 300 Z" fill="${COLORS[3]}" stroke="#222" stroke-width="1.5"/>
+ <path d="M360 360 L240 360 L300 300 Z" fill="${COLORS[0]}" stroke="#222" stroke-width="1.5"/>
+ <path d="M240 360 L240 240 L300 300 Z" fill="${COLORS[1]}" stroke="#222" stroke-width="1.5"/>`;
  if(gameState?.players){
   gameState.players.forEach(p=>p.tokens.forEach((v,i)=>{
    const [x,y]=tokenCoord(p,i),isMine=p.id===me.id;
    const selectable=isMine&&p.id===playerTurn()?.id&&gameState.rolled&&(v===-1?gameState.dice===6:v+gameState.dice<=57);
-   out+=`<g class="token-hit" data-player="${esc(p.id)}" data-token="${i}">
+   const grad=["url(#gotired)","url(#gotigreen)","url(#gotiyellow)","url(#gotiblue)"][p.colorIndex];
+   out+=`<g class="token-hit ${selectable?"selectable":""}" data-player="${esc(p.id)}" data-token="${i}">
     <circle cx="${x}" cy="${y+2}" r="19" fill="#000" opacity=".22"/>
-    <circle cx="${x}" cy="${y}" r="18" fill="${["url(#gotired)","url(#gotigreen)","url(#gotiyellow)","url(#gotiblue)"][p.colorIndex]}" stroke="#fff" stroke-width="3.5"/>
+    <circle cx="${x}" cy="${y}" r="18" fill="${grad}" stroke="#fff" stroke-width="3.5"/>
     <ellipse cx="${x-5}" cy="${y-7}" rx="6" ry="4" fill="#fff" opacity=".55"/>
     <circle cx="${x}" cy="${y}" r="8" fill="#fff" opacity=".12"/>
-    <text x="${x}" y="${y+6}" text-anchor="middle" font-size="23" font-weight="bold" fill="#fff" stroke="#a66" stroke-width=".5">♛</text>
+    <text x="${x}" y="${y+6}" text-anchor="middle" font-size="21" font-weight="bold" fill="#fff">♛</text>
     ${selectable?`<circle cx="${x}" cy="${y}" r="23" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="4 3"/>`:""}
    </g>`;
   }));
  }
  svg.innerHTML=out;
-
- // Clicking your own active-side dice rolls the same shared game dice.
- svg.querySelectorAll(".die-hit").forEach(el=>{
-  el.addEventListener("click",()=>{
-   if(el.dataset.player===me.id&&playerTurn()?.id===me.id){
-    rollDice();
-   }
-  });
- });
- svg.querySelectorAll(".token-hit").forEach(el=>{
-  el.addEventListener("click",()=>{
-   if(el.dataset.player===me.id)moveToken(Number(el.dataset.token));
-  });
- });
+ svg.querySelectorAll(".token-hit").forEach(el=>el.addEventListener("click",()=>{if(el.dataset.player===me.id)moveToken(Number(el.dataset.token))}));
 }
-
 $("createBtn").addEventListener("click",createRoom);
 $("joinToggle").addEventListener("click",()=>$("joinArea").classList.toggle("hidden"));
 $("joinBtn").addEventListener("click",joinRoom);
-
 $("copyBtn").addEventListener("click",async()=>{
  try{await navigator.clipboard.writeText(room.code);$("copyBtn").textContent="Copied!"}
  catch(e){prompt("Copy room code:",room.code)}
 });
-
 $("startBtn").addEventListener("click",startGame);
 $("rollBtn").addEventListener("click",rollDice);
-
 $("leaveBtn").addEventListener("click",async()=>{
  if(!confirm("Room se leave karna hai?"))return;
- if(channel)await db.removeChannel(channel);
- if(roomPoll)clearInterval(roomPoll);
- room=null;
- $("roomPanel").classList.add("hidden");
- $("gamePanel").classList.add("hidden");
- $("gamePanel").classList.remove("fullscreen-game");
- document.body.classList.remove("game-fullscreen");
- $("lobby").classList.remove("hidden");
- notice("You left the room.");
+ if(channel)await db.removeChannel(channel);if(roomPoll)clearInterval(roomPoll);
+ room=null;$("roomPanel").classList.add("hidden");$("gamePanel").classList.add("hidden");$("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("lobby").classList.remove("hidden");notice("You left the room.");
 });
-
 $("exitFullBtn").addEventListener("click",()=>{
  if(!confirm("Game screen se bahar jana hai? Room mein wapas chale jayenge."))return;
- $("gamePanel").classList.remove("fullscreen-game");
- document.body.classList.remove("game-fullscreen");
- $("roomPanel").scrollIntoView({behavior:"smooth"});
+ $("gamePanel").classList.remove("fullscreen-game");document.body.classList.remove("game-fullscreen");$("roomPanel").scrollIntoView({behavior:"smooth"});
 });
-
-$("backLobbyBtn").addEventListener("click",()=>{
- $("roomPanel").scrollIntoView({behavior:"smooth"});
-});
-
+$("backLobbyBtn").addEventListener("click",()=>$("roomPanel").scrollIntoView({behavior:"smooth"}));
 init().catch(e=>notice(e.message,true));
 </script>
 </body>
