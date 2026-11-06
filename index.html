@@ -1,345 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style>
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ChatZone - Fixed</title>
-<!-- FIX 1: Pehle wali CDN line galat thi, is liye supabase load nahi hota tha aur JS start hi nahi hota tha -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171020">
+<title>ChatZone 💬 — Home</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f0f2f5}
-.app{max-width:500px;margin:0 auto;min-height:100vh;background:#f0f2f5;padding-bottom:82px}
-.header{background:#fff;padding:12px;position:sticky;top:0;z-index:20;border-bottom:1px solid #dddfe2}
-.logo{font-size:28px;font-weight:800;color:#1877f2}
-.online-section,.welcome,.create-box,.post,.stories-section{background:#fff;margin:12px;padding:12px;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.1)}
-textarea{width:100%;background:#f0f2f5;border:0;border-radius:20px;padding:12px;font:15px Arial;outline:none;min-height:60px}
-button{cursor:pointer}
-.create-actions{display:flex;gap:8px;margin-top:10px}
-.create-actions button{flex:1;border:0;border-radius:8px;padding:10px;background:#1877f2;color:#fff;font-weight:700}
-.feed-header{padding:8px 16px}
-.post{margin:14px 12px;padding:12px}
-.post-head{display:flex;gap:10px;align-items:center}
-.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#e4e6eb}
-.post-content{margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.post-image{width:100%;max-height:450px;object-fit:cover;border-radius:14px}
-.post-actions{display:flex;gap:6px;margin-top:10px}
-.post-actions button{flex:1;border:1px solid #eef2f7;background:#f8f9fb;border-radius:12px;padding:9px;font-weight:700}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;height:60px;background:#fff;border-top:1px solid #dddfe2;display:flex;justify-content:space-around;z-index:30}
-.bottom-nav button{border:0;background:none;flex:1;color:#65676b;font-size:11px}
-.bottom-nav button.active{color:#1877f2}
-.popup{display:none;position:fixed;inset:0;background:#0008;z-index:100;padding:12vh 4% 20px}
-.popup-content{max-width:500px;margin:auto;background:#fff;border-radius:12px;padding:15px;max-height:76vh;overflow:auto}
-.empty,.loading{text-align:center;padding:25px 10px;color:#65676b}
-#jsError{display:none;background:#ffe1e1;color:#a00;padding:12px;margin:12px;border-radius:10px;font-size:13px;white-space:pre-wrap}
-.online-users{display:flex;gap:8px;overflow-x:auto;padding:4px 2px;scrollbar-width:none}
-.online-users::-webkit-scrollbar{display:none}
-.online-user{display:flex;align-items:center;gap:6px;background:#f0f2f5;border-radius:20px;padding:4px 10px 4px 4px;flex-shrink:0;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
-.online-user img{width:28px;height:28px;border-radius:50%;object-fit:cover}
-.online-dot{width:8px;height:8px;background:#31a24c;border-radius:50%;flex-shrink:0}
-.stories-rail{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
-.stories-rail::-webkit-scrollbar{display:none}
-.story-tile{min-width:72px;width:72px;text-align:center;border:0;background:none;cursor:pointer;padding:0;flex-shrink:0}
-.story-tile small{display:block;margin-top:6px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.story-label{font-size:12px}
-.story-ring{width:66px;height:66px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);display:grid;place-items:center;overflow:hidden;margin:auto}
-.story-ring.seen{background:#ccd0d5}
-.story-ring-inner{width:100%;height:100%;border-radius:50%;background:#fff;padding:2px;display:grid;place-items:center;overflow:hidden}
-.story-ring-inner img{width:100%;height:100%;border-radius:50%;object-fit:cover}
-.story-ring.add{background:#f0f2f5;border:2px dashed #1877f2}
-.story-ring img{width:100%;height:100%;object-fit:cover}
+:root{--bg:#171020;--panel:#241b30;--panel2:#2c2139;--line:#49365b;--text:#f7efff;--muted:#c6b5d8;--purple:#9860f5;--purple2:#b58aff;--green:#28c76f;--danger:#ef5350;--shadow:0 10px 28px #08040d66}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:104px}
+body.light{--bg:#f6f1fc;--panel:#fff;--panel2:#f1e9fb;--line:#ded0ed;--text:#241632;--muted:#756681;--shadow:0 8px 22px #3d245018}
+button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(110deg,#8b55ed,#b28aff);padding:13px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 18px #0003;min-height:82px}.brand{font-weight:850;font-size:20px;white-space:nowrap;margin-right:auto}.top-actions{display:flex;gap:7px;align-items:center}.top-btn{border:1px solid #ffffff55;background:#ffffffd9;color:#503276;border-radius:20px;min-width:54px;height:56px;padding:0 12px;font-weight:750;box-shadow:0 2px 5px #44206b25;position:relative}.top-btn.wide{font-size:13px}.top-btn .count{position:absolute;right:-4px;top:-7px;background:#e64e54;color:white;border-radius:50%;min-width:22px;height:22px;font-size:12px;display:grid;place-items:center}.wrap{width:min(100%,700px);margin:auto;padding:22px 14px 20px}.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:28px;padding:20px;margin-bottom:22px;box-shadow:var(--shadow)}.online-title{font-size:22px;font-weight:800;margin-bottom:16px}.online-list{display:flex;gap:10px;overflow:auto;padding-bottom:3px}.online-user{display:flex;align-items:center;gap:9px;background:var(--panel2);padding:9px 13px;border-radius:30px;white-space:nowrap}.avatar{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#47345d;border:3px solid #60467d}.dot{width:11px;height:11px;background:var(--green);border-radius:50%;display:inline-block}.welcome{text-align:center;font-size:26px;font-weight:850;padding:21px 10px}.section-title{font-size:22px;font-weight:850;margin:0 0 18px}.stories{display:flex;gap:22px;overflow-x:auto;padding:3px 2px 10px;scrollbar-width:thin}.story{flex:0 0 118px;text-align:center;cursor:pointer}.story-ring{width:112px;height:112px;border-radius:50%;padding:5px;margin:0 auto 9px;background:linear-gradient(135deg,#a76cff,#6e42bd);display:grid;place-items:center}.story-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid var(--panel)}.story-name{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.add-story .story-ring{border:4px dashed #a66cff;background:var(--panel2);color:#c7a6ff;font-size:52px;font-weight:300}.composer{padding:24px}.composer-head{display:flex;align-items:center;gap:16px;margin-bottom:26px}.compose-icon{width:82px;height:82px;display:grid;place-items:center;background:linear-gradient(135deg,#a45dff,#8050d9);border-radius:27px;font-size:39px;box-shadow:0 6px 18px #8c4ce755}.composer h2{font-size:29px;margin:0;color:var(--purple2)}textarea{width:100%;min-height:220px;resize:vertical;border:2px solid var(--line);border-radius:34px;background:var(--panel2);color:var(--text);padding:30px;font-size:23px;outline:none}textarea:focus,input:focus{border-color:var(--purple)}.composer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.action-btn{border:1px solid var(--line);background:var(--panel2);padding:13px 16px;border-radius:24px;font-weight:750}.action-btn.primary{background:linear-gradient(135deg,#9b5df5,#7543d2);color:white;border:0;flex:1}.file-label{display:inline-flex;align-items:center;gap:7px}.feed-title{font-size:24px;font-weight:850;margin:25px 5px 15px}.post{padding:18px}.post-head{display:flex;align-items:center;gap:11px}.post-head .avatar{width:48px;height:48px}.post-name{font-weight:800}.post-time{font-size:12px;color:var(--muted)}.post-text{font-size:17px;line-height:1.55;white-space:pre-wrap;margin:17px 0}.post-image{width:100%;max-height:480px;object-fit:cover;border-radius:18px}.post-actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px}.post-actions button{background:var(--panel2);border:0;border-radius:18px;padding:10px 13px}.comment-area{display:none;margin-top:12px}.comment-area.open{display:block}.comment-area input{width:100%;padding:12px 15px;border-radius:18px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}.empty{text-align:center;color:var(--muted);padding:22px}.bottom-nav{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:9px 7px calc(9px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -8px 25px #08040d55}.nav-item{text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:72px;border-radius:18px;font-size:13px;font-weight:750}.nav-item span:first-child{font-size:20px}.nav-item.active{background:var(--panel2);color:var(--purple2)}.toast{position:fixed;z-index:50;left:50%;bottom:105px;transform:translateX(-50%);background:#30223d;color:white;padding:12px 18px;border-radius:20px;box-shadow:var(--shadow);display:none;max-width:90%;text-align:center}.modal{display:none;position:fixed;inset:0;background:#000b;z-index:60;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{width:min(100%,520px);max-height:85vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:20px}.modal-card img{max-width:100%;max-height:65vh;object-fit:contain}.modal-close{float:right;border:0;background:var(--panel2);border-radius:50%;width:36px;height:36px;font-size:20px}
+@media(max-width:480px){.topbar{padding:10px 8px;gap:5px}.brand{font-size:17px}.top-actions{gap:5px}.top-btn{height:50px;min-width:45px;padding:0 8px}.top-btn.wide{font-size:11px}.wrap{padding:18px 12px}.panel{padding:17px;border-radius:25px}.welcome{font-size:23px}.story{flex-basis:118px}.composer{padding:20px}.composer h2{font-size:25px}.compose-icon{width:72px;height:72px}textarea{font-size:20px;padding:24px;min-height:190px}}
 </style>
 </head>
 <body>
-<div class="app">
-<header class="header"><div style="display:flex;justify-content:space-between;align-items:center"><div class="logo">ChatZone</div><div><button onclick="showShare()">📤 Share</button> <button onclick="goNotifications()">🔔</button></div></div></header>
-<div id="jsError"></div>
-<div id="homeView">
-<section class="online-section"><div><b>🟢 <span id="onlineCount">0</span> Users Online</b></div><div id="onlineUsers" class="online-users">Connecting to online users…</div></section>
-<div class="welcome"><div><div style="font-weight:700;font-size:16px">Welcome to ChatZone</div><div style="font-size:13px;color:#65676b">Connect, chat, and share with friends.</div></div></div>
-<section class="stories-section"><h3>Stories</h3><div id="storiesRail" class="stories-rail"><div class="loading">Loading stories…</div></div></section>
-<section class="create-box"><div><b>✍️ Create a Post ✨</b></div><textarea id="postText" placeholder="What's on your mind?"></textarea><div class="create-actions"><button onclick="startVoice()">🎙️ Voice</button><button onclick="showImagePost()">📷 Image</button><button onclick="createPost()">🚀 Post</button></div></section>
-<div class="feed-header"><h3>Home Feed</h3></div><div id="feed"><div class="loading">Checking login and loading feed…</div></div>
-</div>
-<div id="shareBox" class="popup"><div class="popup-content"><h3>📤 Create Post</h3><button onclick="showTextPost()">📝 Text Post</button> <button onclick="showImagePost()">📷 Image Post</button><div id="textPostForm" style="display:none;margin-top:10px"><textarea id="shareText" placeholder="What's on your mind?"></textarea><button onclick="submitTextPost()" style="width:100%;margin-top:8px;padding:12px;background:#1877f2;color:#fff;border:0;border-radius:8px;font-weight:bold">📤 Publish</button></div><div id="imagePostForm" style="display:none;margin-top:10px"><select id="imageCategory" style="width:100%;padding:12px;border-radius:10px"><option value="">Select category</option><option>General</option><option>Funny</option><option>News</option><option>Islamic</option><option>Poetry</option><option>Help</option><option>Other</option></select><br><br><input id="shareImageInput" type="file" accept="image/*" onchange="shareImageSelected()"><img id="shareImagePreview" style="width:100%;display:none;margin-top:8px;border-radius:8px"><textarea id="imageCaption" placeholder="Write a caption..." style="margin-top:8px"></textarea><button onclick="submitImagePost()" style="width:100%;margin-top:8px;padding:12px;background:#1877f2;color:#fff;border:0;border-radius:8px;font-weight:bold">📷 Publish Image Post</button></div><button onclick="closeShare()" style="width:100%;margin-top:8px;padding:10px">Cancel</button></div></div>
+<header class="topbar">
+  <div class="brand">ChatZone 💬</div>
+  <div class="top-actions">
+    <button class="top-btn wide" onclick="showToast('Trending posts coming soon')">🔥 Trending</button>
+    <button class="top-btn wide" onclick="sharePage()">📤 Share</button>
+    <button class="top-btn" title="Stars" onclick="showToast('ChatZone Stars ⭐')">⭐</button>
+    <button class="top-btn" title="Notifications" onclick="location.href='notifications.html'">🔔<span class="count" id="noticeCount" hidden>0</span></button>
+    <button class="top-btn" title="Theme" onclick="toggleTheme()" id="themeBtn">☀️</button>
+  </div>
+</header>
 
-<div id="storyUploadPopup" class="popup"><div class="popup-content"><div style="display:flex;justify-content:space-between;align-items:center"><h3>➕ Add Video Story</h3><button onclick="closeStoryUpload()" style="border:0;border-radius:50%;width:32px;height:32px">✕</button></div><p style="font-size:12px;color:#65676b">Video maximum 1 minute aur 50 MB. Story 24 hours baad auto expire ho jayegi.</p><input id="storyVideoInput" type="file" accept="video/*" style="margin-top:12px;width:100%"><textarea id="storyCaptionInput" maxlength="180" placeholder="Video ke sath chota sa message likhein... (optional)" style="margin-top:10px"></textarea><video id="storyUploadPreview" controls playsinline style="display:none;margin-top:10px;width:100%;max-height:300px;border-radius:12px;background:#000"></video><button id="publishStoryButton" onclick="publishStory()" style="width:100%;padding:12px;border:0;border-radius:8px;background:#1877f2;color:#fff;font-weight:bold;margin-top:10px">📤 Publish Story</button><button onclick="closeStoryUpload()" style="width:100%;margin-top:7px;padding:10px;border:0;border-radius:8px">Cancel</button></div></div>
-<nav class="bottom-nav"><button class="active" onclick="goHome()">🏠<br>Home</button><button onclick="goPrivate()">💌<br>Private</button><button onclick="goMehfil()">👥<br>Mehfil</button><button onclick="goProfile()">👤<br>Profile</button><button onclick="goMore()">⚙️<br>More</button></nav>
+<main class="wrap">
+  <section class="panel">
+    <div class="online-title">🟢 <span id="onlineCount">0</span> Users Online</div>
+    <div class="online-list" id="onlineList"><div class="empty">Loading online users...</div></div>
+  </section>
+
+  <section class="panel welcome">👋 Welcome to ChatZone! 💜💬</section>
+
+  <section class="panel">
+    <h2 class="section-title">🔴 Stories</h2>
+    <div class="stories" id="storiesList">
+      <div class="story add-story" onclick="document.getElementById('storyFile').click()">
+        <div class="story-ring">+</div><div class="story-name">Your story</div>
+      </div>
+    </div>
+    <input type="file" id="storyFile" accept="image/*,video/*" hidden onchange="uploadStory(this.files[0])">
+  </section>
+
+  <section class="panel composer">
+    <div class="composer-head"><div class="compose-icon">✍️</div><h2>Create a Post ✨</h2></div>
+    <textarea id="postText" placeholder="What's on your mind?"></textarea>
+    <div class="composer-actions">
+      <label class="action-btn file-label">🖼️ Image <input id="postImage" type="file" accept="image/*" hidden></label>
+      <label class="action-btn file-label">🎙️ Voice <input id="postVoice" type="file" accept="audio/*" hidden></label>
+      <button class="action-btn primary" id="sendPostBtn" onclick="createPost()">Send Post ➤</button>
+    </div>
+    <div id="selectedFile" class="post-time" style="margin-top:10px"></div>
+  </section>
+
+  <h2 class="feed-title">✨ Recent Posts</h2>
+  <div id="feed"><section class="panel empty">Loading posts...</section></div>
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item active" href="index.html"><span>🏠</span>Home</a>
+  <a class="nav-item" href="private.html"><span>💌</span>Private</a>
+  <a class="nav-item" href="mehfil.html"><span>👥</span>Mehfil</a>
+  <a class="nav-item" href="profile.html"><span>👤</span>Profile</a>
+  <a class="nav-item" href="more.html"><span>⚙️</span>More</a>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="storyModal" onclick="if(event.target===this)closeStory()">
+  <div class="modal-card"><button class="modal-close" onclick="closeStory()">×</button><div id="storyContent"></div></div>
 </div>
+
 <script>
-"use strict";
-// FIX 2: Agar CDN phir bhi fail ho to user ko blank loading nahi dikhega, error dikhega
-window.addEventListener('error', function(e){
-  var el=document.getElementById('jsError');
-  if(el){ el.style.display='block'; el.textContent='JS Error: '+(e.message||'Unknown')+'\nPage refresh karo, agar phir bhi aaye to net check karo.'; }
+const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
 });
-function showJsError(msg){
-  var el=document.getElementById('jsError');
-  if(el){ el.style.display='block'; el.textContent=msg; }
-  var f=document.getElementById('feed');
-  if(f) f.innerHTML='<div class="empty">'+msg+'<br><button onclick="location.reload()">Try again</button></div>';
-}
-if(!window.supabase){
-  showJsError('Supabase library load nahi hui. Net check karo ya CDN block hai. Page refresh karo.');
-} else {
-const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
-const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-let currentUser=null,currentPosts=[],profileMap={},myActions={},postActionCounts={},postCommentCounts={};
-function $(id){return document.getElementById(id)}
-function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
-function formatDate(v){if(!v)return "";const d=new Date(v);const s=Math.max(0,Math.floor((Date.now()-d.getTime())/1000));if(s<60)return "Just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" hr ago";return d.toLocaleDateString()}
-function timeout(p,ms=9000){let timer;return Promise.race([p,new Promise((_,rej)=>{timer=setTimeout(()=>rej(Error("Request timed out. Check internet / Supabase.")),ms)})]).finally(()=>clearTimeout(timer))}
+let currentUser=null, currentProfile=null, postImageFile=null, postVoiceFile=null;
+
+const $ = id => document.getElementById(id);
+function showToast(message){const t=$('toast');t.textContent=message;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
+function safe(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function avatarUrl(profile){return profile?.avatar_url||profile?.avatar||profile?.photo_url||profile?.profile_image||''}
+function displayName(profile){return profile?.username||profile?.full_name||profile?.name||'ChatZone User'}
+function toggleTheme(){document.body.classList.toggle('light');const light=document.body.classList.contains('light');localStorage.setItem('chatzone-theme',light?'light':'dark');$('themeBtn').textContent=light?'🌙':'☀️'}
+if(localStorage.getItem('chatzone-theme')==='light'){document.body.classList.add('light');$('themeBtn').textContent='🌙'}
+async function sharePage(){try{if(navigator.share)await navigator.share({title:'ChatZone',url:location.href});else{await navigator.clipboard.writeText(location.href);showToast('Link copied!')}}catch(e){}}
+function initials(name){return safe((name||'U').trim().slice(0,1).toUpperCase())}
+function avatar(profile,cls='avatar'){const url=avatarUrl(profile);return url?`<img class="${cls}" src="${safe(url)}" alt="" onerror="this.style.display='none'">`:`<div class="${cls}" style="display:grid;place-items:center">${initials(displayName(profile))}</div>`}
+
 async function init(){
-  // WATCHDOG: agar 6 sec me feed load na ho to khud Try Again dikhao, kabhi atka hua nahi rahega
-  setTimeout(()=>{
-    const f=$("feed");
-    if(f && f.textContent.includes("Loading feed") || (f && f.textContent.includes("Checking your login"))){
-      f.innerHTML='<div class="empty">Loading slow lag rahi hai.<br>Net / Supabase slow hai.<br><button onclick="location.reload()">🔄 Reload</button> <button onclick="loadFeed()">Try Feed Again</button><br><small style="color:#999">Agar bar bar aaye to Supabase > Authentication > Users me check karo login bana hua hai ya nahi.</small></div>';
-    }
-  },6000);
-  $("feed").innerHTML='<div class="loading">Checking your login…</div>';
-  try{
-    const r=await timeout(supabaseClient.auth.getSession(),8000);
-    if(r.error) throw r.error;
-    currentUser=r.data?.session?.user||null;
-    if(!currentUser){ $("feed").innerHTML='<div class="empty">Please log in to open Home.<br><button onclick="location.href=\'login.html\'">Open Login</button></div>'; return; }
-    // FIX: teeno ko parallel chalao, ek atke to dusra na ruke. Pehle feed, stories, online ek sath.
-    await Promise.allSettled([loadFeed(), loadStories(), loadOnlineUsers()]);
-  }catch(e){ console.error(e); showJsError('ChatZone could not start: '+(e.message||e)); }
+  const {data:{session},error}=await db.auth.getSession();
+  if(error)console.warn(error);
+  if(!session){location.replace('login.html');return}
+  currentUser=session.user;
+  const {data:profile}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+  currentProfile=profile||{id:currentUser.id,username:currentUser.email?.split('@')[0]||'User'};
+  await Promise.allSettled([loadOnline(),loadStories(),loadPosts(),loadNotifications()]);
+  db.channel('home-live')
+    .on('postgres_changes',{event:'*',schema:'public',table:'posts'},()=>loadPosts())
+    .on('postgres_changes',{event:'*',schema:'public',table:'stories'},()=>loadStories())
+    .subscribe();
 }
-async function loadFeed(){
-  $("feed").innerHTML='<div class="loading">Loading feed…</div>';
-  try{
-    let r=await timeout(supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url,voice_url").order("created_at",{ascending:false}).limit(50),12000);
-    if(r.error) throw r.error;
-    currentPosts=r.data||[];
-    if(!currentPosts.length){ $("feed").innerHTML='<div class="empty">There are no posts yet.</div>'; return; }
-    const ids=[...new Set(currentPosts.map(p=>p.user_id).filter(Boolean))];
-    profileMap={}; postActionCounts={}; postCommentCounts={}; myActions={};
-    if(ids.length){
-      const pr=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),8000);
-      if(!pr.error) (pr.data||[]).forEach(x=>profileMap[x.id]=x);
-    }
-    const pids=currentPosts.map(p=>p.id);
-    const a=await timeout(supabaseClient.from("post_actions").select("post_id,user_id,action_type").in("post_id",pids),8000);
-    if(!a.error) (a.data||[]).forEach(x=>{ postActionCounts[x.post_id]??={like:0,dislike:0}; if(x.action_type==="like") postActionCounts[x.post_id].like++; if(x.action_type==="dislike") postActionCounts[x.post_id].dislike++; if(x.user_id===currentUser.id) myActions[x.post_id]=x.action_type; });
-    const c=await timeout(supabaseClient.from("comments").select("post_id").in("post_id",pids),8000);
-    if(!c.error) (c.data||[]).forEach(x=>postCommentCounts[x.post_id]=(postCommentCounts[x.post_id]||0)+1);
-    $("feed").innerHTML=currentPosts.map(p=>renderPost(p)).join("");
-  }catch(e){ console.error("Feed:",e); $("feed").innerHTML='<div class="empty">Could not load feed: '+esc(e.message)+'<br><button onclick="loadFeed()">Try again</button></div>'; }
+async function loadOnline(){
+  const {data,error}=await db.from('profiles').select('*').limit(40);
+  if(error){$('onlineList').innerHTML='<div class="empty">Online users are unavailable right now.</div>';return}
+  const users=(data||[]).filter(p=>p.id!==currentUser.id && (p.is_online===true||p.online===true||p.status==='online'));
+  $('onlineCount').textContent=users.length+(currentProfile?1:0);
+  const all=[currentProfile,...users].filter(Boolean);
+  $('onlineList').innerHTML=all.length?all.map(p=>`<div class="online-user">${avatar(p)}<span class="dot"></span>${safe(displayName(p))}</div>`).join(''):'<div class="empty">No users online</div>';
 }
-function renderPost(p){
-  const pr=profileMap[p.user_id]||{}, name=pr.name||pr.username||"Member", c=postActionCounts[p.id]||{like:0,dislike:0}, cc=postCommentCounts[p.id]||0, own=p.user_id===currentUser?.id, action=myActions[p.id];
-  return '<article class="post"><div class="post-head">'+(pr.avatar_url?'<img class="avatar" src="'+esc(pr.avatar_url)+'">':'<div class="avatar"></div>')+'<div><b>'+esc(name)+'</b><br><small style="color:#65676b">'+formatDate(p.created_at)+'</small></div></div>'+(p.category?'<div style="margin-top:8px"><span style="background:#e7f3ff;color:#1877f2;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700">#'+esc(p.category)+'</span></div>':'')+(p.content?'<div class="post-content">'+esc(p.content)+'</div>':'')+(p.image_url?'<img class="post-image" src="'+esc(p.image_url)+'">':'')+(p.voice_url?'<audio controls style="width:100%" src="'+esc(p.voice_url)+'"></audio>':'')+'<div class="post-actions">'+(own?'<button onclick="toggleComments(\''+p.id+'\')">💬 '+cc+'</button><button onclick="deletePost(\''+p.id+'\')">🗑 Delete</button>':'<button onclick="setPostAction(\''+p.id+'\',\'like\')">❤️ Like '+c.like+'</button><button onclick="setPostAction(\''+p.id+'\',\'dislike\')">👎 Dislike '+c.dislike+'</button><button onclick="toggleComments(\''+p.id+'\')">💬 '+cc+'</button>')+'</div><div id="comments-'+p.id+'" style="display:none;margin-top:10px"><div id="clist-'+p.id+'"></div><div style="display:flex;gap:6px;margin-top:6px"><input id="cin-'+p.id+'" placeholder="Write a comment..." style="flex:1;padding:10px;border-radius:20px;border:0;background:#f0f2f5" onkeydown="if(event.key===\'Enter\')addComment(\''+p.id+'\')"><button onclick="addComment(\''+p.id+'\')">Send</button></div></div></article>';
+async function loadStories(){
+  const {data,error}=await db.from('stories').select('*').order('created_at',{ascending:false}).limit(30);
+  if(error){console.warn('Stories:',error.message);return}
+  const ids=[...new Set((data||[]).map(s=>s.user_id||s.owner_id).filter(Boolean))];
+  let profiles={};
+  if(ids.length){const r=await db.from('profiles').select('*').in('id',ids);(r.data||[]).forEach(p=>profiles[p.id]=p)}
+  const own=(data||[]).filter(s=>(s.user_id||s.owner_id)===currentUser.id);
+  const other=(data||[]).filter(s=>(s.user_id||s.owner_id)!==currentUser.id);
+  const add=`<div class="story add-story" onclick="document.getElementById('storyFile').click()"><div class="story-ring">+</div><div class="story-name">Your story</div></div>`;
+  $('storiesList').innerHTML=add+other.map(s=>{const p=profiles[s.user_id||s.owner_id]||{};const media=s.media_url||s.image_url||s.video_url||s.url||'';return `<div class="story" onclick="openStory('${safe(s.id)}','${safe(media)}','${safe(displayName(p))}')"><div class="story-ring">${avatar(p,'avatar')}</div><div class="story-name">${safe(displayName(p))}</div></div>`}).join('')+(own.length?own.map(s=>{const media=s.media_url||s.image_url||s.video_url||s.url||'';return `<div class="story" onclick="openStory('${safe(s.id)}','${safe(media)}','Your story')"><div class="story-ring">${avatar(currentProfile,'avatar')}</div><div class="story-name">Your story</div></div>`}).join(''):'');
 }
-async function setPostAction(id,type){
-  try{
-    const res=await timeout(supabaseClient.from("post_actions").select("id,action_type").eq("post_id",id).eq("user_id",currentUser.id).maybeSingle(),8000);
-    if(res.error) throw res.error;
-    const ex=res.data;
-    if(ex && ex.action_type===type){ await timeout(supabaseClient.from("post_actions").delete().eq("id",ex.id),8000); }
-    else if(ex){ await timeout(supabaseClient.from("post_actions").update({action_type:type}).eq("id",ex.id),8000); }
-    else { await timeout(supabaseClient.from("post_actions").insert({post_id:id,user_id:currentUser.id,action_type:type}),8000); }
-    await loadFeed();
-  }catch(e){ alert("Reaction failed: "+e.message); }
+function openStory(id,url,name){$('storyContent').innerHTML=`<h3>${safe(name)}</h3>${url?(/\.(mp4|webm|mov)(\?|$)/i.test(url)?`<video src="${safe(url)}" controls autoplay playsinline style="width:100%"></video>`:`<img src="${safe(url)}" alt="Story">`):'<p>Story media unavailable.</p>'}`;$('storyModal').classList.add('show')}
+function closeStory(){$('storyModal').classList.remove('show')}
+async function uploadStory(file){
+  if(!file)return;
+  try{const ext=file.name.split('.').pop()||'jpg',path=`${currentUser.id}/${Date.now()}.${ext}`;
+    const up=await db.storage.from('stories').upload(path,file,{upsert:false});
+    if(up.error)throw up.error;
+    const {data:{publicUrl}}=db.storage.from('stories').getPublicUrl(path);
+    const ins=await db.from('stories').insert({user_id:currentUser.id,media_url:publicUrl,created_at:new Date().toISOString()});
+    if(ins.error)throw ins.error;showToast('Story uploaded!');loadStories();
+  }catch(e){console.error(e);showToast('Story upload failed: '+(e.message||'Check storage/table permissions'))}
 }
-async function toggleComments(id){
-  const box=$("comments-"+id); box.style.display=box.style.display==="block"?"none":"block"; if(box.style.display==="none") return;
-  const list=$("clist-"+id); list.textContent="Loading comments…";
-  try{
-    const r=await timeout(supabaseClient.from("comments").select("id,user_id,comment,created_at").eq("post_id",id).order("created_at"),8000);
-    if(r.error) throw r.error;
-    list.innerHTML=(r.data||[]).map(c=>'<div style="background:#f0f2f5;border-radius:12px;padding:8px 12px;margin:6px 0;font-size:13px">'+esc(c.comment)+'</div>').join("")||"No comments yet.";
-  }catch(e){ list.textContent="Comments load nahi huay: "+e.message; }
-}
-async function addComment(id){
-  const input=$("cin-"+id), comment=input.value.trim(); if(!comment) return;
-  try{ const r=await timeout(supabaseClient.from("comments").insert({post_id:id,user_id:currentUser.id,comment}),10000); if(r.error) throw r.error; input.value=""; await loadFeed(); }catch(e){ alert(e.message); }
-}
+$('postImage').addEventListener('change',e=>{postImageFile=e.target.files[0]||null;updateFiles()});
+$('postVoice').addEventListener('change',e=>{postVoiceFile=e.target.files[0]||null;updateFiles()});
+function updateFiles(){$('selectedFile').textContent=[postImageFile?.name,postVoiceFile?.name].filter(Boolean).join(' · ')}
 async function createPost(){
-  const content=$("postText").value.trim(); if(!content) return alert("Please write a post first.");
-  try{ const r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"text"}),10000); if(r.error) throw r.error; $("postText").value=""; await loadFeed(); }catch(e){ alert("Could not publish: "+e.message); }
-}
-async function submitTextPost(){
-  const content=$("shareText").value.trim(); if(!content) return alert("Please enter text.");
-  try{ const r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"text"}),10000); if(r.error) throw r.error; $("shareText").value=""; closeShare(); await loadFeed(); }catch(e){ alert("Could not publish: "+e.message); }
-}
-function shareImageSelected(){ const f=$("shareImageInput").files?.[0]; if(!f) return; const rd=new FileReader(); rd.onload=e=>{ $("shareImagePreview").src=e.target.result; $("shareImagePreview").style.display="block"; }; rd.readAsDataURL(f); }
-async function submitImagePost(){
-  const f=$("shareImageInput").files?.[0], category=$("imageCategory").value, content=$("imageCaption").value.trim();
-  if(!category||!f) return alert("Category aur image select karein.");
+  const content=$('postText').value.trim();if(!content&&!postImageFile&&!postVoiceFile){showToast('Write something or select a file first');return}
+  const btn=$('sendPostBtn');btn.disabled=true;btn.textContent='Posting...';
   try{
-    const ext=(f.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg", path="posts/"+currentUser.id+"_"+Date.now()+"."+ext;
-    const up=await timeout(supabaseClient.storage.from("post-images").upload(path,f,{upsert:false}),15000); if(up.error) throw up.error;
-    const url=supabaseClient.storage.from("post-images").getPublicUrl(path).data.publicUrl;
-    const r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"image",category,image_url:url}),10000); if(r.error) throw r.error;
-    closeShare(); await loadFeed();
-  }catch(e){ alert("Could not publish image: "+e.message); }
+    let image_url=null,voice_url=null;
+    if(postImageFile){const path=`${currentUser.id}/${Date.now()}_${postImageFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const up=await db.storage.from('post-images').upload(path,postImageFile);if(up.error)throw up.error;image_url=db.storage.from('post-images').getPublicUrl(path).data.publicUrl}
+    if(postVoiceFile){const path=`${currentUser.id}/${Date.now()}_${postVoiceFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const up=await db.storage.from('voice-posts').upload(path,postVoiceFile);if(up.error)throw up.error;voice_url=db.storage.from('voice-posts').getPublicUrl(path).data.publicUrl}
+    const row={user_id:currentUser.id,content,created_at:new Date().toISOString()};
+    if(image_url)row.image_url=image_url;if(voice_url)row.voice_url=voice_url;
+    const result=await db.from('posts').insert(row);
+    if(result.error)throw result.error;
+    $('postText').value='';$('postImage').value='';$('postVoice').value='';postImageFile=null;postVoiceFile=null;updateFiles();showToast('Post shared successfully!');await loadPosts();
+  }catch(e){console.error(e);showToast('Could not post: '+(e.message||'Check posts table/storage permissions'))}
+  finally{btn.disabled=false;btn.textContent='Send Post ➤'}
 }
-async function deletePost(id){ if(!confirm("Delete your post?")) return; try{ const r=await timeout(supabaseClient.from("posts").delete().eq("id",id).eq("user_id",currentUser.id),10000); if(r.error) throw r.error; await loadFeed(); }catch(e){ alert("Delete failed: "+e.message); } }
-function showShare(){ $("shareBox").style.display="block"; }
-function closeShare(){ $("shareBox").style.display="none"; }
-function showTextPost(){ $("textPostForm").style.display="block"; $("imagePostForm").style.display="none"; }
-function showImagePost(){ $("shareBox").style.display="block"; $("imagePostForm").style.display="block"; $("textPostForm").style.display="none"; }
-function startVoice(){ alert("Voice post is page me abhi off hai, pehle feed fix check karo."); }
-function goHome(){ location.href="index.html"; } function goProfile(){ location.href="profile.html"; } function goPrivate(){ location.href="private.html"; } function goMehfil(){ location.href="mehfil.html"; } function goMore(){ location.href="more.html"; } function goNotifications(){ location.href="notifications.html"; }
-async function loadStories(){
-  const rail=$("storiesRail");
-  try{
-    const now=new Date().toISOString();
-    const result=await timeout(supabaseClient.from("stories").select("id,user_id,video_url,caption,created_at,expires_at").gt("expires_at",now).order("created_at",{ascending:true}).limit(50),10000);
-    if(result.error) throw result.error;
-    const rows=result.data||[];
-    if(!rows.length){ rail.innerHTML='<span style="color:#65676b;font-size:13px">No stories yet</span>'; return; }
-    const ids=[...new Set(rows.map(s=>s.user_id))];
-    const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),8000);
-    const map={}; (p.data||[]).forEach(x=>map[x.id]=x);
-    rail.innerHTML=rows.map(s=>{ const u=map[s.user_id]||{}; return '<button class="story-tile" onclick="alert(\'Story viewer is purani file me tha, is fixed file me feed pehle check karo\')"><span class="story-ring">'+(u.avatar_url?'<img src="'+esc(u.avatar_url)+'">':'👤')+'</span><br><small>'+esc(u.name||u.username||"Member")+'</small></button>'; }).join("");
-  }catch(e){ rail.innerHTML='<span style="color:#65676b;font-size:13px">Stories load nahi huin</span>'; }
+async function loadPosts(){
+  const {data,error}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(40);
+  if(error){$('feed').innerHTML='<section class="panel empty">Posts could not be loaded. Check the posts table permissions.</section>';console.warn(error);return}
+  const posts=data||[];if(!posts.length){$('feed').innerHTML='<section class="panel empty">No posts yet. Be the first to share something! 💜</section>';return}
+  const ids=[...new Set(posts.map(p=>p.user_id).filter(Boolean))];let profiles={};
+  if(ids.length){const r=await db.from('profiles').select('*').in('id',ids);(r.data||[]).forEach(p=>profiles[p.id]=p)}
+  $('feed').innerHTML=posts.map(p=>{
+    const profile=profiles[p.user_id]||{},name=displayName(profile),date=p.created_at?new Date(p.created_at).toLocaleString():'';
+    const content=p.content||p.body||p.text||'';
+    const img=p.image_url||p.image||p.media_url||'';
+    const voice=p.voice_url||p.audio_url||'';
+    return `<article class="panel post"><div class="post-head">${avatar(profile)}<div><div class="post-name">${safe(name)}</div><div class="post-time">${safe(date)}</div></div></div><div class="post-text">${safe(content)}</div>${img?`<img class="post-image" src="${safe(img)}" alt="Post image">`:''}${voice?`<audio controls src="${safe(voice)}" style="width:100%;margin:8px 0"></audio>`:''}<div class="post-actions"><button onclick="reactPost('${safe(p.id)}','like')">❤️ Like</button><button onclick="reactPost('${safe(p.id)}','dislike')">👎 Dislike</button><button onclick="toggleComment('${safe(p.id)}')">💬 Comment</button><button onclick="sharePost('${safe(p.id)}')">📤 Share</button></div><div class="comment-area" id="comments-${safe(p.id)}"><input id="comment-input-${safe(p.id)}" placeholder="Write a comment..." onkeydown="if(event.key==='Enter')sendComment('${safe(p.id)}')"><button class="action-btn" style="margin-top:8px" onclick="sendComment('${safe(p.id)}')">Send</button><div id="comment-list-${safe(p.id)}"></div></div></article>`
+  }).join('');
 }
-let onlineChannel=null;
-async function loadOnlineUsers(){
-  if(!currentUser) return;
-  try{
-    const pr=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").eq("id",currentUser.id).maybeSingle(),7000);
-    const me=pr.data||{};
-    if(onlineChannel){ try{ await supabaseClient.removeChannel(onlineChannel);}catch(e){} }
-    onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});
-    onlineChannel.on("presence",{event:"sync"},renderOnline).on("presence",{event:"join"},renderOnline).on("presence",{event:"leave"},renderOnline);
-    onlineChannel.subscribe(async st=>{
-      if(st==="SUBSCRIBED"){
-        try{ await onlineChannel.track({user_id:currentUser.id,username:me.username||"",name:me.name||"",avatar_url:me.avatar_url||"",online_at:new Date().toISOString()}); renderOnline(); }catch(e){}
-      } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"){ $("onlineUsers").textContent="Online status unavailable"; }
-    });
-    setTimeout(()=>{ if($("onlineUsers").textContent==="Connecting to online users…") $("onlineUsers").textContent="No users online"; },10000);
-  }catch(e){ $("onlineUsers").textContent="Online status unavailable"; }
+async function reactPost(postId,action){
+  try{const {error}=await db.from('post_actions').upsert({post_id:postId,user_id:currentUser.id,action},{onConflict:'post_id,user_id'});if(error)throw error;showToast(action==='like'?'Liked ❤️':'Reaction saved');}
+  catch(e){console.warn(e);showToast('Reaction could not be saved')}
 }
-async function renderOnline(){
-  if(!onlineChannel||!currentUser) return;
-  try{
-    const state=onlineChannel.presenceState(), users=new Map();
-    Object.entries(state).forEach(([key,list])=>(list||[]).forEach(it=>{ const id=it.user_id||key; users.set(id,{...(users.get(id)||{}),...it,user_id:id}); }));
-    // FIX: sirf wohi IDs jo abhi presence me hain - offline wale auto hat jayenge, koi fake list nahi
-    const ids=[...users.keys()];
-    let profiles={};
-    if(ids.length){
-      const r=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),7000);
-      if(!r.error) (r.data||[]).forEach(x=>profiles[x.id]=x);
-    }
-    $("onlineCount").textContent=ids.length;
-    if(!ids.length){ $("onlineUsers").innerHTML="No users online"; return; }
-    $("onlineUsers").innerHTML=ids.map(id=>{
-      const pres=users.get(id)||{}, p=profiles[id]||{};
-      const name=p.username||pres.username||p.name||pres.name||"Member";
-      const av=p.avatar_url||pres.avatar_url||"";
-      return '<div class="online-user" onclick="openProfile(\''+id+'\')">'+(av?'<img src="'+esc(av)+'">':'<span>👤</span>')+'<span class="online-dot"></span><span>'+esc(name)+'</span></div>';
-    }).join("");
-  }catch(e){ console.warn("renderOnline",e); }
+async function toggleComment(id){const box=$('comments-'+id);box.classList.toggle('open');if(box.classList.contains('open'))loadComments(id)}
+async function loadComments(id){
+  const target=$('comment-list-'+id);const {data,error}=await db.from('comments').select('*').eq('post_id',id).order('created_at',{ascending:true}).limit(30);
+  if(error){target.innerHTML='<div class="post-time">Comments unavailable.</div>';return}
+  target.innerHTML=(data||[]).map(c=>`<div class="post-time" style="padding:8px 2px"><b>${safe(c.username||c.name||'User')}:</b> ${safe(c.content||c.comment||c.text||'')}</div>`).join('');
 }
-function openProfile(id){ if(id===currentUser?.id){ goProfile(); return; } location.href="profile.html?user="+encodeURIComponent(id); }
-// --- Stories: Insta style, grouped by user ---
-let storyGroups=[];
-async function loadStories(){
-  const rail=$("storiesRail");
-  try{
-    const now=new Date().toISOString();
-    const result=await timeout(supabaseClient.from("stories").select("id,user_id,video_url,caption,created_at,expires_at").gt("expires_at",now).order("created_at",{ascending:true}).limit(150),12000);
-    if(result.error) throw result.error;
-    const rows=result.data||[];
-    const ids=[...new Set(rows.map(s=>s.user_id))];
-    let profiles={};
-    if(ids.length){ const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000); if(!p.error) (p.data||[]).forEach(x=>profiles[x.id]=x); }
-    let viewed=new Set();
-    if(rows.length){ const v=await timeout(supabaseClient.from("story_views").select("story_id").eq("viewer_id",currentUser.id).in("story_id",rows.map(s=>s.id)),10000); if(!v.error) (v.data||[]).forEach(x=>viewed.add(String(x.story_id))); }
-    // FIX: ek user ki sab stories ek hi tile me - duplicate Dream_Girl nahi dikhega
-    const grouped=new Map();
-    rows.forEach(s=>{ if(!grouped.has(s.user_id)) grouped.set(s.user_id,[]); grouped.get(s.user_id).push(s); });
-    storyGroups=[...grouped.entries()].map(([userId,items])=>({userId,items,profile:profiles[userId]||{}}));
-    const myAvatar=profiles[currentUser.id]?.avatar_url||"";
-    let html='<button class="story-tile" onclick="alert(\'Story upload purani file se hoga\')"><span class="story-ring add"><span class="story-ring-inner" style="font-size:24px;color:#1877f2">＋</span></span><small>Your story</small></button>';
-    html+=storyGroups.map(g=>{
-      const p=g.profile, name=p.username||p.name||"Member";
-      const allSeen=g.items.every(s=>viewed.has(String(s.id)));
-      const av=p.avatar_url||"";
-      return '<button class="story-tile" onclick="openStoryGroup(\''+g.userId+'\')"><span class="story-ring '+(allSeen?'seen':'')+'"><span class="story-ring-inner">'+(av?'<img src="'+esc(av)+'">':'<span style="font-size:24px">👤</span>')+'</span></span><small>'+esc(name)+'</small></button>';
-    }).join("");
-    rail.innerHTML=html||'<span style="color:#65676b;font-size:13px">No stories yet</span>';
-  }catch(e){ rail.innerHTML='<span style="color:#65676b;font-size:13px">Stories load nahi huin</span>'; }
+async function sendComment(id){
+  const input=$('comment-input-'+id),content=input.value.trim();if(!content)return;
+  try{const {error}=await db.from('comments').insert({post_id:id,user_id:currentUser.id,content,created_at:new Date().toISOString()});if(error)throw error;input.value='';loadComments(id);showToast('Comment added')}
+  catch(e){console.warn(e);showToast('Comment could not be sent')}
 }
-function openStoryGroup(userId){
-  const g=storyGroups.find(x=>String(x.userId)===String(userId));
-  if(!g) return;
-  // pehli unseen story kholo, warna pehli
-  alert("Story: "+(g.profile.username||"Member")+" • "+g.items.length+" story (viewer purani file wala use karo, grouping fix ho gaya hai)");
+async function sharePost(id){const url=location.origin+location.pathname+'#post-'+id;try{if(navigator.share)await navigator.share({title:'ChatZone post',url});else{await navigator.clipboard.writeText(url);showToast('Post link copied')}}catch(e){}}
+async function loadNotifications(){
+  const {count,error}=await db.from('notifications').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id).eq('is_read',false);
+  if(!error&&count>0){$('noticeCount').hidden=false;$('noticeCount').textContent=count>9?'9+':count}
 }
-
-// --- Story Upload - khud user laga sake ---
-const STORY_MAX_SIZE=50*1024*1024, STORY_MAX_SECONDS=60;
-function openStoryUpload(){ if(!currentUser) return alert("Please log in again."); $("storyUploadPopup").style.display="block"; }
-function closeStoryUpload(){
-  $("storyUploadPopup").style.display="none";
-  const v=$("storyUploadPreview"); v.pause(); v.removeAttribute("src"); v.load(); v.style.display="none";
-  $("storyVideoInput").value=""; $("storyCaptionInput").value="";
-}
-document.addEventListener("DOMContentLoaded", ()=>{
-  const inp=$("storyVideoInput");
-  if(inp) inp.addEventListener("change", function(){
-    const f=this.files?.[0]; if(!f) return;
-    const preview=$("storyUploadPreview");
-    if(!f.type.startsWith("video/")){ alert("Please select a video file."); this.value=""; return; }
-    if(f.size>STORY_MAX_SIZE){ alert("Video 50 MB se choti honi chahiye."); this.value=""; return; }
-    const url=URL.createObjectURL(f); preview.src=url; preview.style.display="block";
-    preview.onloadedmetadata=()=>{ if(preview.duration>STORY_MAX_SECONDS){ alert("Story video maximum 1 minute ki ho sakti hai."); this.value=""; preview.pause(); preview.removeAttribute("src"); preview.load(); preview.style.display="none"; URL.revokeObjectURL(url); } };
-  });
-});
-async function publishStory(){
-  if(!currentUser) return alert("Please login again.");
-  const f=$("storyVideoInput").files?.[0], btn=$("publishStoryButton");
-  if(!f) return alert("Pehle video select karein.");
-  if(!f.type.startsWith("video/")||f.size>STORY_MAX_SIZE) return alert("Video format ya size sahi nahi. Maximum 50 MB.");
-  btn.disabled=true; btn.textContent="Uploading…";
-  try{
-    const probe=document.createElement("video"), url=URL.createObjectURL(f);
-    const duration=await new Promise((res,rej)=>{ probe.preload="metadata"; probe.onloadedmetadata=()=>res(probe.duration); probe.onerror=()=>rej(Error("Video read nahi ho saki.")); probe.src=url; });
-    URL.revokeObjectURL(url);
-    if(!Number.isFinite(duration)||duration>STORY_MAX_SECONDS) throw Error("Video maximum 1 minute ki honi chahiye.");
-    const ext=(f.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
-    const path=currentUser.id+"/"+Date.now()+"."+ext;
-    const up=await timeout(supabaseClient.storage.from("stories").upload(path,f,{upsert:false,contentType:f.type}),60000);
-    if(up.error) throw up.error;
-    const videoUrl=supabaseClient.storage.from("stories").getPublicUrl(path).data.publicUrl;
-    const expiresAt=new Date(Date.now()+24*60*60*1000).toISOString();
-    const caption=$("storyCaptionInput").value.trim();
-    const ins=await timeout(supabaseClient.from("stories").insert({user_id:currentUser.id,video_url:videoUrl,caption,expires_at:expiresAt}),15000);
-    if(ins.error) throw ins.error;
-    closeStoryUpload(); await loadStories(); alert("Story publish ho gayi!");
-  }catch(e){ alert("Story upload failed: "+(e.message||e)); }
-  finally{ btn.disabled=false; btn.textContent="📤 Publish Story"; }
-}
-
 init();
-}
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</body>
 </html>
