@@ -126,6 +126,101 @@ textarea:focus,input:focus{border-color:var(--purple)}
   #storyContent video,#storyContent img{max-height:78dvh}
 }
 
+
+/* Extra vertical breathing room for feed cards */
+#feed {
+  gap: 18px;
+}
+#feed .post {
+  min-height: 240px;
+  padding: 34px 27px 30px;
+  margin: 0 0 10px;
+  border-radius: 28px;
+}
+#feed .post .post-head {
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+#feed .post .post-text {
+  min-height: 76px;
+  margin: 22px 0 24px;
+  font-size: 18px;
+  line-height: 1.9;
+}
+#feed .post .post-image {
+  margin: 22px 0;
+  max-height: 650px;
+}
+#feed .post .post-actions {
+  gap: 12px;
+  padding-top: 20px;
+  margin-top: 22px;
+}
+#feed .post .post-actions button {
+  min-height: 54px;
+  padding: 12px 17px;
+  border-radius: 18px;
+  font-size: 15px;
+}
+#feed .post .comment-area {
+  margin-top: 18px;
+}
+@media (max-width: 480px) {
+  #feed .post {
+    min-height: 250px;
+    padding: 32px 22px 28px;
+    margin-bottom: 8px;
+  }
+  #feed .post .post-head {
+    margin-bottom: 20px;
+    padding-bottom: 17px;
+  }
+  #feed .post .post-text {
+    min-height: 84px;
+    margin: 24px 0 26px;
+    font-size: 17px;
+    line-height: 1.9;
+  }
+  #feed .post .post-actions {
+    gap: 10px;
+    padding-top: 19px;
+    margin-top: 24px;
+  }
+  #feed .post .post-actions button {
+    min-height: 52px;
+    flex: 1 1 calc(50% - 10px);
+  }
+}
+
+
+/* Make each home-feed post card noticeably wider on mobile */
+#feed {
+  width: 100%;
+  max-width: none;
+  gap: 16px;
+}
+#feed .post {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+@media (max-width: 600px) {
+  .wrap {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  #feed .post {
+    width: 100%;
+    max-width: none;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 23px;
+  }
+}
+
 </style>
 </head>
 <body>
