@@ -93,12 +93,37 @@ textarea:focus,input:focus,select:focus{background:#e4e6eb}
 .feed-header{padding:8px 16px}
 .feed-header h3{margin:8px 0;font-size:15px;font-weight:700;color:#050505}
 
-.post{margin:12px}
-.post-head{display:flex;justify-content:space-between;align-items:center;gap:7px}
-.user-info{display:flex;align-items:center;gap:8px;min-width:0}
-.avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#e4e6eb;flex-shrink:0;cursor:pointer}
-.user-name{font-size:15px;font-weight:600;overflow-wrap:anywhere;cursor:pointer}
+/* UNIQUE POST DESIGN */
+.post{margin:14px 12px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(24,119,242,0.08),0 1px 3px rgba(0,0,0,0.06);border:1px solid #eef2f7;overflow:visible;position:relative;padding-bottom:6px}
+.post::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1877f2,#00c2ff,#a78bfa,#ec4899);border-radius:20px 20px 0 0}
+.post-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:16px 16px 0}
+.user-info{display:flex;align-items:flex-start;gap:11px;min-width:0}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#e4e6eb;flex-shrink:0;cursor:pointer;border:2px solid #fff;outline:2px solid #1877f2;box-shadow:0 2px 8px rgba(24,119,242,0.25)}
+.user-name{font-size:16px;font-weight:800;overflow-wrap:anywhere;cursor:pointer;line-height:1.3;display:flex;flex-wrap:wrap;align-items:center;gap:6px;row-gap:6px}
+.user-name .post-author-name{white-space:nowrap}
+.user-name small{white-space:nowrap;font-weight:600;color:#050505}
+.pts-badge{white-space:nowrap!important;display:inline-flex!important;align-items:center;gap:3px;flex-shrink:0}
+.role-badge{white-space:nowrap!important;flex-shrink:0}
+.user-info>div{min-width:0;flex:1}
+.post-head{padding-right:14px}
 .post-author-name{color:#050505;-webkit-text-fill-color:initial;background:none}
+.post-menu{position:relative;flex-shrink:0}
+.post-menu-btn{border:0;background:#f0f2f5;width:36px;height:36px;border-radius:50%;font-size:20px;font-weight:800;cursor:pointer;line-height:1}
+.post-menu-dropdown{display:none;position:absolute;right:0;top:42px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.15);border:1px solid #eef2f7;min-width:160px;z-index:50;overflow:hidden;padding:6px}
+.post-menu-dropdown.open{display:block}
+.post-menu-dropdown button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;padding:11px 12px;font-size:14px;font-weight:600;text-align:left;cursor:pointer;border-radius:8px}
+.post-menu-dropdown button:hover{background:#f0f2f5}
+.post-date{font-size:12px;color:#8a8d91;margin-top:4px;font-weight:500}
+.post-category{display:inline-block;background:#e7f3ff;color:#1877f2;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;margin:12px 16px 0;border:1px solid #d0e4ff}
+.post-content{margin:10px 16px 12px;font-size:16px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;color:#1c1e21;font-weight:500}
+.post-image{width:calc(100% - 32px);margin:0 16px;max-height:450px;object-fit:cover;border-radius:14px}
+.post-voice{margin:10px 16px;background:#f0f2f5;padding:10px;border-radius:12px}
+.post-voice audio{width:100%}
+.post-actions{border-top:1px solid #f0f2f5;padding:10px 16px 12px;flex-wrap:nowrap;justify-content:space-between;gap:8px;display:flex}
+.post-actions button{flex:1;min-width:0;padding:9px 3px;font-size:13px;background:#f8f9fb!important;color:#4b4f56!important;font-weight:700;border-radius:12px;border:1px solid #eef2f7;cursor:pointer}
+.post-actions button:hover{background:#eef4ff!important;color:#1877f2!important;border-color:#d0e4ff}
+.delete-post-btn{background:#fff5f5!important;color:#e41e3f!important;border-color:#ffe1e1!important}
+
 .role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle}
 .role-creator{background:#fff0c2;color:#875500}.role-senior{background:#dbeafe;color:#1d4ed8}.role-fire{background:#ffedd5;color:#c2410c}
 .post-date{font-size:12px;color:#65676b;margin-top:2px}
@@ -216,15 +241,105 @@ textarea:focus,input:focus,select:focus{background:#e4e6eb}
 .reaction-activity-line.like{color:#31a24c}
 .reaction-activity-line.dislike{color:#e41e3f}
 button:disabled{opacity:.6;cursor:wait}
+
+/* ===== THEME TOGGLE - Light = Pure White, Dark = Pure Black ===== */
+html[data-theme="dark"]{
+  --page-bg:#000000;
+  --app-bg:#000000;
+  --surface:#0f0f0f;
+  --surface-soft:#1a1a1a;
+  --surface-soft-2:#1a1a1a;
+  --text:#ffffff;
+  --muted:#a8a8a8;
+  --border:#262626;
+  --input-border:#333333;
+  --accent:#1877f2;
+  --accent-text:#4aa3ff;
+  --shadow:0 1px 2px rgba(255,255,255,0.08);
+  --nav-shadow:0 -1px 0 #262626;
+  color-scheme:dark;
+}
+html[data-theme="dark"] body{background:#000!important;color:#fff!important}
+html[data-theme="dark"] .app{background:#000!important}
+html[data-theme="dark"] .header{background:#000!important;color:#fff!important;border-bottom:1px solid #262626!important;box-shadow:none!important}
+html[data-theme="dark"] .logo{color:#1877f2!important}
+html[data-theme="dark"] .header-buttons button{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .header-buttons button:hover{background:#262626!important}
+html[data-theme="dark"] .online-section,
+html[data-theme="dark"] .welcome,
+html[data-theme="dark"] .create-box,
+html[data-theme="dark"] .post,
+html[data-theme="dark"] .stories-section,
+html[data-theme="dark"] .points-panel{background:#0f0f0f!important;border:1px solid #262626!important;box-shadow:none!important;color:#fff!important}
+html[data-theme="dark"] .online-title,
+html[data-theme="dark"] .welcome b,
+html[data-theme="dark"] .stories-heading,
+html[data-theme="dark"] .composer-title,
+html[data-theme="dark"] .feed-header h3,
+html[data-theme="dark"] .post-author-name,
+html[data-theme="dark"] .post-content,
+html[data-theme="dark"] .story-label,
+html[data-theme="dark"] .story-tile{color:#fff!important}
+html[data-theme="dark"] .welcome div[style*="color:#65676b"],
+html[data-theme="dark"] .post-date,
+html[data-theme="dark"] .points-note{color:#a8a8a8!important}
+html[data-theme="dark"] .online-user{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select{background:#1a1a1a!important;color:#fff!important;border-color:#333!important}
+html[data-theme="dark"] textarea::placeholder,
+html[data-theme="dark"] input::placeholder{color:#888!important}
+html[data-theme="dark"] .create-box textarea{background:#1a1a1a!important}
+html[data-theme="dark"] .create-box .create-actions{border-top-color:#262626!important}
+html[data-theme="dark"] .create-box .create-actions .voice-btn,
+html[data-theme="dark"] .create-box .create-actions .upload-btn{background:transparent!important;color:#a8a8a8!important}
+html[data-theme="dark"] .composer-icon{background:#1a2f4a!important;color:#4aa3ff!important}
+html[data-theme="dark"] .story-ring{background:#000!important;border-color:#1877f2!important}
+html[data-theme="dark"] .story-ring.seen{border-color:#555!important}
+html[data-theme="dark"] .story-add .story-ring{background:#1a1a1a!important}
+html[data-theme="dark"] .story-add .story-avatar{background:#1a2f4a!important}
+html[data-theme="dark"] .post-category{background:#1a2f4a!important;color:#4aa3ff!important;border-color:#2a4a7a!important}
+html[data-theme="dark"] .post-actions{border-top-color:#262626!important}
+html[data-theme="dark"] .post-actions button{background:#1a1a1a!important;color:#e4e6eb!important;border-color:#262626!important}
+html[data-theme="dark"] .post-actions button:hover{background:#262626!important;color:#4aa3ff!important}
+html[data-theme="dark"] .post-actions .delete-post-btn{background:#2a0f0f!important;color:#ff6b6b!important;border-color:#3a1a1a!important}
+html[data-theme="dark"] .post-voice{background:#1a1a1a!important}
+html[data-theme="dark"] .comment-item{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .comments{border-top-color:#262626!important}
+html[data-theme="dark"] .comment-input-row input{background:#1a1a1a!important}
+html[data-theme="dark"] .reaction-activity{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .bottom-nav{background:#000!important;border-top:1px solid #262626!important}
+html[data-theme="dark"] .bottom-nav button{color:#a8a8a8!important}
+html[data-theme="dark"] .bottom-nav button.active{color:#1877f2!important}
+html[data-theme="dark"] .popup-content{background:#0f0f0f!important;color:#fff!important;border:1px solid #262626!important}
+html[data-theme="dark"] .popup-head button{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .share-option,
+html[data-theme="dark"] .cancel-share{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .story-list-tabs button{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .story-list-tabs button.active{background:#1877f2!important}
+html[data-theme="dark"] .story-view-row,
+html[data-theme="dark"] .like-user,
+html[data-theme="dark"] .points-row,
+html[data-theme="dark"] .story-reply-row{border-bottom-color:#262626!important}
+html[data-theme="dark"] .post-menu-btn{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .post-menu-dropdown{background:#1a1a1a!important;border-color:#333!important;box-shadow:0 8px 24px rgba(0,0,0,0.8)!important}
+html[data-theme="dark"] .post-menu-dropdown button{color:#fff!important}
+html[data-theme="dark"] .post-menu-dropdown button:hover{background:#262626!important}
+html[data-theme="dark"] .theme-toggle{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .user-actions button{background:#1a1a1a!important;color:#fff!important}
+html[data-theme="dark"] .avatar{border-color:#000!important}
+html[data-theme="light"]{color-scheme:light}
+html[data-theme="light"] body{background:#f0f2f5!important}
+
 </style>
 </head>
 <body>
 <div class="app">
-<header class="header"><div class="header-top"><div class="logo">ChatZone</div><div class="header-buttons"><button onclick="showTrending()">🔥 Trending</button><button onclick="showShare()">📤 Share</button><button id="starsButton" onclick="goStars()">⭐</button><button id="notificationButton" onclick="goNotifications()" style="position:relative" aria-label="Notifications">🔔<span id="notificationBadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;background:#e41e3f;color:#fff;border-radius:20px;font-size:10px;line-height:18px;text-align:center">0</span></button></div></div></header>
+<header class="header"><div class="header-top"><div class="logo">ChatZone</div><div class="header-buttons"><button onclick="showShare()">📤 Share</button><button id="notificationButton" onclick="goNotifications()" style="position:relative" aria-label="Notifications">🔔<span id="notificationBadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;background:#e41e3f;color:#fff;border-radius:20px;font-size:10px;line-height:18px;text-align:center">0</span></button><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme" title="Dark / Light">🌙</button></div></div></header>
 <div id="homeView">
 <section class="online-section"><div class="online-title">🟢 <span id="onlineCount">0</span> Users Online</div><div id="onlineUsers" class="online-users">Connecting to online users…</div></section>
 
-<div class="welcome"><div><div style="font-weight:700;font-size:16px">Welcome to ChatZone</div><div style="font-size:13px;color:#65676b;margin-top:2px">Connect, chat, and share with friends.</div></div></div>
+<div class="welcome"><div><div style="font-weight:700;font-size:16px">Welcome to ChatZone</div><div style="font-size:13px;color:#65676b;margin-top:2px">Connect, chat, and share with friends.</div></div><button class="join-btn">Join</button></div>
 
 <!-- Stories rail -->
 <section class="stories-section">
@@ -297,7 +412,7 @@ function $(id){return document.getElementById(id)}
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function escJs(v){return String(v??"").replaceAll("\\","\\\\").replaceAll("'","\\'").replaceAll("\n","\\n").replaceAll("\r","")}
 function timeout(p,ms=9000){let timer;return Promise.race([p,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error("Request timed out. Check internet or Supabase settings.")),ms)})]).finally(()=>clearTimeout(timer))}
-function applyTheme(theme){const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}const b=$("themeToggle");if(b){b.textContent=chosen==="dark"?"☀️":"🌙";b.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";b.setAttribute("aria-label",b.title)}const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=chosen==="dark"?"#242526":"#1877f2"}
+function applyTheme(theme){const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}const b=$("themeToggle");if(b){b.textContent=chosen==="dark"?"☀️":"🌙";b.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";b.setAttribute("aria-label",b.title)}const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=chosen==="dark"?"#000000":"#1877f2"}
 function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")}
 try{applyTheme(localStorage.getItem("chatzone-theme")||"light")}catch(e){applyTheme("light")}
 function formatDate(v){if(!v)return "";const d=new Date(v);if(Number.isNaN(d.getTime()))return "";const s=Math.max(0,Math.floor((Date.now()-d.getTime())/1000));if(s<60)return "Just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" hr ago";return d.toLocaleDateString()}
@@ -307,7 +422,7 @@ async function loadUnreadNotificationCount(){if(!currentUser)return;try{const re
 function startNotifications(){if(!currentUser)return;loadUnreadNotificationCount();if(notificationChannel)supabaseClient.removeChannel(notificationChannel);notificationChannel=supabaseClient.channel("chatzone-notifications-"+currentUser.id).on("postgres_changes",{event:"*",schema:"public",table:"notifications",filter:"user_id=eq."+currentUser.id},()=>loadUnreadNotificationCount()).subscribe(status=>{if(status==="SUBSCRIBED")loadUnreadNotificationCount()})}
 async function init(){$("feed").innerHTML='<div class="loading">Checking your login…</div>';try{if(!window.supabase)throw Error("Supabase library did not load. Refresh the page or check your internet.");const r=await timeout(supabaseClient.auth.getSession(),10000);if(r.error)throw r.error;currentUser=r.data?.session?.user||null;if(currentUser)startNotifications();if(!currentUser){$("feed").innerHTML='<div class="empty">Please log in to open Home.<br><button onclick="location.href=\'login.html\'">Open Login</button></div>';return}$("feed").innerHTML='<div class="loading">Loading feed…</div>';await loadFeed();await loadPointsBoard();loadOnlineUsers().catch(e=>console.warn("Online:",e));loadStories().catch(e=>console.warn("Stories:",e))}catch(e){console.error("ChatZone startup:",e);$("feed").innerHTML='<div class="empty">ChatZone could not start: '+esc(e.message||"Unknown error")+'<br><button onclick="init()">Try again</button></div>';$("onlineUsers").textContent="Online status unavailable"}}
 async function loadPointsBoard(){if(!currentUser)return;try{const r=await timeout(supabaseClient.from("member_points").select("user_id,points").eq("user_id",currentUser.id).maybeSingle(),7000);if(r.error)throw r.error;$("myPoints").textContent=Number(r.data?.points||0).toLocaleString()}catch(e){$("myPoints").textContent="—";console.warn("Points board:",e)}}
-async function showStars(){$("starsBox").style.display="block";$("starsList").textContent="Loading top scorers…";try{const r=await timeout(supabaseClient.from("member_points").select("user_id,points").order("points",{ascending:false}).limit(10),8000);if(r.error)throw r.error;const rows=(r.data||[]).filter(x=>Number(x.points||0)>0);if(!rows.length){$("starsList").innerHTML='<div class="empty">Abhi top scorers nahi hain.</div>';return}const ids=rows.map(x=>x.user_id),p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),8000);if(p.error)throw p.error;const map={};(p.data||[]).forEach(x=>map[x.id]=x);$("starsList").innerHTML=rows.map((x,i)=>{const u=map[x.user_id]||{},name=u.name||u.username||"Member";return '<div class="points-row"><span style="font-weight:bold;width:28px">'+(["🥇","🥈","🥉"][i]||("#"+(i+1)))+'</span>'+(u.avatar_url?'<img class="like-user-avatar" src="'+esc(u.avatar_url)+'" alt="" onerror="this.style.display=\'none\'">' : '<span class="like-user-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="points-name"><b>'+esc(name)+'</b><br><small>@'+esc(u.username||"member")+'</small></span><span class="points-value">'+Number(x.points||0).toLocaleString()+' pts</span></div>'}).join("")}catch(e){$("starsList").innerHTML='<div class="empty">Top scorers load nahi huay: '+esc(e.message)+'<br><button onclick="showStars()">Try again</button></div>'}}
+async function showStars(){$("starsBox").style.display="block";$("starsList").textContent="Loading top scorers…";try{const r=await timeout(supabaseClient.from("member_points").select("user_id,points").order("points",{ascending:false}).limit(10),8000);if(r.error)throw r.error;const rows=(r.data||[]).filter(x=>Number(x.points||0)>0);if(!rows.length){$("starsList").innerHTML='<div class="empty">Abhi top scorers nahi hain.</div>';return}const ids=rows.map(x=>x.user_id),p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),8000);if(p.error)throw p.error;const map={};(p.data||[]).forEach(x=>map[x.id]=x);$("starsList").innerHTML=rows.map((x,i)=>{const u=map[x.user_id]||{},name=u.name||u.username||"Member";return '<div class="points-row"><span style="font-weight:bold;width:28px">'+(["🥇","🥈","🥉"][i]||("#"+(i+1)))+'</span>'+(u.avatar_url?'<img class="like-user-avatar" src="'+esc(u.avatar_url)+'" alt="" onerror="this.style.display=\'none\'">' : '<span class="like-user-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="points-name"><b>'+esc(name)+'</b><br><small>@'+esc(u.username||"member")+'</small></span><span class="points-value">'+Number(x.points||0).toLocaleString()+'&nbsp;pts</span></div>'}).join("")}catch(e){$("starsList").innerHTML='<div class="empty">Top scorers load nahi huay: '+esc(e.message)+'<br><button onclick="showStars()">Try again</button></div>'}}
 async function loadOnlineUsers(){if(!currentUser)return;try{const pr=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").eq("id",currentUser.id).maybeSingle(),7000);if(pr.error)throw pr.error;const p=pr.data||{};if(onlineChannel){try{await supabaseClient.removeChannel(onlineChannel)}catch(e){}}onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});onlineChannel.on("presence",{event:"sync"},renderOnline).on("presence",{event:"join"},renderOnline).on("presence",{event:"leave"},renderOnline).subscribe(async s=>{if(s==="SUBSCRIBED"){try{await onlineChannel.track({user_id:currentUser.id,username:p.username||"",name:p.name||"",avatar_url:p.avatar_url||"",online_at:new Date().toISOString(),page:"home"});renderOnline()}catch(e){console.warn("Presence track:",e);$("onlineUsers").textContent="Online status unavailable"}}else if(s==="CHANNEL_ERROR"||s==="TIMED_OUT"||s==="CLOSED")$("onlineUsers").textContent="Online status unavailable"});setTimeout(()=>{if($("onlineUsers").textContent==="Connecting to online users…")$("onlineUsers").textContent="No other users shown yet"},10000)}catch(e){console.warn("Online presence:",e);$("onlineUsers").textContent="Online status unavailable"}}
 async function renderOnline(){if(!onlineChannel||!currentUser)return;try{const state=onlineChannel.presenceState(),users=new Map();Object.entries(state).forEach(([key,list])=>(list||[]).forEach(item=>{const id=item.user_id||key,old=users.get(id)||{};users.set(id,{...old,...item,user_id:id})}));if(!users.has(currentUser.id))users.set(currentUser.id,{user_id:currentUser.id});const ids=[...users.keys()],r=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),7000),profiles={};if(!r.error)(r.data||[]).forEach(p=>profiles[p.id]=p);$("onlineCount").textContent=ids.length;$("onlineUsers").innerHTML=ids.map(id=>{const presence=users.get(id)||{},p=profiles[id]||{},username=p.username||presence.username||p.name||presence.name||"Member",avatar=p.avatar_url||presence.avatar_url||"";return '<div class="online-user" onclick="openProfile(\''+escJs(id)+'\')">'+(avatar?'<img class="online-user-avatar" src="'+esc(avatar)+'" alt="" onerror="this.style.display=\'none\'">' : '<span class="online-user-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="online-dot"></span><span>'+esc(username)+'</span></div>'}).join("")||"No users online"}catch(e){console.warn("Render online:",e)}}
 function openProfile(id){if(id===currentUser?.id){goProfile();return}location.href="profile.html?user="+encodeURIComponent(id)}
@@ -315,7 +430,28 @@ async function loadFeed(){if(!currentUser){showFeedError("Login session missing.
 async function loadReactionActivities(postIds){if(!currentUser||!postIds.length)return;try{let r=await timeout(supabaseClient.from("post_actions").select("post_id,user_id,action_type,created_at").in("post_id",postIds).order("created_at",{ascending:false}),8000);if(r.error)r=await timeout(supabaseClient.from("post_actions").select("post_id,user_id,action_type").in("post_id",postIds),8000);if(r.error)throw r.error;const rows=r.data||[],actorIds=[...new Set(rows.map(x=>x.user_id).filter(Boolean))],users={};if(actorIds.length){const p=await timeout(supabaseClient.from("profiles").select("id,username,name").in("id",actorIds),8000);if(!p.error)(p.data||[]).forEach(x=>users[x.id]=x)}postIds.forEach(id=>reactionActivityMap[id]=[]);rows.forEach(x=>{if(!reactionActivityMap[x.post_id])reactionActivityMap[x.post_id]=[];if(reactionActivityMap[x.post_id].some(a=>a.user_id===x.user_id))return;const u=users[x.user_id]||{};reactionActivityMap[x.post_id].push({user_id:x.user_id,username:u.username||u.name||"Member",action_type:x.action_type})})}catch(e){console.warn("Reaction activity could not load:",e.message)}}
 function reactionPointsForOwner(ownerId){const roles=roleMap[ownerId]||[];return (String(ownerId)===CREATOR_ID||String(ownerId)===SENIOR_ID||roles.some(x=>["admin","senior_admin","creator","fire","fire_badge"].includes(x)))?500:20}
 function renderReactionActivity(postId){const rows=reactionActivityMap[postId]||[],post=currentPosts.find(p=>String(p.id)===String(postId));if(!rows.length)return "";const points=reactionPointsForOwner(post?.user_id);return '<div class="reaction-activity" aria-label="Post reaction activity">'+rows.map(x=>'<div class="reaction-activity-line '+(x.action_type==="like"?"like":"dislike")+'">@'+esc(x.username)+' ne aapki post '+(x.action_type==="like"?'like ki (+'+points+')':'dislike ki (-'+points+')')+'</div>').join("")+'</div>'}
-function renderPost(p,c={like:0,dislike:0},cc=0,prefix=""){const pr=profileMap[p.user_id]||{},u=pr.username||"Member",name=pr.name||pr.username||"Member",own=p.user_id===currentUser?.id,action=myActions[p.id];return '<article class="post" id="post-'+prefix+p.id+'"><div class="post-head"><div class="user-info">'+(pr.avatar_url?'<img class="avatar" src="'+esc(pr.avatar_url)+'" alt="" onclick="openProfile(\''+escJs(p.user_id)+'\')" onerror="this.style.visibility=\'hidden\'">' : '<div class="avatar" style="display:grid;place-items:center" onclick="openProfile(\''+escJs(p.user_id)+'\')">👤</div>')+'<div><div class="user-name" onclick="openProfile(\''+escJs(p.user_id)+'\')"><span class="post-author-name">'+esc(name)+'</span> '+getRoleBadge(p.user_id,pr.username)+' <span style="font-size:10px;background:#f0f2f5;color:#65676b;border-radius:8px;padding:3px 6px">⭐ '+Number(pointsMap[p.user_id]||0)+' pts</span>'+(pr.username?'<small> @'+esc(pr.username)+'</small>':'')+'</div><div class="post-date">'+formatDate(p.created_at)+'</div></div></div>'+(own?'':'<button onclick="blockUser(\''+escJs(p.user_id)+'\')" style="border:0;background:#f0f2f5;width:30px;height:30px;border-radius:50%">⋮</button>')+'</div>'+(p.category?'<div class="post-category">#'+esc(p.category)+'</div>':'')+(p.content?'<div class="post-content">'+esc(p.content)+'</div>':'')+(p.image_url?'<img class="post-image" src="'+esc(p.image_url)+'" loading="lazy" alt="Post image">':'')+(p.voice_url?'<div class="post-voice"><audio controls src="'+esc(p.voice_url)+'"></audio></div>':'')+'<div class="post-actions"><button class="like-btn" style="'+(action==="like"?'color:#1877f2!important;font-weight:700;':'')+'" onclick="setPostAction('+p.id+',\'like\')">❤️ Like '+c.like+'</button><button class="dislike-btn" style="'+(action==="dislike"?'color:#e41e3f!important;':'')+'" onclick="setPostAction('+p.id+',\'dislike\')">👎 Dislike '+c.dislike+'</button><button class="comment-btn" onclick="toggleComments('+p.id+',\''+prefix+'\')">💬 '+cc+'</button>'+(own?'<button class="comment-btn" onclick="editPost('+p.id+')">✏️ Edit</button><button class="delete-post-btn" onclick="deletePost('+p.id+')">🗑 Delete</button>':'<button onclick="replyPost(\''+escJs(u)+'\')">↩ Reply</button>')+'</div>'+(own?'':'<div class="user-actions"><button class="report-btn" onclick="reportPost('+p.id+',\''+escJs(p.user_id)+'\')">🚩 Report</button><button onclick="toggleFollow(\''+escJs(p.user_id)+'\')">'+(followMap[p.user_id]?'✅ Following':'➕ Follow')+'</button><button class="block-btn" onclick="blockUser(\''+escJs(p.user_id)+'\')">🚫 Block</button></div>')+renderReactionActivity(p.id)+'<div class="comments" id="comments-'+prefix+p.id+'"><div id="clist-'+prefix+p.id+'">Tap comments to load.</div><div class="comment-input-row"><input id="cin-'+prefix+p.id+'" placeholder="Write a comment..." onkeydown="if(event.key===\'Enter\')addComment('+p.id+',\''+prefix+'\')"><button onclick="addComment('+p.id+',\''+prefix+'\')">Send</button></div></div></article>'}
+function togglePostMenu(postId, prefix){
+  const id = "menu-" + prefix + postId;
+  const el = $(id);
+  if(!el) return;
+  const wasOpen = el.classList.contains("open");
+  document.querySelectorAll(".post-menu-dropdown.open").forEach(d=>d.classList.remove("open"));
+  if(!wasOpen) el.classList.add("open");
+}
+document.addEventListener("click", function(e){
+  if(!e.target.closest(".post-menu")){
+    document.querySelectorAll(".post-menu-dropdown.open").forEach(d=>d.classList.remove("open"));
+  }
+});
+function sharePost(id){
+  const post = currentPosts.find(p=>String(p.id)===String(id));
+  const text = post ? (post.content || "Check this post on ChatZone!") : "Check this post on ChatZone!";
+  const url = location.origin + location.pathname + "?post=" + id;
+  if(navigator.share){ navigator.share({title:"ChatZone Post", text:text, url:url}).catch(()=>{}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(url+" - "+text).then(()=>alert("Post link copy ho gaya!")); }
+  else { prompt("Post link copy karein:", url); }
+}
+function renderPost(p,c={like:0,dislike:0},cc=0,prefix=""){const pr=profileMap[p.user_id]||{},u=pr.username||"Member",name=pr.name||pr.username||"Member",own=p.user_id===currentUser?.id,action=myActions[p.id];return '<article class="post" id="post-'+prefix+p.id+'"><div class="post-head"><div class="user-info">'+(pr.avatar_url?'<img class="avatar" src="'+esc(pr.avatar_url)+'" alt="" onclick="openProfile(\''+escJs(p.user_id)+'\')" onerror="this.style.visibility=\'hidden\'">' : '<div class="avatar" style="display:grid;place-items:center" onclick="openProfile(\''+escJs(p.user_id)+'\')">👤</div>')+'<div><div class="user-name" onclick="openProfile(\''+escJs(p.user_id)+'\')"><span class="post-author-name">'+esc(name)+'</span> '+getRoleBadge(p.user_id,pr.username)+' <span class="pts-badge" style="font-size:11px;background:#fff8e1;color:#b45309;border:1px solid #ffe9a8;border-radius:20px;padding:4px 8px;font-weight:700;white-space:nowrap;display:inline-flex">⭐ '+Number(pointsMap[p.user_id]||0)+'&nbsp;pts</span>'+(pr.username?'<small> @'+esc(pr.username)+'</small>':'')+'</div><div class="post-date">'+formatDate(p.created_at)+'</div></div></div>'+(own?'<div class="post-menu"><button class="post-menu-btn" onclick="event.stopPropagation();togglePostMenu('+p.id+',\''+prefix+'\')">⋮</button><div class="post-menu-dropdown" id="menu-'+prefix+p.id+'"><button onclick="togglePostMenu('+p.id+',\''+prefix+'\');editPost('+p.id+')">✏️ Edit Post</button></div></div>':'')+'</div>'+(p.category?'<div class="post-category">#'+esc(p.category)+'</div>':'')+(p.content?'<div class="post-content">'+esc(p.content)+'</div>':'')+(p.image_url?'<img class="post-image" src="'+esc(p.image_url)+'" loading="lazy" alt="Post image">':'')+(p.voice_url?'<div class="post-voice"><audio controls src="'+esc(p.voice_url)+'"></audio></div>':'')+'<div class="post-actions">'+(own?'<button class="comment-btn" onclick="toggleComments('+p.id+',\''+prefix+'\')">💬 '+cc+'</button><button class="share-btn" onclick="sharePost('+p.id+')">↗️ Share</button><button class="delete-post-btn" onclick="deletePost('+p.id+')">🗑 Delete</button>':'<button class="like-btn" style="'+(action==="like"?'color:#1877f2!important;font-weight:700;':'')+'" onclick="setPostAction('+p.id+',\'like\')">❤️ Like '+c.like+'</button><button class="dislike-btn" style="'+(action==="dislike"?'color:#e41e3f!important;':'')+'" onclick="setPostAction('+p.id+',\'dislike\')">👎 Dislike '+c.dislike+'</button><button class="comment-btn" onclick="toggleComments('+p.id+',\''+prefix+'\')">💬 '+cc+'</button><button class="share-btn" onclick="sharePost('+p.id+')">↗️ Share</button>')+'</div>'+renderReactionActivity(p.id)+'<div class="comments" id="comments-'+prefix+p.id+'"><div id="clist-'+prefix+p.id+'">Tap comments to load.</div><div class="comment-input-row"><input id="cin-'+prefix+p.id+'" placeholder="Write a comment..." onkeydown="if(event.key===\'Enter\')addComment('+p.id+',\''+prefix+'\')"><button onclick="addComment('+p.id+',\''+prefix+'\')">Send</button></div></div></article>'}
 function updateTrending(){const eligible=currentPosts.filter(p=>(postActionCounts[p.id]?.like||0)>=4);const a=eligible.sort((x,y)=>(postActionCounts[y.id]?.like||0)-(postActionCounts[x.id]?.like||0)).slice(0,10);$("trendingList").innerHTML=a.map(p=>renderPost(p,postActionCounts[p.id]||{like:0,dislike:0},postCommentCounts[p.id]||0,"trend-")).join("")||'<div class="empty">Abhi 4 likes wali koi post nahi.</div>'}
 function showTrending(){$("trendingBox").style.display="block"}function closePopup(id){$(id).style.display="none"}function showShare(){$("shareBox").style.display="block";$("textPostForm").style.display="none";$("imagePostForm").style.display="none"}function closeShare(){$("shareBox").style.display="none"}function showTextPost(){$("textPostForm").style.display="block";$("imagePostForm").style.display="none"}function showImagePost(){$("shareBox").style.display="block";$("imagePostForm").style.display="block";$("textPostForm").style.display="none"}
 async function createPost(){if(!currentUser)return alert("Please log in again.");const content=$("postText").value.trim();if(!content)return alert("Please write a post first.");const b=document.querySelector(".send-post-btn");if(b)b.disabled=true;try{const r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"text"}),10000);if(r.error)throw r.error;$("postText").value="";await loadFeed();await loadPointsBoard()}catch(e){alert("Could not publish: "+e.message)}finally{if(b)b.disabled=false}}
