@@ -111,15 +111,21 @@ function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt
 function formatDate(v){if(!v)return "";const d=new Date(v);const s=Math.max(0,Math.floor((Date.now()-d.getTime())/1000));if(s<60)return "Just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" hr ago";return d.toLocaleDateString()}
 function timeout(p,ms=9000){let timer;return Promise.race([p,new Promise((_,rej)=>{timer=setTimeout(()=>rej(Error("Request timed out. Check internet / Supabase.")),ms)})]).finally(()=>clearTimeout(timer))}
 async function init(){
+  // WATCHDOG: agar 6 sec me feed load na ho to khud Try Again dikhao, kabhi atka hua nahi rahega
+  setTimeout(()=>{
+    const f=$("feed");
+    if(f && f.textContent.includes("Loading feed") || (f && f.textContent.includes("Checking your login"))){
+      f.innerHTML='<div class="empty">Loading slow lag rahi hai.<br>Net / Supabase slow hai.<br><button onclick="location.reload()">🔄 Reload</button> <button onclick="loadFeed()">Try Feed Again</button><br><small style="color:#999">Agar bar bar aaye to Supabase > Authentication > Users me check karo login bana hua hai ya nahi.</small></div>';
+    }
+  },6000);
   $("feed").innerHTML='<div class="loading">Checking your login…</div>';
   try{
-    const r=await timeout(supabaseClient.auth.getSession(),10000);
+    const r=await timeout(supabaseClient.auth.getSession(),8000);
     if(r.error) throw r.error;
     currentUser=r.data?.session?.user||null;
     if(!currentUser){ $("feed").innerHTML='<div class="empty">Please log in to open Home.<br><button onclick="location.href=\'login.html\'">Open Login</button></div>'; return; }
-    await loadFeed();
-    loadStories().catch(()=>{});
-    loadOnlineUsers().catch(()=>{});
+    // FIX: teeno ko parallel chalao, ek atke to dusra na ruke. Pehle feed, stories, online ek sath.
+    await Promise.allSettled([loadFeed(), loadStories(), loadOnlineUsers()]);
   }catch(e){ console.error(e); showJsError('ChatZone could not start: '+(e.message||e)); }
 }
 async function loadFeed(){
