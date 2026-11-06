@@ -20,6 +20,105 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}.topbar{p
 #feed .post{width:100%;max-width:none}
 .post-actions button{white-space:nowrap}
 @media(max-width:380px){.post-actions button{font-size:14px;padding:10px 12px}.post{padding:16px 13px}}
+
+/* ChatZone phone layout: normal 1x scale, vertical feed, no oversized cards */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+body {
+  zoom: 1;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap, #feed, .panel, .post {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+#feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.post-image, video, audio {
+  max-width: 100%;
+}
+@media (max-width: 600px) {
+  .topbar {
+    min-height: 64px;
+    height: 64px;
+    padding: 7px 9px;
+    gap: 7px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .brand {
+    font-size: 16px;
+    margin-right: 2px;
+  }
+  .top-actions { gap: 5px; }
+  .top-btn {
+    height: 42px;
+    min-width: 42px;
+    padding: 0 9px;
+    border-radius: 13px;
+    font-size: 15px;
+  }
+  .top-btn.wide {
+    font-size: 11px;
+    padding: 0 9px;
+  }
+  .wrap {
+    padding: 12px 10px 18px;
+  }
+  .panel {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 22px;
+  }
+  .online-title { font-size: 18px; margin-bottom: 12px; }
+  .online-user { font-size: 14px; padding: 7px 10px; gap: 7px; }
+  .avatar { width: 44px; height: 44px; border-width: 3px; }
+  .welcome { font-size: 19px; padding: 17px 8px; }
+  .section-title { font-size: 19px; margin-bottom: 13px; }
+  .stories { gap: 13px; padding-bottom: 7px; }
+  .story { flex: 0 0 82px; }
+  .story-ring { width: 78px; height: 78px; padding: 4px; margin-bottom: 6px; }
+  .story-name { font-size: 13px; }
+  .composer { padding: 15px; }
+  .composer-head { gap: 11px; margin-bottom: 16px; }
+  .compose-icon { width: 54px; height: 54px; border-radius: 17px; font-size: 27px; }
+  .composer h2 { font-size: 20px; }
+  textarea {
+    min-height: 145px;
+    padding: 17px;
+    border-radius: 22px;
+    font-size: 16px;
+  }
+  .composer-actions { gap: 7px; }
+  .action-btn { padding: 10px 12px; font-size: 13px; }
+  .feed-title { font-size: 21px; margin: 18px 4px 12px; }
+  .post { padding: 15px; margin-bottom: 15px; }
+  .post-head .avatar { width: 42px; height: 42px; }
+  .post-name { font-size: 15px; }
+  .post-time { font-size: 11px; }
+  .post-text { font-size: 16px; line-height: 1.5; margin: 13px 0; }
+  .post-actions { gap: 7px; padding-top: 10px; }
+  .post-actions button { padding: 9px 11px; font-size: 13px; border-radius: 17px; }
+  .bottom-nav {
+    padding: 6px 5px calc(6px + env(safe-area-inset-bottom));
+    gap: 2px;
+  }
+  .nav-item { min-height: 62px; font-size: 11px; border-radius: 14px; }
+  .nav-item span:first-child { font-size: 18px; }
+}
+@media (max-width: 360px) {
+  .brand { font-size: 14px; }
+  .top-btn.wide { font-size: 10px; }
+  .post-actions button { padding: 8px 9px; font-size: 12px; }
+}
+
 </style>
 </head>
 <body>
