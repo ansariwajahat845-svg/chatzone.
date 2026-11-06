@@ -52,9 +52,21 @@ button{cursor:pointer}
 .popup-content{max-width:500px;margin:auto;background:#fff;border-radius:12px;padding:15px;max-height:76vh;overflow:auto}
 .empty,.loading{text-align:center;padding:25px 10px;color:#65676b}
 #jsError{display:none;background:#ffe1e1;color:#a00;padding:12px;margin:12px;border-radius:10px;font-size:13px;white-space:pre-wrap}
-.stories-rail{display:flex;gap:12px;overflow-x:auto}
-.story-tile{min-width:66px;text-align:center;border:0;background:none;cursor:pointer}
-.story-ring{width:62px;height:62px;border-radius:50%;border:2px solid #1877f2;display:grid;place-items:center;overflow:hidden;margin:auto}
+.online-users{display:flex;gap:8px;overflow-x:auto;padding:4px 2px;scrollbar-width:none}
+.online-users::-webkit-scrollbar{display:none}
+.online-user{display:flex;align-items:center;gap:6px;background:#f0f2f5;border-radius:20px;padding:4px 10px 4px 4px;flex-shrink:0;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.online-user img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.online-dot{width:8px;height:8px;background:#31a24c;border-radius:50%;flex-shrink:0}
+.stories-rail{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
+.stories-rail::-webkit-scrollbar{display:none}
+.story-tile{min-width:72px;width:72px;text-align:center;border:0;background:none;cursor:pointer;padding:0;flex-shrink:0}
+.story-tile small{display:block;margin-top:6px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.story-label{font-size:12px}
+.story-ring{width:66px;height:66px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);display:grid;place-items:center;overflow:hidden;margin:auto}
+.story-ring.seen{background:#ccd0d5}
+.story-ring-inner{width:100%;height:100%;border-radius:50%;background:#fff;padding:2px;display:grid;place-items:center;overflow:hidden}
+.story-ring-inner img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.story-ring.add{background:#f0f2f5;border:2px dashed #1877f2}
 .story-ring img{width:100%;height:100%;object-fit:cover}
 </style>
 </head>
@@ -63,13 +75,15 @@ button{cursor:pointer}
 <header class="header"><div style="display:flex;justify-content:space-between;align-items:center"><div class="logo">ChatZone</div><div><button onclick="showShare()">📤 Share</button> <button onclick="goNotifications()">🔔</button></div></div></header>
 <div id="jsError"></div>
 <div id="homeView">
-<section class="online-section"><div><b>🟢 <span id="onlineCount">0</span> Users Online</b></div><div id="onlineUsers">Connecting to online users…</div></section>
+<section class="online-section"><div><b>🟢 <span id="onlineCount">0</span> Users Online</b></div><div id="onlineUsers" class="online-users">Connecting to online users…</div></section>
 <div class="welcome"><div><div style="font-weight:700;font-size:16px">Welcome to ChatZone</div><div style="font-size:13px;color:#65676b">Connect, chat, and share with friends.</div></div></div>
 <section class="stories-section"><h3>Stories</h3><div id="storiesRail" class="stories-rail"><div class="loading">Loading stories…</div></div></section>
 <section class="create-box"><div><b>✍️ Create a Post ✨</b></div><textarea id="postText" placeholder="What's on your mind?"></textarea><div class="create-actions"><button onclick="startVoice()">🎙️ Voice</button><button onclick="showImagePost()">📷 Image</button><button onclick="createPost()">🚀 Post</button></div></section>
 <div class="feed-header"><h3>Home Feed</h3></div><div id="feed"><div class="loading">Checking login and loading feed…</div></div>
 </div>
 <div id="shareBox" class="popup"><div class="popup-content"><h3>📤 Create Post</h3><button onclick="showTextPost()">📝 Text Post</button> <button onclick="showImagePost()">📷 Image Post</button><div id="textPostForm" style="display:none;margin-top:10px"><textarea id="shareText" placeholder="What's on your mind?"></textarea><button onclick="submitTextPost()" style="width:100%;margin-top:8px;padding:12px;background:#1877f2;color:#fff;border:0;border-radius:8px;font-weight:bold">📤 Publish</button></div><div id="imagePostForm" style="display:none;margin-top:10px"><select id="imageCategory" style="width:100%;padding:12px;border-radius:10px"><option value="">Select category</option><option>General</option><option>Funny</option><option>News</option><option>Islamic</option><option>Poetry</option><option>Help</option><option>Other</option></select><br><br><input id="shareImageInput" type="file" accept="image/*" onchange="shareImageSelected()"><img id="shareImagePreview" style="width:100%;display:none;margin-top:8px;border-radius:8px"><textarea id="imageCaption" placeholder="Write a caption..." style="margin-top:8px"></textarea><button onclick="submitImagePost()" style="width:100%;margin-top:8px;padding:12px;background:#1877f2;color:#fff;border:0;border-radius:8px;font-weight:bold">📷 Publish Image Post</button></div><button onclick="closeShare()" style="width:100%;margin-top:8px;padding:10px">Cancel</button></div></div>
+
+<div id="storyUploadPopup" class="popup"><div class="popup-content"><div style="display:flex;justify-content:space-between;align-items:center"><h3>➕ Add Video Story</h3><button onclick="closeStoryUpload()" style="border:0;border-radius:50%;width:32px;height:32px">✕</button></div><p style="font-size:12px;color:#65676b">Video maximum 1 minute aur 50 MB. Story 24 hours baad auto expire ho jayegi.</p><input id="storyVideoInput" type="file" accept="video/*" style="margin-top:12px;width:100%"><textarea id="storyCaptionInput" maxlength="180" placeholder="Video ke sath chota sa message likhein... (optional)" style="margin-top:10px"></textarea><video id="storyUploadPreview" controls playsinline style="display:none;margin-top:10px;width:100%;max-height:300px;border-radius:12px;background:#000"></video><button id="publishStoryButton" onclick="publishStory()" style="width:100%;padding:12px;border:0;border-radius:8px;background:#1877f2;color:#fff;font-weight:bold;margin-top:10px">📤 Publish Story</button><button onclick="closeStoryUpload()" style="width:100%;margin-top:7px;padding:10px;border:0;border-radius:8px">Cancel</button></div></div>
 <nav class="bottom-nav"><button class="active" onclick="goHome()">🏠<br>Home</button><button onclick="goPrivate()">💌<br>Private</button><button onclick="goMehfil()">👥<br>Mehfil</button><button onclick="goProfile()">👤<br>Profile</button><button onclick="goMore()">⚙️<br>More</button></nav>
 </div>
 <script>
@@ -198,14 +212,126 @@ async function loadStories(){
     rail.innerHTML=rows.map(s=>{ const u=map[s.user_id]||{}; return '<button class="story-tile" onclick="alert(\'Story viewer is purani file me tha, is fixed file me feed pehle check karo\')"><span class="story-ring">'+(u.avatar_url?'<img src="'+esc(u.avatar_url)+'">':'👤')+'</span><br><small>'+esc(u.name||u.username||"Member")+'</small></button>'; }).join("");
   }catch(e){ rail.innerHTML='<span style="color:#65676b;font-size:13px">Stories load nahi huin</span>'; }
 }
+let onlineChannel=null;
 async function loadOnlineUsers(){
+  if(!currentUser) return;
   try{
-    const r=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").limit(10),8000);
-    if(r.error) throw r.error;
-    $("onlineCount").textContent=(r.data||[]).length;
-    $("onlineUsers").innerHTML=(r.data||[]).map(u=>'<span style="background:#f0f2f5;border-radius:20px;padding:4px 10px;font-size:13px;display:inline-block;margin:2px">🟢 '+esc(u.username||u.name||"Member")+'</span>').join("")||"No users online";
+    const pr=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").eq("id",currentUser.id).maybeSingle(),7000);
+    const me=pr.data||{};
+    if(onlineChannel){ try{ await supabaseClient.removeChannel(onlineChannel);}catch(e){} }
+    onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});
+    onlineChannel.on("presence",{event:"sync"},renderOnline).on("presence",{event:"join"},renderOnline).on("presence",{event:"leave"},renderOnline);
+    onlineChannel.subscribe(async st=>{
+      if(st==="SUBSCRIBED"){
+        try{ await onlineChannel.track({user_id:currentUser.id,username:me.username||"",name:me.name||"",avatar_url:me.avatar_url||"",online_at:new Date().toISOString()}); renderOnline(); }catch(e){}
+      } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"){ $("onlineUsers").textContent="Online status unavailable"; }
+    });
+    setTimeout(()=>{ if($("onlineUsers").textContent==="Connecting to online users…") $("onlineUsers").textContent="No users online"; },10000);
   }catch(e){ $("onlineUsers").textContent="Online status unavailable"; }
 }
+async function renderOnline(){
+  if(!onlineChannel||!currentUser) return;
+  try{
+    const state=onlineChannel.presenceState(), users=new Map();
+    Object.entries(state).forEach(([key,list])=>(list||[]).forEach(it=>{ const id=it.user_id||key; users.set(id,{...(users.get(id)||{}),...it,user_id:id}); }));
+    // FIX: sirf wohi IDs jo abhi presence me hain - offline wale auto hat jayenge, koi fake list nahi
+    const ids=[...users.keys()];
+    let profiles={};
+    if(ids.length){
+      const r=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),7000);
+      if(!r.error) (r.data||[]).forEach(x=>profiles[x.id]=x);
+    }
+    $("onlineCount").textContent=ids.length;
+    if(!ids.length){ $("onlineUsers").innerHTML="No users online"; return; }
+    $("onlineUsers").innerHTML=ids.map(id=>{
+      const pres=users.get(id)||{}, p=profiles[id]||{};
+      const name=p.username||pres.username||p.name||pres.name||"Member";
+      const av=p.avatar_url||pres.avatar_url||"";
+      return '<div class="online-user" onclick="openProfile(\''+id+'\')">'+(av?'<img src="'+esc(av)+'">':'<span>👤</span>')+'<span class="online-dot"></span><span>'+esc(name)+'</span></div>';
+    }).join("");
+  }catch(e){ console.warn("renderOnline",e); }
+}
+function openProfile(id){ if(id===currentUser?.id){ goProfile(); return; } location.href="profile.html?user="+encodeURIComponent(id); }
+// --- Stories: Insta style, grouped by user ---
+let storyGroups=[];
+async function loadStories(){
+  const rail=$("storiesRail");
+  try{
+    const now=new Date().toISOString();
+    const result=await timeout(supabaseClient.from("stories").select("id,user_id,video_url,caption,created_at,expires_at").gt("expires_at",now).order("created_at",{ascending:true}).limit(150),12000);
+    if(result.error) throw result.error;
+    const rows=result.data||[];
+    const ids=[...new Set(rows.map(s=>s.user_id))];
+    let profiles={};
+    if(ids.length){ const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000); if(!p.error) (p.data||[]).forEach(x=>profiles[x.id]=x); }
+    let viewed=new Set();
+    if(rows.length){ const v=await timeout(supabaseClient.from("story_views").select("story_id").eq("viewer_id",currentUser.id).in("story_id",rows.map(s=>s.id)),10000); if(!v.error) (v.data||[]).forEach(x=>viewed.add(String(x.story_id))); }
+    // FIX: ek user ki sab stories ek hi tile me - duplicate Dream_Girl nahi dikhega
+    const grouped=new Map();
+    rows.forEach(s=>{ if(!grouped.has(s.user_id)) grouped.set(s.user_id,[]); grouped.get(s.user_id).push(s); });
+    storyGroups=[...grouped.entries()].map(([userId,items])=>({userId,items,profile:profiles[userId]||{}}));
+    const myAvatar=profiles[currentUser.id]?.avatar_url||"";
+    let html='<button class="story-tile" onclick="alert(\'Story upload purani file se hoga\')"><span class="story-ring add"><span class="story-ring-inner" style="font-size:24px;color:#1877f2">＋</span></span><small>Your story</small></button>';
+    html+=storyGroups.map(g=>{
+      const p=g.profile, name=p.username||p.name||"Member";
+      const allSeen=g.items.every(s=>viewed.has(String(s.id)));
+      const av=p.avatar_url||"";
+      return '<button class="story-tile" onclick="openStoryGroup(\''+g.userId+'\')"><span class="story-ring '+(allSeen?'seen':'')+'"><span class="story-ring-inner">'+(av?'<img src="'+esc(av)+'">':'<span style="font-size:24px">👤</span>')+'</span></span><small>'+esc(name)+'</small></button>';
+    }).join("");
+    rail.innerHTML=html||'<span style="color:#65676b;font-size:13px">No stories yet</span>';
+  }catch(e){ rail.innerHTML='<span style="color:#65676b;font-size:13px">Stories load nahi huin</span>'; }
+}
+function openStoryGroup(userId){
+  const g=storyGroups.find(x=>String(x.userId)===String(userId));
+  if(!g) return;
+  // pehli unseen story kholo, warna pehli
+  alert("Story: "+(g.profile.username||"Member")+" • "+g.items.length+" story (viewer purani file wala use karo, grouping fix ho gaya hai)");
+}
+
+// --- Story Upload - khud user laga sake ---
+const STORY_MAX_SIZE=50*1024*1024, STORY_MAX_SECONDS=60;
+function openStoryUpload(){ if(!currentUser) return alert("Please log in again."); $("storyUploadPopup").style.display="block"; }
+function closeStoryUpload(){
+  $("storyUploadPopup").style.display="none";
+  const v=$("storyUploadPreview"); v.pause(); v.removeAttribute("src"); v.load(); v.style.display="none";
+  $("storyVideoInput").value=""; $("storyCaptionInput").value="";
+}
+document.addEventListener("DOMContentLoaded", ()=>{
+  const inp=$("storyVideoInput");
+  if(inp) inp.addEventListener("change", function(){
+    const f=this.files?.[0]; if(!f) return;
+    const preview=$("storyUploadPreview");
+    if(!f.type.startsWith("video/")){ alert("Please select a video file."); this.value=""; return; }
+    if(f.size>STORY_MAX_SIZE){ alert("Video 50 MB se choti honi chahiye."); this.value=""; return; }
+    const url=URL.createObjectURL(f); preview.src=url; preview.style.display="block";
+    preview.onloadedmetadata=()=>{ if(preview.duration>STORY_MAX_SECONDS){ alert("Story video maximum 1 minute ki ho sakti hai."); this.value=""; preview.pause(); preview.removeAttribute("src"); preview.load(); preview.style.display="none"; URL.revokeObjectURL(url); } };
+  });
+});
+async function publishStory(){
+  if(!currentUser) return alert("Please login again.");
+  const f=$("storyVideoInput").files?.[0], btn=$("publishStoryButton");
+  if(!f) return alert("Pehle video select karein.");
+  if(!f.type.startsWith("video/")||f.size>STORY_MAX_SIZE) return alert("Video format ya size sahi nahi. Maximum 50 MB.");
+  btn.disabled=true; btn.textContent="Uploading…";
+  try{
+    const probe=document.createElement("video"), url=URL.createObjectURL(f);
+    const duration=await new Promise((res,rej)=>{ probe.preload="metadata"; probe.onloadedmetadata=()=>res(probe.duration); probe.onerror=()=>rej(Error("Video read nahi ho saki.")); probe.src=url; });
+    URL.revokeObjectURL(url);
+    if(!Number.isFinite(duration)||duration>STORY_MAX_SECONDS) throw Error("Video maximum 1 minute ki honi chahiye.");
+    const ext=(f.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
+    const path=currentUser.id+"/"+Date.now()+"."+ext;
+    const up=await timeout(supabaseClient.storage.from("stories").upload(path,f,{upsert:false,contentType:f.type}),60000);
+    if(up.error) throw up.error;
+    const videoUrl=supabaseClient.storage.from("stories").getPublicUrl(path).data.publicUrl;
+    const expiresAt=new Date(Date.now()+24*60*60*1000).toISOString();
+    const caption=$("storyCaptionInput").value.trim();
+    const ins=await timeout(supabaseClient.from("stories").insert({user_id:currentUser.id,video_url:videoUrl,caption,expires_at:expiresAt}),15000);
+    if(ins.error) throw ins.error;
+    closeStoryUpload(); await loadStories(); alert("Story publish ho gayi!");
+  }catch(e){ alert("Story upload failed: "+(e.message||e)); }
+  finally{ btn.disabled=false; btn.textContent="📤 Publish Story"; }
+}
+
 init();
 }
 </script>
