@@ -1,248 +1,292 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#8b5cf6">
-<meta name="google-site-verification" content="mhEo4JUhhspflRW-XdA_XI_grR9fxNFalhk69ZGQ1eg">
-<meta name="description" content="Welcome to ChatZone 💬 — Connect with friends, chat privately, share posts and photos, explore Mehfil, follow trending topics, and earn points. Join the ChatZone community today!">
-<title>ChatZone 💬</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box}:root{--page-bg:linear-gradient(135deg,#f8f5ff,#e9ddff);--app-bg:#f8f5ff;--surface:#fff;--surface-soft:#f0e8ff;--surface-soft-2:#f7f5ff;--text:#352451;--muted:#76628e;--border:#e5d9ff;--input-border:#cbb8f4;--accent:#8b5cf6;--accent-2:#a78bfa;--accent-text:#7044bd;--shadow:0 4px 16px #5b37951a;--nav-shadow:0 -3px 14px #5b379514}
-html[data-theme="dark"]{color-scheme:dark;--page-bg:linear-gradient(135deg,#100d18,#1c1430);--app-bg:#171222;--surface:#211a30;--surface-soft:#302344;--surface-soft-2:#282036;--text:#f0e9ff;--muted:#b5a7cb;--border:#403054;--input-border:#59416f;--accent-text:#d5c2ff;--shadow:0 4px 16px #00000035;--nav-shadow:0 -3px 14px #00000035}
-html,body{margin:0;padding:0;width:100%;min-height:100%;overflow-x:hidden}body{font-family:Arial,sans-serif;background:var(--page-bg);color:var(--text);transition:background .2s,color .2s}.app{width:100%;max-width:680px;margin:auto;min-height:100vh;background:var(--app-bg);padding-bottom:82px}
-.header{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;padding:10px 7px;position:sticky;top:0;z-index:20}.header-top{display:flex;align-items:center;gap:6px}.logo{font-size:18px;font-weight:bold;white-space:nowrap}.header-buttons{display:flex;gap:4px;flex:1;justify-content:flex-end;min-width:0}.header-buttons button{flex:1;min-width:0;height:39px;border:1px solid #d8c7ff;background:#ede5ff;color:#59359a;border-radius:12px;padding:0 4px;font-size:11px;font-weight:bold;white-space:nowrap}
-.online-section,.welcome,.create-box,.post,.points-panel{background:var(--surface);margin:12px;padding:12px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow)}.online-title{font-size:13px;font-weight:bold;margin-bottom:8px}.online-users{display:flex;gap:8px;overflow:auto}.online-user{display:flex;align-items:center;gap:5px;background:var(--surface-soft);border-radius:22px;padding:4px 9px;flex-shrink:0;font-size:12px;cursor:pointer}.online-user-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0}.online-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;flex-shrink:0}.welcome{text-align:center;font-weight:bold}.points-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.points-title{font-weight:800;color:var(--accent-text)}.points-total{font-size:22px;font-weight:900;color:#a78bfa}.points-note{font-size:11px;color:var(--muted);margin-top:4px}
-textarea,input,select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--input-border);border-radius:12px;padding:11px;font:15px Arial;outline:none}textarea{min-height:78px;resize:vertical}textarea::placeholder,input::placeholder{color:var(--muted)}.create-actions,.post-actions,.user-actions,.comment-input-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.create-actions button,.post-actions button,.user-actions button,.comment-input-row button{border:0;border-radius:11px;padding:10px;background:var(--accent);color:white;font-weight:bold;cursor:pointer;min-height:38px}.create-actions button{flex:1}.upload-btn,.voice-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.feed-header{padding:0 12px}.feed-header h3{margin:8px 0}.post{margin:10px 12px}.post-head{display:flex;justify-content:space-between;align-items:center;gap:7px}.user-info{display:flex;align-items:center;gap:8px;min-width:0}.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0;cursor:pointer}.user-name{font-size:14px;font-weight:800;overflow-wrap:anywhere;cursor:pointer}.post-author-name{background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle;-webkit-text-fill-color:initial}.role-creator{background:#fff0c2;color:#875500}.role-senior{background:#dbeafe;color:#1d4ed8}.role-fire{background:#ffedd5;color:#c2410c}.post-date{font-size:11px;color:var(--muted);margin-top:3px}.post-category{display:inline-block;background:var(--surface-soft);color:var(--accent-text);font-size:11px;font-weight:bold;padding:5px 9px;border-radius:15px;margin-top:8px}.post-content{margin:12px 0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.post-image{width:100%;max-height:450px;object-fit:contain;border-radius:12px;margin-top:8px}.post-voice{margin-top:10px;background:var(--surface-soft-2);padding:8px;border-radius:12px}.post-voice audio{width:100%}.post-actions{border-top:1px solid var(--border);padding-top:8px;flex-wrap:nowrap}.post-actions button,.user-actions button{flex:1;min-width:0;padding:7px 3px;font-size:11px;overflow:hidden}.like-btn,.comment-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.dislike-btn{background:#f8eaf2!important;color:#a14c79!important}.delete-post-btn,.block-btn{background:#ffe5e5!important;color:#d00000!important}.user-actions button{background:var(--surface-soft);color:var(--accent-text)}.report-btn{background:#fff0e8!important;color:#c2410c!important}.comments{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}.comment-item{background:var(--surface-soft-2);border-radius:10px;padding:8px;margin:6px 0;font-size:13px}.comment-input-row{display:flex;gap:6px;margin-top:8px}.comment-input-row input{flex:1;min-width:0}.comment-input-row button{flex-shrink:0}.empty,.loading{text-align:center;padding:25px 10px;color:var(--muted);overflow-wrap:anywhere}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:680px;height:70px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:4px;gap:3px;z-index:30;box-shadow:var(--nav-shadow)}.bottom-nav button{border:0;background:none;flex:1;min-width:0;height:60px;color:var(--accent-text);font-size:10px;font-weight:bold;border-radius:10px}.bottom-nav button.active{background:var(--surface-soft)}.popup{display:none;position:fixed;inset:0;background:#0009;z-index:100;padding:12vh 4% 20px}.popup-content{max-width:600px;max-height:76vh;overflow:auto;margin:auto;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:18px;padding:15px}.popup-head{display:flex;justify-content:space-between;align-items:center}.popup-head button{border:0;border-radius:15px;padding:8px 12px;background:var(--surface-soft);color:var(--text)}.share-option{display:block;width:100%;text-align:left;margin-top:8px;background:var(--surface-soft);color:var(--accent-text);border:0;border-radius:11px;padding:10px;font-weight:bold}.share-form{display:none;margin-top:12px}.share-submit{width:100%;margin-top:9px;border:0;border-radius:11px;padding:10px;background:var(--accent);color:#fff;font-weight:bold}.cancel-share{width:100%;margin-top:7px;background:var(--surface-soft);color:var(--text);border:0;border-radius:11px;padding:10px}.hidden-input{display:none}.image-preview{width:100%;max-height:250px;object-fit:contain;display:none;margin-top:8px}.likes-content{max-width:430px}.story-views-content{max-width:430px}.story-view-row{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--border);cursor:pointer}.story-view-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--surface-soft);flex-shrink:0}.story-view-meta{min-width:0;flex:1}.story-view-name{font-weight:700;font-size:14px;overflow-wrap:anywhere}.story-view-time{font-size:11px;color:var(--muted);margin-top:3px}.story-view-count-button{display:inline-block;border:0;background:transparent;color:#fff;padding:8px 2px;font-size:13px;font-weight:bold;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.like-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer}.like-user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#ddd}.points-row{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.points-name{flex:1;overflow:hidden;text-overflow:ellipsis}.points-value{font-weight:bold;color:var(--accent-text)}.theme-toggle{flex:0 0 40px!important;width:40px;height:39px!important;border-radius:12px!important;font-size:17px!important;padding:0!important}
-@media(max-width:400px){.logo{font-size:13px}.header-buttons button{font-size:9px;padding:0 2px}.post-actions button,.user-actions button{font-size:9px}.bottom-nav button{font-size:9px}}
-.create-box{padding:16px;border-radius:22px;background:linear-gradient(145deg,var(--surface),var(--surface-soft-2));border:1px solid var(--border);box-shadow:0 8px 26px #8b5cf625}.composer-title{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:800;color:var(--accent-text);margin-bottom:14px}.composer-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;font-size:22px;box-shadow:0 4px 12px #8b5cf640}.create-box textarea{min-height:125px;padding:17px;border:1.5px solid var(--input-border);border-radius:20px;background:var(--surface-soft-2);font-size:17px;line-height:1.5;box-shadow:inset 0 2px 5px #8b5cf60a}.create-box .create-actions{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:8px;margin-top:14px}.create-box .create-actions button{min-width:0;min-height:72px;padding:10px 5px;border:1px solid var(--border);border-radius:17px;font-size:13px;line-height:1.4;white-space:normal;overflow-wrap:anywhere;box-shadow:0 4px 12px #8b5cf612;transition:transform .15s,box-shadow .15s}.create-box .create-actions button:active{transform:scale(.97)}.create-box .create-actions .voice-btn,.create-box .create-actions .upload-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.create-box .create-actions .send-post-btn{background:linear-gradient(135deg,#8b5cf6,#7138ed)!important;color:#fff!important;border-color:#a78bfa;box-shadow:0 6px 16px #8b5cf640;font-weight:800}@media(max-width:400px){.create-box{padding:12px}.create-box .create-actions{gap:6px}.create-box .create-actions button{font-size:11px;min-height:66px;padding:8px 3px}}.reaction-activity{margin-top:8px;padding:9px 11px;border-radius:12px;background:var(--surface-soft-2);font-size:13px;line-height:1.5;overflow-wrap:anywhere}.reaction-activity-line{padding:3px 0}.reaction-activity-line.like{color:#16a34a}.reaction-activity-line.dislike{color:#e11d48}button:disabled{opacity:.6;cursor:wait}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+      <meta name="theme-color" content="#21006d" />
+      <title>ChatZone — Connect • Share • Chat</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <style>
+        :root{--deep:#180052;--purple:#6500f5;--violet:#9b20ff;--ink:#17104c;--muted:#7469a9;--line:#e5d8ff;--surface:#fff;--bg:#f7f3ff}
+        *{box-sizing:border-box} html{scroll-behavior:smooth}
+        body{margin:0;background:linear-gradient(155deg,#240078 0%,#7800ff 36%,#f3eaff 36%,#faf8ff 100%);font-family:Nunito,system-ui,sans-serif;color:var(--ink);min-height:100vh;padding-bottom:100px}
+        button,input,textarea{font:inherit}button{cursor:pointer}
+        .app{max-width:760px;margin:auto;min-height:100vh;background:linear-gradient(180deg,#25006e 0,#5c00ec 235px,#f8f5ff 420px);overflow:hidden;position:relative}
+        .top{padding:18px 18px 12px;color:white;display:flex;align-items:center;justify-content:space-between;gap:12px}
+        .brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{width:58px;height:58px;border-radius:22px 22px 22px 7px;background:linear-gradient(145deg,#ef68ff,#8d13ff);display:grid;place-items:center;font-size:29px;box-shadow:0 7px 25px #a52bff70}
+        .brand h1{font-size:clamp(27px,7vw,40px);line-height:1;margin:0;font-weight:900;letter-spacing:-1.5px}.brand h1 span{color:#d77aff}.tagline{font-size:13px;color:#e7d6ff;margin-top:5px;font-weight:700}
+        .user-avatar{width:56px;height:56px;border:3px solid white;border-radius:50%;object-fit:cover;background:#d8c8ff;flex-shrink:0}
+        .top-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 14px 14px}
+        .top-tab{border:1px solid #ffffffa8;background:#fff;color:#21105f;border-radius:25px;padding:11px 4px 10px;min-height:83px;box-shadow:0 5px 15px #29008024;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+        .top-tab .ico{font-size:25px;line-height:1.1}.top-tab strong{font-size:16px;font-weight:900}.top-tab small{font-size:10px;font-weight:800;color:#71659f}
+        .top-tab.active{background:linear-gradient(140deg,#8e00ff,#4b00d8);color:white;border:2px solid #e7caff;box-shadow:0 8px 20px #7b18ed55}.top-tab.active small{color:#eee1ff}
+        main{padding:0 12px 20px}
+        .panel{background:rgba(255,255,255,.96);border:1px solid #e8dcff;border-radius:27px;box-shadow:0 6px 18px #6a20d51b;margin-bottom:13px}
+        .online{padding:12px 14px 13px}.online-head{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;margin-bottom:9px}.green-dot{width:14px;height:14px;background:#13d77b;border-radius:50%;box-shadow:0 0 0 4px #d9ffeb}
+        .avatars{display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none}.avatars::-webkit-scrollbar{display:none}.friend{position:relative;flex:0 0 48px;height:48px}.friend img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #e3d4ff;background:#eee}.friend i{position:absolute;right:0;bottom:0;width:12px;height:12px;background:#13d77b;border:2px solid white;border-radius:50%}
+        .composer{padding:13px}.compose-row{display:flex;align-items:center;gap:10px}.my-avatar{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#e4d8ff;flex-shrink:0}.compose-input{width:100%;border:1px solid #e5d9ff;border-radius:30px;background:#f5f0ff;padding:15px 17px;color:var(--ink);outline:none;font-weight:800}.compose-input:focus{border-color:#9b51ff}
+        .compose-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1.2fr;gap:7px;margin-top:12px}.chip-btn{border:0;border-radius:24px;padding:10px 5px;font-weight:900;font-size:13px;background:#eaf1ff;color:#1262d8}.chip-btn.star{background:#fff2d9;color:#ed9300}.chip-btn.text{background:#e1f8ed;color:#0b9a5a}.chip-btn.post{background:linear-gradient(130deg,#a100ff,#5100df);color:white;box-shadow:0 5px 12px #7818e84a}
+        .categories{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:none}.categories::-webkit-scrollbar{display:none}.category{white-space:nowrap;border:1px solid #ddccff;border-radius:25px;background:#f0e8ff;padding:10px 15px;font-size:13px;font-weight:900;color:#25105f}.category.active{background:linear-gradient(135deg,#a000ff,#5a00df);color:white;border-color:transparent}
+        .sort-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0 2px 13px;background:#eee5ff;border-radius:28px;padding:4px}.sort{border:0;background:transparent;color:#24115e;border-radius:25px;padding:11px 4px;font-size:14px;font-weight:900}.sort.active{background:linear-gradient(130deg,#a000ff,#5900df);color:white;box-shadow:0 4px 12px #7518dc44}
+        .post{padding:13px;margin-bottom:13px}.post-head{display:flex;align-items:center;gap:10px}.post-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#e7ddff}.post-user{min-width:0;flex:1}.post-user strong{font-size:16px;font-weight:900}.post-meta{font-size:12px;color:#7567a9;font-weight:800;margin-top:2px}.verified{color:#7624ed}.dots{border:0;background:transparent;color:#6750a7;font-size:23px;letter-spacing:2px}
+        .post-content{font-size:17px;font-weight:800;line-height:1.45;margin:13px 3px 15px;overflow-wrap:anywhere}.post-image{width:100%;max-height:290px;object-fit:cover;border-radius:18px;margin:0 0 12px}
+        .post-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.action{border:1px solid #e4d4ff;background:#f3ebff;color:#6500dc;border-radius:15px;padding:9px 2px;font-size:11px;font-weight:900;min-width:0}.action span{display:block;font-size:20px;line-height:1.1;margin-bottom:3px}.action.like{background:#fff0f5;color:#e51d58;border-color:#ffd2e1}.action.chat{background:#edf3ff;color:#0758e8}.action.report{background:#fff5e6;color:#ed8500}.action.liked{background:#ffe0eb;border-color:#ff8bb4}
+        .empty{padding:24px;text-align:center;color:#7d70a7;font-weight:800}.status{position:fixed;left:50%;transform:translateX(-50%);bottom:91px;background:#1e075c;color:white;border-radius:18px;padding:8px 13px;font-size:12px;z-index:30;box-shadow:0 5px 18px #26006c55;display:none;max-width:90%;text-align:center}
+        .bottom-wrap{position:fixed;bottom:0;left:0;right:0;z-index:20;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#f8f4ff00,#eee5ff 35%);pointer-events:none}
+        .bottom{pointer-events:auto;max-width:740px;margin:auto;background:#fff;border:1px solid #e8dcff;border-radius:28px;box-shadow:0 8px 25px #4e0aa83a;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 3px 7px}
+        .bottom button{border:0;background:transparent;color:#1f145d;font-weight:900;font-size:12px;padding:4px 1px;display:flex;flex-direction:column;align-items:center;gap:1px}.bottom .bico{font-size:24px;line-height:1.1}.bottom button.active{color:#7400ed}
+        .hidden{display:none!important}
+        @media(min-width:650px){body{padding:18px 0 110px}.app{border-radius:28px;box-shadow:0 20px 70px #21005a66}.top{padding:24px}.top-tab{min-height:92px}.post-content{font-size:19px}.bottom-wrap{bottom:12px}.bottom{border-radius:24px}}
+        @media(max-width:370px){.brand h1{font-size:27px}.logo{width:48px;height:48px}.top-tab strong{font-size:14px}.top-tab small{font-size:9px}.compose-actions{gap:4px}.chip-btn{font-size:11px}.post-actions{gap:4px}.action{font-size:10px}}
+      </style>
+    </head>
+    <body>
+    <div class="app">
+      <header class="top">
+        <div class="brand">
+          <div class="logo">•••</div>
+          <div><h1>Chat<span>Zone</span></h1><div class="tagline">Connect • Share • Chat ❤️</div></div>
+        </div>
+        <img id="headerAvatar" class="user-avatar" src="https://i.pravatar.cc/120?img=12" alt="Profile">
+      </header>
 
-/* ChatZone Stories */
-.stories-section{margin:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
-.stories-heading{font-size:14px;font-weight:800;margin:0 0 10px;color:var(--accent-text)}
-.stories-rail{display:flex;gap:12px;overflow-x:auto;padding:2px 1px 7px;scrollbar-width:thin}
-.story-tile{border:0;background:none;color:var(--text);padding:0;min-width:66px;width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;font:12px Arial;cursor:pointer}
-.story-ring{position:relative;box-sizing:border-box;width:62px;height:62px;padding:3px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#8b5cf6,#ec4899,#f59e0b);display:grid;place-items:center;flex:0 0 62px}.story-ring>.story-avatar{display:block;box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;aspect-ratio:1/1;max-width:100%;max-height:100%;border:2px solid var(--surface);border-radius:50%;object-fit:cover;object-position:center center;overflow:hidden}
-.story-ring.seen{background:var(--border)}
-.story-avatar{width:100%;height:100%;border:2px solid var(--surface);border-radius:50%;object-fit:cover;background:var(--surface-soft);display:grid;place-items:center;font-size:23px}
-.story-label{max-width:70px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.story-add .story-ring{background:var(--surface-soft);border:2px dashed var(--accent);padding:3px}
-.story-add .story-avatar{color:var(--accent-text);font-size:27px}
-.story-upload-action{width:100%;padding:12px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:bold;margin-top:8px}
-.story-video{width:100%;max-height:65vh;background:#090909;border-radius:12px;object-fit:contain}
-.story-viewer-content{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:10px 14px calc(18px + env(safe-area-inset-bottom))!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;display:flex;flex-direction:column;overflow:hidden}
-#storyViewerPopup{padding:0!important;background:#000!important;z-index:110!important}
-.story-progress{height:4px;background:#ffffff55;border-radius:8px;overflow:hidden;margin:0 0 12px;flex:0 0 auto}
-.story-progress-fill{height:100%;width:0;background:#fff}
-.story-viewer-top{display:flex;align-items:center;justify-content:space-between;color:#fff;gap:10px;margin:0 0 12px;flex:0 0 auto;min-height:48px}
-.story-viewer-top button{border:0;border-radius:9px;background:transparent;color:#fff;padding:8px 10px;font-size:25px}
-.story-user-head{display:flex;align-items:center;gap:10px;min-width:0}
-.story-owner-avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;border:3px solid #8b5cf6;flex:0 0 46px;background:#222}
-.story-user-details{min-width:0;display:flex;flex-direction:column;gap:3px}
-.story-user-details b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:65vw}
-.story-count{font-size:12px;color:#bbb}
-.story-viewer-actions{display:flex;align-items:center;gap:10px}
-.story-viewer-stage{position:relative;background:#000;border-radius:0;overflow:hidden;flex:1 1 0;min-height:100px;display:flex;align-items:center;justify-content:center}
-.story-viewer-stage .story-video{width:100%;height:100%;max-height:none;object-fit:contain;border-radius:0;background:#000}
-.story-nav{position:absolute;top:0;bottom:0;width:28%;border:0;background:transparent;color:transparent;z-index:2}
-.story-nav.prev{left:0}.story-nav.next{right:0}
-.story-caption{color:#fff;text-align:center;font-size:17px;font-weight:700;padding:15px 8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;flex:0 0 auto}
-.story-reactions{display:flex;justify-content:space-around;align-items:center;gap:5px;flex-wrap:nowrap;padding:12px 0 14px;flex:0 0 auto}
-.story-reactions button{border:0;background:transparent;color:#fff;border-radius:50%;padding:2px;font-size:36px;line-height:1.2}
-.story-reactions button.active{background:#ffffff20;transform:scale(1.12)}
-.story-owner-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;flex:0 0 auto}
-.story-delete-button{background:#dc2626!important;color:#fff!important}
-@media(max-width:400px){.story-viewer-content{padding-left:12px!important;padding-right:12px!important}.story-reactions button{font-size:32px}}
-.story-delete-button{background:#dc2626!important;color:#fff!important}
-.story-upload-caption{margin-top:10px;min-height:64px}
- .story-reply-area{display:flex;position:relative;z-index:8;gap:8px;align-items:center;padding:9px 0 calc(12px + env(safe-area-inset-bottom));flex:0 0 auto;min-height:56px;width:100%;background:#000}.story-reply-area input{display:block!important;visibility:visible!important;min-width:0;flex:1 1 auto;width:0;background:#171717;color:#fff;border:1px solid #888;border-radius:24px;padding:13px 16px;font-size:14px;outline:none}.story-reply-area input::placeholder{color:#ccc;opacity:1}.story-reply-area button{display:block!important;visibility:visible!important;flex:0 0 auto;border:0;border-radius:22px;padding:12px 18px;background:#8b5cf6;color:#fff;font-weight:bold;font-size:14px}.story-list-tabs{display:flex;gap:8px;margin:12px 0}.story-list-tabs button{flex:1;border:0;border-radius:20px;padding:10px;background:var(--surface-soft);color:var(--accent-text);font-weight:bold}.story-list-tabs button.active{background:var(--accent);color:#fff}.story-reply-row{padding:11px 2px;border-bottom:1px solid var(--border)}.story-reply-row p{margin:6px 0;font-size:14px;overflow-wrap:anywhere}.story-reply-row small{color:var(--muted)}
-@media(max-width:400px){.stories-section{padding:10px}.story-tile{min-width:61px;width:61px}.story-ring{width:58px;height:58px;flex-basis:58px}}
-</style>
-</head>
-<body>
-<div class="app">
-<header class="header"><div class="header-top"><div class="logo">ChatZone 💬</div><div class="header-buttons"><button onclick="showTrending()">🔥 Trending</button><button onclick="showShare()">📤 Share</button><button id="starsButton" onclick="goStars()">⭐</button><button id="notificationButton" onclick="goNotifications()" style="position:relative" aria-label="Notifications">🔔<span id="notificationBadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;background:#ef4444;color:#fff;border-radius:20px;font-size:10px;line-height:18px;text-align:center">0</span></button><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme">🌙</button></div></div></header>
-<div id="homeView"><section class="online-section"><div class="online-title">🟢 <span id="onlineCount">0</span> Users Online</div><div id="onlineUsers" class="online-users">Connecting to online users…</div></section><div class="welcome">👋 Welcome to ChatZone! 💜💬</div>
+      <nav class="top-tabs" aria-label="Main feed sections">
+        <button class="top-tab active" data-feed="for-me"><span class="ico">👥</span><strong>For Me</strong><small>My Followers Posts</small></button>
+        <button class="top-tab" data-feed="stars"><span class="ico">⭐</span><strong>Stars</strong><small>Red Star Users</small></button>
+        <button class="top-tab" data-feed="explore"><span class="ico">🧭</span><strong>Explore</strong><small>All Categories</small></button>
+      </nav>
 
-<!-- Stories rail -->
-<section class="stories-section">
-  <h3 class="stories-heading">⭕ Stories</h3>
-  <div id="storiesRail" class="stories-rail">
-    <div class="loading" style="padding:10px">Loading stories…</div>
-  </div>
-</section>
+      <main>
+        <section class="panel online">
+          <div class="online-head"><span class="green-dot"></span><span>Online Friends</span><span id="onlineCount">12</span></div>
+          <div class="avatars" id="onlineFriends">
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=12"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=13"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=14"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=15"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img= 여자"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=17"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=18"><i></i></div>
+            <div class="friend"><img src="https://i.pravatar.cc/100?img=19"><i></i></div>
+          </div>
+        </section>
 
-<section class="create-box"><div class="composer-title"><span class="composer-icon">✍️</span><span>Create a Post ✨</span></div><textarea id="postText" placeholder="What's on your mind?"></textarea><div class="create-actions"><button class="voice-btn" onclick="startVoice()">🎙️ Voice</button><button class="upload-btn" onclick="showImagePost()">📷 Image Post</button><button class="send-post-btn" onclick="createPost()">🚀 Send Post</button></div></section><div class="feed-header"><h3>Home Feed</h3></div><div id="feed"><div class="loading">Checking login and loading feed…</div></div></div>
-<div id="starsBox" class="popup"><div class="popup-content"><div class="popup-head"><h3>⭐ ChatZone Points & Top 10</h3><button onclick="closePopup('starsBox')">✕</button></div><section class="points-panel" style="margin:0 0 14px"><div class="points-head"><div><div class="points-title">⭐ ChatZone Points</div><div class="points-note">Post owner: Like +20 points · Dislike −20 points (special roles: ±500)</div></div><div class="points-total"><span id="myPoints">0</span> pts</div></div></section><h3>🏆 Top 10 Members</h3><div id="starsList" class="loading">Loading top scorers...</div></div></div>
-<div id="likesPopup" class="popup"><div class="popup-content likes-content"><div class="popup-head"><h3>❤️ Liked by</h3><button onclick="closePopup('likesPopup')">✕</button></div><div id="likesList">Loading...</div></div></div>
-<div id="shareBox" class="popup"><div class="popup-content"><div class="popup-head"><h3>📤 Create Post</h3><button onclick="closeShare()">❌</button></div><button class="share-option" onclick="showTextPost()">📝 Text Post</button><button class="share-option" onclick="showImagePost()">📷 Image Post</button><div id="textPostForm" class="share-form"><textarea id="shareText" placeholder="What's on your mind?"></textarea><button class="share-submit" onclick="submitTextPost()">📤 Publish Text Post</button></div><div id="imagePostForm" class="share-form"><label class="points-title">Select Category *</label><select id="imageCategory"><option value="">Select category</option><option>General</option><option>Funny</option><option>News</option><option>Islamic</option><option>Poetry</option><option>Help</option><option>Other</option></select><button class="share-option" onclick="$('shareImageInput').click()">📷 Select Image</button><input id="shareImageInput" class="hidden-input" type="file" accept="image/*" onchange="shareImageSelected()"><img id="shareImagePreview" class="image-preview" alt="Preview"><textarea id="imageCaption" placeholder="Write a caption (optional)..." style="margin-top:8px"></textarea><button class="share-submit" onclick="submitImagePost()">📷 Publish Image Post</button></div><button class="cancel-share" onclick="closeShare()">Cancel</button></div></div>
-<div id="voicePopup" class="popup"><div class="popup-content"><h3>🎙️ Voice Post</h3><div id="voiceStatus">Ready to record</div><div id="voiceTimer" style="font-size:30px;text-align:center">00:00</div><audio id="voicePreview" controls style="width:100%;display:none"></audio><div class="create-actions"><button onclick="recordVoice()">🔴 Record</button><button onclick="stopVoice()">⏹ Stop</button><button onclick="sendVoice()">📤 Send</button></div><button class="cancel-share" onclick="closeVoice()">Cancel</button></div></div>
-<div id="trendingBox" class="popup"><div class="popup-content"><div class="popup-head"><h3>🔥 Trending Posts</h3><button onclick="closePopup('trendingBox')">❌</button></div><p class="points-note">Posts with 4 or more likes are eligible. Trending status is tracked for 7 days from the date the post first qualifies when the database history table is configured.</p><div id="trendingList">Loading...</div></div></div>
+        <section class="panel composer">
+          <div class="compose-row">
+            <img id="composerAvatar" class="my-avatar" src="https://i.pravatar.cc/100?img=12" alt="">
+            <input id="postText" class="compose-input" type="text" maxlength="1000" placeholder="What's on your mind?">
+          </div>
+          <div class="compose-actions">
+            <button class="chip-btn" id="imageMode">▣ Images</button>
+            <button class="chip-btn star" id="starMode">⭐ Stars</button>
+            <button class="chip-btn text" id="textMode">▧ Text</button>
+            <button class="chip-btn post" id="publishBtn">➤ Post</button>
+          </div>
+          <input id="imageUrl" class="compose-input hidden" style="margin-top:9px" type="url" placeholder="Paste image URL (optional)">
+        </section>
 
-<!-- Story upload popup -->
-<div id="storyUploadPopup" class="popup"><div class="popup-content">
-  <div class="popup-head"><h3>➕ Add Video Story</h3><button onclick="closeStoryUpload()">✕</button></div>
-  <p class="points-note">Video maximum 1 minute and 50 MB. Story 24 hours baad automatically expire ho jayegi.</p>
-  <input id="storyVideoInput" type="file" accept="video/*" style="margin-top:12px">
-  <textarea id="storyCaptionInput" class="story-upload-caption" maxlength="180" placeholder="Video ke sath chota sa message likhein... (optional)"></textarea>
-  <video id="storyUploadPreview" class="story-video" controls playsinline style="display:none;margin-top:10px"></video>
-  <button id="publishStoryButton" class="story-upload-action" onclick="publishStory()">📤 Publish Story</button>
-  <button class="cancel-share" onclick="closeStoryUpload()">Cancel</button>
-</div></div>
+        <div class="categories" id="categories">
+          <button class="category active" data-category="All">▦ All</button>
+          <button class="category" data-category="Poetry">🍃 Poetry</button>
+          <button class="category" data-category="Romantic">♥ Romantic</button>
+          <button class="category" data-category="Sad">☹ Sad</button>
+          <button class="category" data-category="Funny">😂 Funny</button>
+          <button class="category" data-category="Love">❤️ Love</button>
+          <button class="category" data-category="Quotes">✦ Quotes</button>
+          <button class="category" data-category="Attitude">😎 Attitude</button>
+        </div>
 
-<!-- Story viewer -->
-<div id="storyViewerPopup" class="popup" style="padding:0">
-  <div class="popup-content story-viewer-content">
-    <div class="story-progress"><div id="storyProgressFill" class="story-progress-fill"></div></div>
-    <div class="story-viewer-top">
-      <div class="story-user-head">
-        <img id="storyViewerAvatar" class="story-owner-avatar" src="" alt="Profile">
-        <div class="story-user-details"><b id="storyViewerName">Story</b><div id="storyViewerCount" class="story-count"></div></div>
-      </div>
-      <div class="story-viewer-actions"><button id="storyMuteButton" onclick="toggleStoryMute()" aria-label="Mute">⚙</button><button onclick="closeStoryViewer()" aria-label="Close" style="font-size:34px">×</button></div>
+        <div class="sort-tabs">
+          <button class="sort active" data-sort="trending">🔥 Trending Posts</button>
+          <button class="sort" data-sort="latest">⭐ Latest Posts</button>
+        </div>
+
+        <section id="feed">
+          <article class="panel post">
+            <div class="post-head"><img class="post-avatar" src="https://i.pravatar.cc/120?img=12"><div class="post-user"><strong>Horeenkhan <span class="verified">✔</span></strong><div class="post-meta">Top 2 🔥 · Just now</div></div><button class="dots">•••</button></div>
+            <div class="post-content">mein theek ho ap sonaao kese hoo sis 🤣🤣🤣🤣😁😁😁</div>
+            <div class="post-actions"><button class="action"><span>👥</span>Follow</button><button class="action like"><span>❤️</span>Like</button><button class="action chat"><span>💬</span>1 ON 1</button><button class="action"><span>↪</span>Replies 0</button><button class="action report"><span>⚠️</span>Report</button></div>
+          </article>
+          <article class="panel post">
+            <div class="post-head"><img class="post-avatar" src="https://i.pravatar.cc/120?img=33"><div class="post-user"><strong>ahil_66</strong><div class="post-meta">Top 4 ⭐ · Just now</div></div><button class="dots">•••</button></div>
+            <div class="post-content">😜😜😜😜😜 U rupa ho 🤣🤣🤣🤣</div>
+            <div class="post-actions"><button class="action"><span>👥</span>Follow</button><button class="action like"><span>❤️</span>Like</button><button class="action chat"><span>💬</span>1 ON 1</button><button class="action"><span>↪</span>Replies 0</button><button class="action report"><span>⚠️</span>Report</button></div>
+          </article>
+        </section>
+      </main>
     </div>
-    <div class="story-viewer-stage">
-      <video id="storyViewerVideo" class="story-video" playsinline autoplay></video>
-      <button class="story-nav prev" aria-label="Previous story" onclick="previousStory()">Previous</button>
-      <button class="story-nav next" aria-label="Next story" onclick="nextStory()">Next</button>
+
+    <div id="status" class="status" role="status"></div>
+    <div class="bottom-wrap">
+      <nav class="bottom" aria-label="Bottom navigation">
+        <button class="active" data-bottom="Home"><span class="bico">⌂</span>Home</button>
+        <button data-bottom="1 ON 1"><span class="bico">☏</span>1 ON 1</button>
+        <button data-bottom="Inbox"><span class="bico">✉</span>Inbox</button>
+        <button data-bottom="Profile"><span class="bico">♙</span>Profile</button>
+        <button data-bottom="More"><span class="bico">•••</span>More</button>
+      </nav>
     </div>
-    <div id="storyViewerCaption" class="story-caption"></div>
-    <div id="storyReactionBar" class="story-reactions"></div>
-    <div id="storyReplyArea" class="story-reply-area" style="display:none"><input id="storyReplyInput" maxlength="1000" placeholder="Reply to story..." onkeydown="if(event.key==='Enter')sendStoryReply()"><button id="storyReplySend" onclick="sendStoryReply()">Send</button></div>
-    <div class="story-owner-bottom"><div id="storyOwnerViews" class="story-count"></div><div id="storyOwnerDelete"></div></div>
-  </div>
-</div>
 
-<!-- Story viewers list (visible only to the story owner) -->
-<div id="storyViewsPopup" class="popup" style="z-index:120">
-  <div class="popup-content story-views-content">
-    <div class="popup-head"><h3>👁 Story viewers</h3><button onclick="closePopup('storyViewsPopup')">✕</button></div>
-    <div class="story-list-tabs"><button id="storyViewersTab" class="active" onclick="switchStoryList('views')">👁 Viewers</button><button id="storyRepliesTab" onclick="switchStoryList('replies')">💬 Replies</button></div>
-    <div id="storyViewsList" class="points-note" style="padding-top:12px">Loading viewers…</div>
-  </div>
-</div>
+    <script>
+    /* ==========================================================
+       SUPABASE CONNECTION
+       1) Paste your Supabase Project URL below.
+       2) Paste your Supabase anon/public key below.
+       Never put your service_role key in browser HTML.
+       ========================================================== */
+    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
 
-<nav class="bottom-nav"><button id="navHome" class="active" onclick="goHome()">🏠<br>Home</button><button onclick="goPrivate()">💌<br>Private</button><button onclick="goMehfil()">👥<br>Mehfil</button><button id="navProfile" onclick="goProfile()">👤<br>Profile</button><button onclick="goMore()">⚙️<br>More</button></nav>
-</div>
-<script>
-"use strict";
-const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
-const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-let currentUser=null,currentPosts=[],profileMap={},followMap={},pointsMap={},postActionCounts={},postCommentCounts={},myActions={},reactionActivityMap={},onlineChannel=null,voiceRecorder=null,voiceStream=null,voiceChunks=[],voiceBlob=null,voiceStartedAt=0,voiceTimerInterval=null,notificationChannel=null,roleMap={},trendingStartMap={};
-const CREATOR_ID="db4d3669-e3ec-42ec-a716-791f43cebd8d",SENIOR_ID="21e46d48-cd2c-4824-992e-5beb7f797c5b",SENIOR_USERNAME="dream_girl";
-const STORY_MAX_SIZE=50*1024*1024,STORY_MAX_SECONDS=60,STORY_LIFETIME_HOURS=24;
-let storyRows=[],storyGroups=[],storyGroupIndex=0,storyItemIndex=0,storyProgressTimer=null,storyProgressStarted=0,storyProgressElapsed=0,storyMuted=true,storyCurrentUrl=null,storyViewListId=null,storyReactionMap={},storyListMode="views";
-let storyReplySending=false;
-function $(id){return document.getElementById(id)}
-function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function escJs(v){return String(v??"").replaceAll("\\","\\\\").replaceAll("'","\\'").replaceAll("\n","\\n").replaceAll("\r","")}
-function timeout(p,ms=9000){let timer;return Promise.race([p,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error("Request timed out. Check internet or Supabase settings.")),ms)})]).finally(()=>clearTimeout(timer))}
-function applyTheme(theme){const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}const b=$("themeToggle");if(b){b.textContent=chosen==="dark"?"☀️":"🌙";b.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";b.setAttribute("aria-label",b.title)}const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=chosen==="dark"?"#171222":"#8b5cf6"}
-function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")}
-try{applyTheme(localStorage.getItem("chatzone-theme")||"light")}catch(e){applyTheme("light")}
-function formatDate(v){if(!v)return "";const d=new Date(v);if(Number.isNaN(d.getTime()))return "";const s=Math.max(0,Math.floor((Date.now()-d.getTime())/1000));if(s<60)return "Just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" hr ago";return d.toLocaleDateString()}
-function getRoleBadge(id,username=""){const roles=roleMap[id]||[];if(String(id)===CREATOR_ID||roles.includes("creator"))return '<span class="role-badge role-creator">👑 Website Creator</span>';if(String(id)===SENIOR_ID||roles.includes("senior_admin")||roles.includes("admin")||String(username).trim().toLowerCase()===SENIOR_USERNAME)return '<span class="role-badge role-senior">🛡️ Senior Admin</span>';if(roles.includes("fire")||roles.includes("fire_badge"))return '<span class="role-badge role-fire">🔥 Fire</span>';return ""}
-function showFeedError(message){$("feed").innerHTML='<div class="empty">Could not load feed: '+esc(message)+'<br><button onclick="loadFeed()">Try again</button></div>'}
-async function loadUnreadNotificationCount(){if(!currentUser)return;try{const result=await timeout(supabaseClient.from("notifications").select("id",{count:"exact",head:true}).eq("user_id",currentUser.id).is("read_at",null),8000);if(result.error)throw result.error;const badge=$("notificationBadge");if(!badge)return;const count=result.count||0;badge.textContent=count>99?"99+":String(count);badge.style.display=count>0?"inline-block":"none"}catch(error){console.warn("Notification count:",error.message)}}
-function startNotifications(){if(!currentUser)return;loadUnreadNotificationCount();if(notificationChannel)supabaseClient.removeChannel(notificationChannel);notificationChannel=supabaseClient.channel("chatzone-notifications-"+currentUser.id).on("postgres_changes",{event:"*",schema:"public",table:"notifications",filter:"user_id=eq."+currentUser.id},()=>loadUnreadNotificationCount()).subscribe(status=>{if(status==="SUBSCRIBED")loadUnreadNotificationCount()})}
-async function init(){$("feed").innerHTML='<div class="loading">Checking your login…</div>';try{if(!window.supabase)throw Error("Supabase library did not load. Refresh the page or check your internet.");const r=await timeout(supabaseClient.auth.getSession(),10000);if(r.error)throw r.error;currentUser=r.data?.session?.user||null;if(currentUser)startNotifications();if(!currentUser){$("feed").innerHTML='<div class="empty">Please log in to open Home.<br><button onclick="location.href=\'login.html\'">Open Login</button></div>';return}$("feed").innerHTML='<div class="loading">Loading feed…</div>';await loadFeed();await loadPointsBoard();loadOnlineUsers().catch(e=>console.warn("Online:",e));loadStories().catch(e=>console.warn("Stories:",e))}catch(e){console.error("ChatZone startup:",e);$("feed").innerHTML='<div class="empty">ChatZone could not start: '+esc(e.message||"Unknown error")+'<br><button onclick="init()">Try again</button></div>';$("onlineUsers").textContent="Online status unavailable"}}
-async function loadPointsBoard(){if(!currentUser)return;try{const r=await timeout(supabaseClient.from("member_points").select("user_id,points").eq("user_id",currentUser.id).maybeSingle(),7000);if(r.error)throw r.error;$("myPoints").textContent=Number(r.data?.points||0).toLocaleString()}catch(e){$("myPoints").textContent="—";console.warn("Points board:",e)}}
-async function showStars(){$("starsBox").style.display="block";$("starsList").textContent="Loading top scorers…";try{const r=await timeout(supabaseClient.from("member_points").select("user_id,points").order("points",{ascending:false}).limit(10),8000);if(r.error)throw r.error;const rows=(r.data||[]).filter(x=>Number(x.points||0)>0);if(!rows.length){$("starsList").innerHTML='<div class="empty">Abhi top scorers nahi hain.</div>';return}const ids=rows.map(x=>x.user_id),p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),8000);if(p.error)throw p.error;const map={};(p.data||[]).forEach(x=>map[x.id]=x);$("starsList").innerHTML=rows.map((x,i)=>{const u=map[x.user_id]||{},name=u.name||u.username||"Member";return '<div class="points-row"><span style="font-weight:bold;width:28px">'+(["🥇","🥈","🥉"][i]||("#"+(i+1)))+'</span>'+(u.avatar_url?'<img class="like-user-avatar" src="'+esc(u.avatar_url)+'" alt="" onerror="this.style.display=\'none\'">':'<span class="like-user-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="points-name"><b>'+esc(name)+'</b><br><small>@'+esc(u.username||"member")+'</small></span><span class="points-value">'+Number(x.points||0).toLocaleString()+' pts</span></div>'}).join("")}catch(e){$("starsList").innerHTML='<div class="empty">Top scorers load nahi huay: '+esc(e.message)+'<br><button onclick="showStars()">Try again</button></div>'}}
-async function loadOnlineUsers(){if(!currentUser)return;try{const pr=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").eq("id",currentUser.id).maybeSingle(),7000);if(pr.error)throw pr.error;const p=pr.data||{};if(onlineChannel){try{await supabaseClient.removeChannel(onlineChannel)}catch(e){}}onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});onlineChannel.on("presence",{event:"sync"},renderOnline).on("presence",{event:"join"},renderOnline).on("presence",{event:"leave"},renderOnline).subscribe(async s=>{if(s==="SUBSCRIBED"){try{await onlineChannel.track({user_id:currentUser.id,username:p.username||"",name:p.name||"",avatar_url:p.avatar_url||"",online_at:new Date().toISOString(),page:"home"});renderOnline()}catch(e){console.warn("Presence track:",e);$("onlineUsers").textContent="Online status unavailable"}}else if(s==="CHANNEL_ERROR"||s==="TIMED_OUT"||s==="CLOSED")$("onlineUsers").textContent="Online status unavailable"});setTimeout(()=>{if($("onlineUsers").textContent==="Connecting to online users…")$("onlineUsers").textContent="No other users shown yet"},10000)}catch(e){console.warn("Online presence:",e);$("onlineUsers").textContent="Online status unavailable"}}
-async function renderOnline(){if(!onlineChannel||!currentUser)return;try{const state=onlineChannel.presenceState(),users=new Map();Object.entries(state).forEach(([key,list])=>(list||[]).forEach(item=>{const id=item.user_id||key,old=users.get(id)||{};users.set(id,{...old,...item,user_id:id})}));if(!users.has(currentUser.id))users.set(currentUser.id,{user_id:currentUser.id});const ids=[...users.keys()],r=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),7000),profiles={};if(!r.error)(r.data||[]).forEach(p=>profiles[p.id]=p);$("onlineCount").textContent=ids.length;$("onlineUsers").innerHTML=ids.map(id=>{const presence=users.get(id)||{},p=profiles[id]||{},username=p.username||presence.username||p.name||presence.name||"Member",avatar=p.avatar_url||presence.avatar_url||"";return '<div class="online-user" onclick="openProfile(\''+escJs(id)+'\')">'+(avatar?'<img class="online-user-avatar" src="'+esc(avatar)+'" alt="" onerror="this.style.display=\'none\'">':'<span class="online-user-avatar" style="display:grid;place-items:center">👤</span>')+'<span class="online-dot"></span><span>'+esc(username)+'</span></div>'}).join("")||"No users online"}catch(e){console.warn("Render online:",e)}}
-function openProfile(id){if(id===currentUser?.id){goProfile();return}location.href="profile.html?user="+encodeURIComponent(id)}
-async function loadFeed(){if(!currentUser){showFeedError("Login session missing. Please log in again.");return}$("feed").innerHTML='<div class="loading">Loading feed…</div>';try{let r=await timeout(supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration").order("created_at",{ascending:false}).limit(50),10000);if(r.error&&/voice_url|voice_duration|column/i.test(r.error.message))r=await timeout(supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url").order("created_at",{ascending:false}).limit(50),10000);if(r.error)throw r.error;currentPosts=r.data||[];const ids=[...new Set(currentPosts.map(p=>p.user_id).filter(Boolean))];profileMap={};followMap={};pointsMap={};postActionCounts={};postCommentCounts={};myActions={};reactionActivityMap={};roleMap={};if(!currentPosts.length){$("feed").innerHTML='<div class="empty">There are no posts yet.</div>';updateTrending();return}if(ids.length){const results=await Promise.allSettled([timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),7000),timeout(supabaseClient.from("user_follows").select("following_id").eq("follower_id",currentUser.id).in("following_id",ids),7000),timeout(supabaseClient.from("member_points").select("user_id,points").in("user_id",ids),7000),timeout(supabaseClient.from("user_roles").select("user_id,role").in("user_id",ids),7000)]);if(results[0].status==="fulfilled"&&!results[0].value.error)(results[0].value.data||[]).forEach(x=>profileMap[x.id]=x);if(results[1].status==="fulfilled"&&!results[1].value.error)(results[1].value.data||[]).forEach(x=>followMap[x.following_id]=true);if(results[2].status==="fulfilled"&&!results[2].value.error)(results[2].value.data||[]).forEach(x=>pointsMap[x.user_id]=Number(x.points||0));if(results[3].status==="fulfilled"&&!results[3].value.error)(results[3].value.data||[]).forEach(x=>(roleMap[x.user_id]??=[]).push(String(x.role||"").toLowerCase()))}const pids=currentPosts.map(p=>p.id);if(pids.length){const results=await Promise.allSettled([timeout(supabaseClient.from("post_actions").select("post_id,user_id,action_type").in("post_id",pids),7000),timeout(supabaseClient.from("comments").select("post_id").in("post_id",pids),7000)]);if(results[0].status==="fulfilled"&&!results[0].value.error)(results[0].value.data||[]).forEach(x=>{postActionCounts[x.post_id]??={like:0,dislike:0};if(x.action_type==="like")postActionCounts[x.post_id].like++;if(x.action_type==="dislike")postActionCounts[x.post_id].dislike++;if(x.user_id===currentUser.id)myActions[x.post_id]=x.action_type});if(results[1].status==="fulfilled"&&!results[1].value.error)(results[1].value.data||[]).forEach(x=>postCommentCounts[x.post_id]=(postCommentCounts[x.post_id]||0)+1);await loadReactionActivities(pids)}$("feed").innerHTML=currentPosts.map(p=>renderPost(p,postActionCounts[p.id]||{like:0,dislike:0},postCommentCounts[p.id]||0)).join("");updateTrending()}catch(e){console.error("Feed load:",e);showFeedError(e.message||"Unknown error")}}
-async function loadReactionActivities(postIds){if(!currentUser||!postIds.length)return;try{let r=await timeout(supabaseClient.from("post_actions").select("post_id,user_id,action_type,created_at").in("post_id",postIds).order("created_at",{ascending:false}),8000);if(r.error)r=await timeout(supabaseClient.from("post_actions").select("post_id,user_id,action_type").in("post_id",postIds),8000);if(r.error)throw r.error;const rows=r.data||[],actorIds=[...new Set(rows.map(x=>x.user_id).filter(Boolean))],users={};if(actorIds.length){const p=await timeout(supabaseClient.from("profiles").select("id,username,name").in("id",actorIds),8000);if(!p.error)(p.data||[]).forEach(x=>users[x.id]=x)}postIds.forEach(id=>reactionActivityMap[id]=[]);rows.forEach(x=>{if(!reactionActivityMap[x.post_id])reactionActivityMap[x.post_id]=[];if(reactionActivityMap[x.post_id].some(a=>a.user_id===x.user_id))return;const u=users[x.user_id]||{};reactionActivityMap[x.post_id].push({user_id:x.user_id,username:u.username||u.name||"Member",action_type:x.action_type})})}catch(e){console.warn("Reaction activity could not load:",e.message)}}
-function reactionPointsForOwner(ownerId){const roles=roleMap[ownerId]||[];return (String(ownerId)===CREATOR_ID||String(ownerId)===SENIOR_ID||roles.some(x=>["admin","senior_admin","creator","fire","fire_badge"].includes(x)))?500:20}
-function renderReactionActivity(postId){const rows=reactionActivityMap[postId]||[],post=currentPosts.find(p=>String(p.id)===String(postId));if(!rows.length)return "";const points=reactionPointsForOwner(post?.user_id);return '<div class="reaction-activity" aria-label="Post reaction activity">'+rows.map(x=>'<div class="reaction-activity-line '+(x.action_type==="like"?"like":"dislike")+'">@'+esc(x.username)+' ne aapki post '+(x.action_type==="like"?'like ki (+'+points+')':'dislike ki (-'+points+')')+'</div>').join("")+'</div>'}
-function renderPost(p,c={like:0,dislike:0},cc=0,prefix=""){const pr=profileMap[p.user_id]||{},u=pr.username||"Member",name=pr.name||pr.username||"Member",own=p.user_id===currentUser?.id,action=myActions[p.id];return '<article class="post" id="post-'+prefix+p.id+'"><div class="post-head"><div class="user-info">'+(pr.avatar_url?'<img class="avatar" src="'+esc(pr.avatar_url)+'" alt="" onclick="openProfile(\''+escJs(p.user_id)+'\')" onerror="this.style.visibility=\'hidden\'">':'<div class="avatar" style="display:grid;place-items:center" onclick="openProfile(\''+escJs(p.user_id)+'\')">👤</div>')+'<div><div class="user-name" onclick="openProfile(\''+escJs(p.user_id)+'\')"><span class="post-author-name">'+esc(name)+'</span> '+getRoleBadge(p.user_id,pr.username)+' <span style="font-size:10px;background:var(--surface-soft);color:var(--accent-text);border-radius:8px;padding:3px">⭐ '+Number(pointsMap[p.user_id]||0)+' pts</span>'+(pr.username?'<small> @'+esc(pr.username)+'</small>':'')+'</div><div class="post-date">'+formatDate(p.created_at)+'</div></div></div>'+(own?'':'<button onclick="blockUser(\''+escJs(p.user_id)+'\')">⋮</button>')+'</div>'+(p.category?'<div class="post-category">#'+esc(p.category)+'</div>':'')+(p.content?'<div class="post-content">'+esc(p.content)+'</div>':'')+(p.image_url?'<img class="post-image" src="'+esc(p.image_url)+'" loading="lazy" alt="Post image">':'')+(p.voice_url?'<div class="post-voice"><audio controls src="'+esc(p.voice_url)+'"></audio></div>':'')+'<div class="post-actions"><button class="like-btn" style="'+(action==="like"?'outline:2px solid #8b5cf6;':'')+'" onclick="setPostAction('+p.id+',\'like\')">❤️ Like '+c.like+'</button><button class="dislike-btn" style="'+(action==="dislike"?'outline:2px solid #d94683;':'')+'" onclick="setPostAction('+p.id+',\'dislike\')">👎 Dislike '+c.dislike+'</button><button class="comment-btn" onclick="toggleComments('+p.id+',\''+prefix+'\')">💬 '+cc+'</button>'+(own?'<button class="comment-btn" onclick="editPost('+p.id+')">✏️ Edit</button><button class="delete-post-btn" onclick="deletePost('+p.id+')">🗑 Delete</button>':'<button onclick="replyPost(\''+escJs(u)+'\')">↩ Reply</button>')+'</div>'+(own?'':'<div class="user-actions"><button class="report-btn" onclick="reportPost('+p.id+',\''+escJs(p.user_id)+'\')">🚩 Report</button><button onclick="toggleFollow(\''+escJs(p.user_id)+'\')">'+(followMap[p.user_id]?'✅ Following':'➕ Follow')+'</button><button class="block-btn" onclick="blockUser(\''+escJs(p.user_id)+'\')">🚫 Block</button></div>')+renderReactionActivity(p.id)+'<div class="comments" id="comments-'+prefix+p.id+'"><div id="clist-'+prefix+p.id+'">Tap comments to load.</div><div class="comment-input-row"><input id="cin-'+prefix+p.id+'" placeholder="Write a comment..." onkeydown="if(event.key===\'Enter\')addComment('+p.id+',\''+prefix+'\')"><button onclick="addComment('+p.id+',\''+prefix+'\')">Send</button></div></div></article>'}
-function updateTrending(){const eligible=currentPosts.filter(p=>(postActionCounts[p.id]?.like||0)>=4);const a=eligible.sort((x,y)=>(postActionCounts[y.id]?.like||0)-(postActionCounts[x.id]?.like||0)).slice(0,10);$("trendingList").innerHTML=a.map(p=>renderPost(p,postActionCounts[p.id]||{like:0,dislike:0},postCommentCounts[p.id]||0,"trend-")).join("")||'<div class="empty">Abhi 4 likes wali koi post nahi. 4 likes milne par post yahan nazar aayegi.</div>'}
-function showTrending(){$("trendingBox").style.display="block"}function closePopup(id){$(id).style.display="none"}function showShare(){$("shareBox").style.display="block";$("textPostForm").style.display="none";$("imagePostForm").style.display="none"}function closeShare(){$("shareBox").style.display="none"}function showTextPost(){$("textPostForm").style.display="block";$("imagePostForm").style.display="none"}function showImagePost(){$("shareBox").style.display="block";$("imagePostForm").style.display="block";$("textPostForm").style.display="none"}
-async function createPost(){if(!currentUser)return alert("Please log in again.");const content=$("postText").value.trim();if(!content)return alert("Please write a post first.");const b=document.querySelector(".send-post-btn");if(b)b.disabled=true;try{const r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"text"}),10000);if(r.error)throw r.error;$("postText").value="";await loadFeed();await loadPointsBoard()}catch(e){alert("Could not publish: "+e.message)}finally{if(b)b.disabled=false}}
-async function submitTextPost(){if(!currentUser)return alert("Please log in again.");const content=$("shareText").value.trim();if(!content)return alert("Please enter text.");try{const r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"text"}),10000);if(r.error)throw r.error;$("shareText").value="";closeShare();await loadFeed();await loadPointsBoard()}catch(e){alert("Could not publish: "+e.message)}}
-function shareImageSelected(){const f=$("shareImageInput").files?.[0];if(!f)return;const r=new FileReader();r.onload=e=>{$("shareImagePreview").src=e.target.result;$("shareImagePreview").style.display="block"};r.readAsDataURL(f)}
-async function submitImagePost(){const f=$("shareImageInput").files?.[0],category=$("imageCategory").value,content=$("imageCaption").value.trim();if(!currentUser)return alert("Please log in again.");if(!category||!f)return alert("Category aur image select karein.");if(f.size>10*1024*1024)return alert("Image 10 MB se choti honi chahiye.");try{const ext=(f.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path="posts/"+currentUser.id+"_"+Date.now()+"."+ext,up=await timeout(supabaseClient.storage.from("post-images").upload(path,f,{upsert:false}),15000);if(up.error)throw up.error;const url=supabaseClient.storage.from("post-images").getPublicUrl(path).data.publicUrl,r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content,post_type:"image",category,image_url:url}),10000);if(r.error)throw r.error;closeShare();$("shareImageInput").value="";$("imageCaption").value="";$("imageCategory").value="";$("shareImagePreview").style.display="none";await loadFeed();await loadPointsBoard()}catch(e){alert("Could not publish image: "+e.message)}}
-async function setPostAction(id,type){if(!currentUser)return alert("Please log in again.");const post=currentPosts.find(p=>String(p.id)===String(id));if(!post)return alert("Post nahi mili.");if(post.user_id===currentUser.id)return alert("Apni post ko Like/Dislike nahi kar sakte.");const buttons=[...document.querySelectorAll('#post-'+id+' .post-actions button, #post-trend-'+id+' .post-actions button')];buttons.forEach(button=>button.disabled=true);try{const result=await timeout(supabaseClient.from("post_actions").select("id,action_type").eq("post_id",id).eq("user_id",currentUser.id).maybeSingle(),8000);if(result.error)throw result.error;const existing=result.data;if(existing&&existing.action_type===type){const removed=await timeout(supabaseClient.from("post_actions").delete().eq("id",existing.id),8000);if(removed.error)throw removed.error}else if(existing){const changed=await timeout(supabaseClient.from("post_actions").update({action_type:type}).eq("id",existing.id),8000);if(changed.error)throw changed.error}else{const inserted=await timeout(supabaseClient.from("post_actions").insert({post_id:id,user_id:currentUser.id,action_type:type}),8000);if(inserted.error)throw inserted.error}await loadFeed();await loadPointsBoard()}catch(e){alert("Reaction failed: "+e.message);await loadFeed()}finally{buttons.forEach(button=>button.disabled=false)}}
-async function showLikes(id){$("likesPopup").style.display="block";$("likesList").textContent="Loading…";try{const r=await timeout(supabaseClient.from("post_actions").select("user_id").eq("post_id",id).eq("action_type","like"),8000);if(r.error)throw r.error;const ids=[...new Set((r.data||[]).map(x=>x.user_id))];if(!ids.length){$("likesList").textContent="No likes yet.";return}const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),8000),m={};(p.data||[]).forEach(x=>m[x.id]=x);$("likesList").innerHTML=ids.map(uid=>'<div class="like-user" onclick="openProfile(\''+escJs(uid)+'\')">'+(m[uid]?.avatar_url?'<img class="like-user-avatar" src="'+esc(m[uid].avatar_url)+'" alt="">':'👤')+'<span><b>'+esc(m[uid]?.name||m[uid]?.username||"Member")+'</b> <small>@'+esc(m[uid]?.username||"member")+'</small></span></div>').join("")}catch(e){$("likesList").textContent=e.message}}
-async function toggleFollow(id){if(!id||id===currentUser?.id)return;try{const q=followMap[id]?await supabaseClient.from("user_follows").delete().eq("follower_id",currentUser.id).eq("following_id",id):await supabaseClient.from("user_follows").insert({follower_id:currentUser.id,following_id:id});if(q.error)throw q.error;await loadFeed()}catch(e){alert("Follow failed: "+e.message)}}
-async function editPost(id){const post=currentPosts.find(p=>String(p.id)===String(id));if(!post)return alert("Post nahi mili. Feed refresh karke dobara try karein.");if(post.user_id!==currentUser.id)return alert("Aap sirf apni post edit kar sakte hain.");const updated=prompt("Apni post edit karein:",post.content||"");if(updated===null)return;const content=updated.trim();if(!content&&!post.image_url&&!post.voice_url)return alert("Post khaali nahi ho sakti.");try{const result=await timeout(supabaseClient.from("posts").update({content}).eq("id",id).eq("user_id",currentUser.id),10000);if(result.error)throw result.error;await loadFeed();alert("Post update ho gayi 💜")}catch(e){alert("Post edit nahi ho saki: "+e.message)}}
-async function deletePost(id){if(!confirm("Delete your post?"))return;try{const r=await timeout(supabaseClient.from("posts").delete().eq("id",id).eq("user_id",currentUser.id),10000);if(r.error)throw r.error;await loadFeed()}catch(e){alert("Delete failed: "+e.message)}}
-async function blockUser(id){if(id===currentUser?.id)return alert("You cannot block yourself.");if(!confirm("Block this user?"))return;try{const r=await timeout(supabaseClient.from("user_blocks").insert({blocker_id:currentUser.id,blocked_id:id}),10000);if(r.error)throw r.error;alert("User blocked")}catch(e){alert(e.message)}}
-async function reportPost(id,uid){const reason=prompt("Report reason?");if(!reason)return;try{const r=await timeout(supabaseClient.from("post_reports").insert({post_id:id,reporter_id:currentUser.id,reported_user_id:uid,reason}),10000);if(r.error)throw r.error;alert("Report submitted")}catch(e){alert(e.message)}}
-function replyPost(u){$("postText").value="@"+u+" ";$("postText").focus();scrollTo({top:0,behavior:"smooth"})}
-async function toggleComments(id,prefix=""){const box=$("comments-"+prefix+id);box.style.display=box.style.display==="block"?"none":"block";if(box.style.display==="none")return;const list=$("clist-"+prefix+id);list.textContent="Loading comments…";try{const r=await timeout(supabaseClient.from("comments").select("id,user_id,comment,created_at").eq("post_id",id).order("created_at"),8000);if(r.error)throw r.error;const ids=[...new Set((r.data||[]).map(x=>x.user_id))],p=ids.length?await timeout(supabaseClient.from("profiles").select("id,username,name").in("id",ids),8000):{data:[]},m={};(p.data||[]).forEach(x=>m[x.id]=x);list.innerHTML=(r.data||[]).map(c=>'<div class="comment-item"><b>'+esc(m[c.user_id]?.name||m[c.user_id]?.username||"Member")+'</b><div>'+esc(c.comment)+'</div><small>'+formatDate(c.created_at)+'</small></div>').join("")||"No comments yet."}catch(e){list.textContent="Comments load nahi huay: "+e.message}}
-async function addComment(id,prefix=""){const input=$("cin-"+prefix+id),comment=input.value.trim();if(!comment)return;try{const r=await timeout(supabaseClient.from("comments").insert({post_id:id,user_id:currentUser.id,comment}),10000);if(r.error)throw r.error;input.value="";await loadFeed();await toggleComments(id,prefix);$("comments-"+prefix+id).style.display="block"}catch(e){alert(e.message)}}
-function goHome(){location.href="index.html"}function goProfile(){location.href="profile.html"}function goPrivate(){location.href="private.html"}function goMehfil(){location.href="mehfil.html"}function goMore(){location.href="more.html"}function goStars(){showStars()}function goNotifications(){location.href="notifications.html"}
-function startVoice(){$("voicePopup").style.display="block";$("voiceStatus").textContent="Microphone permission is needed."}
-async function recordVoice(){try{if(!navigator.mediaDevices?.getUserMedia)throw Error("Voice recording is not supported in this browser.");voiceStream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];voiceBlob=null;voiceRecorder=new MediaRecorder(voiceStream);voiceRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};voiceRecorder.onstop=()=>{voiceBlob=new Blob(voiceChunks,{type:voiceRecorder.mimeType||"audio/webm"});$("voicePreview").src=URL.createObjectURL(voiceBlob);$("voicePreview").style.display="block";$("voiceStatus").textContent="Recording ready";if(voiceTimerInterval){clearInterval(voiceTimerInterval);voiceTimerInterval=null}};voiceRecorder.start();voiceStartedAt=Date.now();$("voiceStatus").textContent="Recording…";if(voiceTimerInterval)clearInterval(voiceTimerInterval);voiceTimerInterval=setInterval(()=>{const s=Math.floor((Date.now()-voiceStartedAt)/1000);$("voiceTimer").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500)}catch(e){alert("Microphone error: "+e.message)}}
-function stopVoice(){if(voiceRecorder&&voiceRecorder.state!=="inactive")voiceRecorder.stop();if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());voiceStream=null}
-async function sendVoice(){if(!currentUser)return alert("Please log in again.");if(!voiceBlob)return alert("Pehle voice record karein.");try{const path=currentUser.id+"/"+Date.now()+".webm",u=await timeout(supabaseClient.storage.from("voice-posts").upload(path,voiceBlob,{upsert:false}),15000);if(u.error)throw u.error;const url=supabaseClient.storage.from("voice-posts").getPublicUrl(path).data.publicUrl,r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content:"",post_type:"voice",voice_url:url}),10000);if(r.error)throw r.error;closeVoice();voiceBlob=null;$("voicePreview").style.display="none";await loadFeed();await loadPointsBoard()}catch(e){alert("Voice post failed: "+e.message)}}
-function closeVoice(){if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());voiceStream=null;if(voiceTimerInterval){clearInterval(voiceTimerInterval);voiceTimerInterval=null}$("voicePopup").style.display="none"}
+    let supabaseClient = null;
+    let currentUser = null;
+    let selectedFeed = "for-me";
+    let selectedCategory = "All";
+    let selectedSort = "trending";
+    let postType = "text";
 
-/* Stories: video upload, 24-hour expiry, viewer navigation and view tracking */
-function openStoryUpload(){if(!currentUser)return alert("Please log in again.");$("storyUploadPopup").style.display="block"}
-function closeStoryUpload(){$("storyUploadPopup").style.display="none";const v=$("storyUploadPreview");v.pause();v.removeAttribute("src");v.load();v.style.display="none";$("storyVideoInput").value="";$("storyCaptionInput").value=""}
-$("storyVideoInput").addEventListener("change",function(){const f=this.files?.[0];if(!f)return;const preview=$("storyUploadPreview");if(!f.type.startsWith("video/")){alert("Please select a video file.");this.value="";return}if(f.size>STORY_MAX_SIZE){alert("Video 50 MB se choti honi chahiye.");this.value="";return}const url=URL.createObjectURL(f);preview.src=url;preview.style.display="block";preview.onloadedmetadata=()=>{if(preview.duration>STORY_MAX_SECONDS){alert("Story video maximum 1 minute ki ho sakti hai.");this.value="";preview.pause();preview.removeAttribute("src");preview.load();preview.style.display="none";URL.revokeObjectURL(url)}}});
-async function publishStory(){if(!currentUser)return alert("Please login again.");const f=$("storyVideoInput").files?.[0],button=$("publishStoryButton");if(!f)return alert("Pehle video select karein.");if(!f.type.startsWith("video/")||f.size>STORY_MAX_SIZE)return alert("Video format ya size sahi nahi. Maximum 50 MB.");button.disabled=true;button.textContent="Uploading…";try{const probe=document.createElement("video"),url=URL.createObjectURL(f);const duration=await new Promise((resolve,reject)=>{probe.preload="metadata";probe.onloadedmetadata=()=>resolve(probe.duration);probe.onerror=()=>reject(Error("Video read nahi ho saki."));probe.src=url});URL.revokeObjectURL(url);if(!Number.isFinite(duration)||duration>STORY_MAX_SECONDS)throw Error("Video maximum 1 minute ki honi chahiye.");const ext=(f.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4",path=currentUser.id+"/"+Date.now()+"."+ext;const upload=await timeout(supabaseClient.storage.from("stories").upload(path,f,{upsert:false,contentType:f.type}),60000);if(upload.error)throw upload.error;const videoUrl=supabaseClient.storage.from("stories").getPublicUrl(path).data.publicUrl;const expiresAt=new Date(Date.now()+STORY_LIFETIME_HOURS*60*60*1000).toISOString();const caption=$("storyCaptionInput").value.trim();const inserted=await timeout(supabaseClient.from("stories").insert({user_id:currentUser.id,video_url:videoUrl,caption,expires_at:expiresAt}),15000);if(inserted.error)throw inserted.error;closeStoryUpload();await loadStories();alert("Story publish ho gayi! 💜")}catch(e){alert("Story upload failed: "+(e.message||e))}finally{button.disabled=false;button.textContent="📤 Publish Story"}}
-async function loadStories(){if(!currentUser)return;const rail=$("storiesRail");try{const now=new Date().toISOString();const result=await timeout(supabaseClient.from("stories").select("id,user_id,video_url,caption,created_at,expires_at").gt("expires_at",now).order("created_at",{ascending:true}).limit(150),12000);if(result.error)throw result.error;storyRows=result.data||[];const ids=[...new Set(storyRows.map(s=>s.user_id))],profiles={};if(ids.length){const p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000);if(p.error)throw p.error;(p.data||[]).forEach(x=>profiles[x.id]=x)}let viewed=new Set();if(storyRows.length){const v=await timeout(supabaseClient.from("story_views").select("story_id").eq("viewer_id",currentUser.id).in("story_id",storyRows.map(s=>s.id)),10000);if(!v.error)(v.data||[]).forEach(x=>viewed.add(String(x.story_id)))}const grouped=new Map();storyRows.forEach(s=>{if(!grouped.has(s.user_id))grouped.set(s.user_id,[]);grouped.get(s.user_id).push(s)});storyGroups=[...grouped.entries()].map(([userId,items])=>({userId,items,profile:profiles[userId]||{}}));rail.innerHTML='<button class="story-tile story-add" onclick="openStoryUpload()"><span class="story-ring"><span class="story-avatar">＋</span></span><span class="story-label">Your story</span></button>'+storyGroups.map((g,i)=>{const p=g.profile,name=p.name||p.username||"Member",avatar=p.avatar_url||"",allSeen=g.items.every(s=>viewed.has(String(s.id)));return '<button class="story-tile" onclick="openStoryGroup('+i+')"><span class="story-ring '+(allSeen?'seen':'')+'">'+(avatar?'<img class="story-avatar" src="'+esc(avatar)+'" alt="">':'<span class="story-avatar">👤</span>')+'</span><span class="story-label">'+esc(name)+'</span></button>'}).join("");const requestedStory=new URLSearchParams(location.search).get("story_id");if(requestedStory&&!window.__chatZoneStoryDeepLinkHandled){window.__chatZoneStoryDeepLinkHandled=true;setTimeout(()=>openStoryById(requestedStory),150)}}catch(e){console.warn("Load stories:",e);rail.innerHTML='<button class="story-tile story-add" onclick="openStoryUpload()"><span class="story-ring"><span class="story-avatar">＋</span></span><span class="story-label">Add story</span></button><span class="points-note" style="align-self:center">Stories load nahi huin</span>'}}
-async function openStoryById(storyId){for(let gi=0;gi<storyGroups.length;gi++){const ii=storyGroups[gi].items.findIndex(x=>String(x.id)===String(storyId));if(ii>=0){storyGroupIndex=gi;storyItemIndex=ii;$("storyViewerPopup").style.display="block";await showCurrentStory();return true}}alert("Ye Story expire ho chuki hai ya available nahi hai.");return false}
-async function openStoryGroup(index){if(index<0||index>=storyGroups.length)return;storyGroupIndex=index;storyItemIndex=0;$("storyViewerPopup").style.display="block";await showCurrentStory()}
-async function showCurrentStory(){clearStoryProgress();const group=storyGroups[storyGroupIndex];if(!group){closeStoryViewer();return}const story=group.items[storyItemIndex];if(!story){nextStoryGroup();return}const profile=group.profile||{},video=$("storyViewerVideo");storyViewListId=story.id;$("storyViewerName").textContent=profile.name||profile.username||"Member";$("storyViewerAvatar").src=profile.avatar_url||("https://ui-avatars.com/api/?name="+encodeURIComponent(profile.name||profile.username||"User")+"&background=292929&color=fff");$("storyViewerCount").textContent=(story.created_at?new Date(story.created_at).toLocaleString():"Story") ;$("storyOwnerViews").innerHTML="";$("storyViewerCaption").textContent=story.caption||"";$("storyReplyArea").style.display=group.userId===currentUser.id?"none":"flex";$("storyReplyInput").value="";$("storyOwnerDelete").innerHTML=group.userId===currentUser.id?'<button class="story-view-count-button story-delete-button" onclick="deleteCurrentStory()">🗑 Delete story</button>':"";video.pause();video.src=story.video_url;video.muted=storyMuted;video.currentTime=0;$("storyMuteButton").textContent=storyMuted?"🔇":"🔊";try{await video.play()}catch(e){console.warn("Story autoplay:",e)}if(group.userId===currentUser.id)loadStoryViewCount(story.id);else recordStoryView(story.id);loadStoryReactions(story.id);video.onended=()=>nextStory();video.onloadedmetadata=()=>startStoryProgress(Math.min(60,video.duration||15));if(video.readyState>=1)startStoryProgress(Math.min(60,video.duration||15))}
-function startStoryProgress(seconds){clearStoryProgress();const fill=$("storyProgressFill");fill.style.width="0%";storyProgressStarted=Date.now();storyProgressElapsed=0;const total=Math.max(5,seconds)*1000;storyProgressTimer=setInterval(()=>{const pct=Math.min(100,((Date.now()-storyProgressStarted+storyProgressElapsed)/total)*100);fill.style.width=pct+"%";if(pct>=100)nextStory()},100)}
-function clearStoryProgress(){if(storyProgressTimer){clearInterval(storyProgressTimer);storyProgressTimer=null}}
-function nextStory(){clearStoryProgress();const group=storyGroups[storyGroupIndex];if(!group)return;if(storyItemIndex<group.items.length-1){storyItemIndex++;showCurrentStory()}else nextStoryGroup()}
-function nextStoryGroup(){if(storyGroupIndex<storyGroups.length-1){storyGroupIndex++;storyItemIndex=0;showCurrentStory()}else closeStoryViewer()}
-function previousStory(){clearStoryProgress();if(storyItemIndex>0){storyItemIndex--;showCurrentStory()}else if(storyGroupIndex>0){storyGroupIndex--;storyItemIndex=storyGroups[storyGroupIndex].items.length-1;showCurrentStory()}}
-function toggleStoryMute(){storyMuted=!storyMuted;$("storyViewerVideo").muted=storyMuted;$("storyMuteButton").textContent=storyMuted?"🔇":"🔊"}
-function closeStoryViewer(){clearStoryProgress();const v=$("storyViewerVideo");v.pause();v.removeAttribute("src");v.load();v.onended=null;$("storyViewerPopup").style.display="none";loadStories().catch(()=>{})}
-async function recordStoryView(storyId){if(!currentUser)return;try{const r=await timeout(supabaseClient.from("story_views").upsert({story_id:storyId,viewer_id:currentUser.id},{onConflict:"story_id,viewer_id",ignoreDuplicates:true}),8000);if(r.error)console.warn("Story view record:",r.error.message)}catch(e){console.warn("Story view record:",e.message)}}
-async function loadStoryViewCount(storyId){try{const r=await timeout(supabaseClient.from("story_views").select("id",{count:"exact",head:true}).eq("story_id",storyId),8000);if(r.error)throw r.error;$("storyOwnerViews").innerHTML='<button class="story-view-count-button" onclick="openStoryViewList()">👁 '+(r.count||0)+' views · View list</button>';storyViewListId=storyId}catch(e){$("storyOwnerViews").textContent="Views unavailable";console.warn("Story view count:",e.message)}}
-async function openStoryViewList(){if(!storyViewListId||!currentUser)return;const group=storyGroups[storyGroupIndex];if(!group||group.userId!==currentUser.id)return;$("storyViewsPopup").style.display="block";switchStoryList("views");await renderStoryViewers()}
+    const $ = (id) => document.getElementById(id);
+    const statusBox = $("status");
+    function showStatus(message) {
+      statusBox.textContent = message;
+      statusBox.style.display = "block";
+      clearTimeout(showStatus.timer);
+      showStatus.timer = setTimeout(() => statusBox.style.display = "none", 3000);
+    }
+    function escapeHTML(value="") {
+      return String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
+    function timeAgo(dateValue) {
+      const date = new Date(dateValue || Date.now());
+      const seconds = Math.max(0, Math.floor((Date.now()-date.getTime())/1000));
+      if(seconds < 60) return "Just now";
+      if(seconds < 3600) return Math.floor(seconds/60)+"m ago";
+      if(seconds < 86400) return Math.floor(seconds/3600)+"h ago";
+      return Math.floor(seconds/86400)+"d ago";
+    }
 
-const STORY_EMOJIS=["❤️","😂","😍","🔥","👏","😮"];
-async function loadStoryReactions(storyId){const bar=$("storyReactionBar");bar.innerHTML="Loading reactions…";try{const r=await timeout(supabaseClient.from("story_reactions").select("user_id,emoji").eq("story_id",storyId),8000);if(r.error)throw r.error;const rows=r.data||[],counts={};rows.forEach(x=>counts[x.emoji]=(counts[x.emoji]||0)+1);const mine=rows.find(x=>x.user_id===currentUser.id);bar.innerHTML=STORY_EMOJIS.map(e=>'<button class="'+(mine?.emoji===e?'active':'')+'" onclick="reactToStory(\''+escJs(storyId)+'\',\''+e+'\')">'+e+' <small>'+ (counts[e]||0)+'</small></button>').join("")}catch(e){bar.textContent="Reactions unavailable";console.warn("Story reactions:",e.message)}}
-async function reactToStory(storyId,emoji){if(!currentUser)return alert("Please login again.");try{const q=await timeout(supabaseClient.from("story_reactions").select("id,emoji").eq("story_id",storyId).eq("user_id",currentUser.id).maybeSingle(),8000);if(q.error)throw q.error;if(q.data?.emoji===emoji){const d=await timeout(supabaseClient.from("story_reactions").delete().eq("id",q.data.id),8000);if(d.error)throw d.error}else if(q.data){const u=await timeout(supabaseClient.from("story_reactions").update({emoji}).eq("id",q.data.id),8000);if(u.error)throw u.error}else{const i=await timeout(supabaseClient.from("story_reactions").insert({story_id:storyId,user_id:currentUser.id,emoji}),8000);if(i.error)throw i.error}await loadStoryReactions(storyId)}catch(e){alert("Reaction nahi ho saki: "+e.message)}}
-async function sendStoryReply(){
- if(storyReplySending)return;
- if(!currentUser)return alert("Please login again.");
- const group=storyGroups[storyGroupIndex],story=group?.items?.[storyItemIndex],input=$("storyReplyInput"),message=input.value.trim();
- if(!story||!group||group.userId===currentUser.id||!message)return;
- storyReplySending=true;
- const button=$("storyReplySend");button.disabled=true;button.textContent="Sending…";
- try{
-  const row={story_id:story.id,sender_id:currentUser.id,receiver_id:group.userId,message};
-  const r=await timeout(supabaseClient.from("story_replies").insert(row).select("id").single(),10000);
-  if(r.error)throw r.error;
-  let privateChatError=null;
-  try{
-   const chatRow={sender_id:currentUser.id,receiver_id:group.userId,content:message,message_type:"video",media_url:story.video_url,reply_to_content:"📹 Replied to your Story: "+(story.caption||"Video Story")+" · Story ID: "+story.id,reply_to_sender_id:group.userId};
-   const chatResult=await timeout(supabaseClient.from("private_messages").insert(chatRow),10000);
-   if(chatResult.error)throw chatResult.error;
-  }catch(chatErr){privateChatError=chatErr;console.error("Story reply private-chat delivery:",chatErr)}
-  let notificationError=null;
-  try{
-   const n=await timeout(supabaseClient.from("notifications").insert({user_id:group.userId,sender_id:currentUser.id,type:"story_reply",story_id:story.id,message:"replied to your story: "+message,is_read:false}),10000);
-   if(n.error)throw n.error;
-  }catch(notificationErr){notificationError=notificationErr;console.warn("Story reply notification:",notificationErr)}
-  input.value="";
-  if(privateChatError)alert("Story reply save ho gaya, lekin Private Chat mein deliver nahi hua: "+(privateChatError.message||"Check private_messages RLS policy."));
-  else if(notificationError)alert("Story reply Private Chat mein bhej diya 💜 Notification nahi bhej saki: "+(notificationError.message||""));
-  else alert("Story reply Private Chat mein bhej diya 💜");
- }catch(e){alert("Reply send nahi hua: "+e.message+". SQL setup/RLS check karein.")}
- finally{storyReplySending=false;button.disabled=false;button.textContent="Send"}
-}
-function switchStoryList(mode){storyListMode=mode;$("storyViewersTab").classList.toggle("active",mode==="views");$("storyRepliesTab").classList.toggle("active",mode==="replies");if(mode==="views")renderStoryViewers();else renderStoryReplies()}
-let cachedStoryViewRows=[],cachedStoryReplyRows=[];
-async function renderStoryViewers(){const box=$("storyViewsList");box.textContent="Loading viewers…";try{const storyId=storyViewListId;const r=await timeout(supabaseClient.from("story_views").select("viewer_id,viewed_at").eq("story_id",storyId).order("viewed_at",{ascending:false}).limit(500),10000);if(r.error)throw r.error;cachedStoryViewRows=r.data||[];if(!cachedStoryViewRows.length){box.textContent="Abhi tak kisi ne ye story nahi dekhi.";return}const ids=[...new Set(cachedStoryViewRows.map(x=>x.viewer_id).filter(Boolean))],p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000);if(p.error)throw p.error;const profiles={};(p.data||[]).forEach(x=>profiles[x.id]=x);const reactions=await timeout(supabaseClient.from("story_reactions").select("user_id,emoji").eq("story_id",storyId),10000);if(reactions.error)throw reactions.error;const rx={};(reactions.data||[]).forEach(x=>rx[x.user_id]=x.emoji);box.innerHTML=cachedStoryViewRows.map(x=>{const u=profiles[x.viewer_id]||{};return '<div class="story-view-row" onclick="openProfile(\''+escJs(x.viewer_id)+'\')">'+(u.avatar_url?'<img class="story-view-avatar" src="'+esc(u.avatar_url)+'" alt="">':'<span class="story-view-avatar">👤</span>')+'<span class="story-view-meta"><span class="story-view-name">'+esc(u.name||u.username||"Member")+'</span><div class="story-view-time">@'+esc(u.username||"member")+' · '+esc(x.viewed_at?new Date(x.viewed_at).toLocaleString():"Viewed")+'</div><div class="story-view-time">'+(rx[x.viewer_id]?'Reacted '+esc(rx[x.viewer_id]):'👀 Seen only')+'</div></span></div>'}).join("")}catch(e){box.textContent="Viewers load nahi huay: "+e.message}}
-async function renderStoryReplies(){const box=$("storyViewsList");box.textContent="Loading replies…";try{const r=await timeout(supabaseClient.from("story_replies").select("id,story_id,sender_id,receiver_id,message,created_at").eq("story_id",storyViewListId).eq("receiver_id",currentUser.id).order("created_at",{ascending:false}).limit(200),10000);if(r.error)throw r.error;cachedStoryReplyRows=r.data||[];if(!cachedStoryReplyRows.length){box.textContent="Is story par abhi koi reply nahi aaya.";return}const ids=[...new Set(cachedStoryReplyRows.map(x=>x.sender_id))],p=await timeout(supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",ids),10000);if(p.error)throw p.error;const m={};(p.data||[]).forEach(x=>m[x.id]=x);box.innerHTML=cachedStoryReplyRows.map(x=>{const u=m[x.sender_id]||{};return '<div class="story-reply-row"><b>'+esc(u.name||u.username||"Member")+'</b> <small>@'+esc(u.username||"member")+' · '+esc(x.created_at?new Date(x.created_at).toLocaleString():"")+'</small><p>'+esc(x.message)+'</p><button class="btn open" onclick="replyToStoryReply(\''+escJs(x.sender_id)+'\',\''+escJs(x.story_id||storyViewListId)+'\')">↩ Reply</button></div>'}).join("")}catch(e){box.textContent="Replies load nahi huay: "+e.message}}
-function replyToStoryReply(uid,storyId){location.href="notifications.html?reply_to="+encodeURIComponent(uid)+"&story_id="+encodeURIComponent(storyId)}
-async function deleteCurrentStory(){const group=storyGroups[storyGroupIndex],story=group?.items?.[storyItemIndex];if(!story||group.userId!==currentUser.id)return;if(!confirm("Kya aap ye story delete karna chahte hain?"))return;try{const rv=await timeout(supabaseClient.from("story_views").delete().eq("story_id",story.id),8000);if(rv.error)throw rv.error;const rr=await timeout(supabaseClient.from("story_reactions").delete().eq("story_id",story.id),8000);if(rr.error)throw rr.error;const d=await timeout(supabaseClient.from("stories").delete().eq("id",story.id).eq("user_id",currentUser.id),10000);if(d.error)throw d.error;const marker="/stories/",at=story.video_url.indexOf(marker);if(at>=0){const objectPath=decodeURIComponent(story.video_url.slice(at+marker.length).split(/[?#]/)[0]);const rm=await timeout(supabaseClient.storage.from("stories").remove([objectPath]),10000);if(rm.error)console.warn("Story row deleted but storage cleanup failed:",rm.error.message)}group.items.splice(storyItemIndex,1);if(!group.items.length)storyGroups.splice(storyGroupIndex,1);if(!storyGroups.length){closeStoryViewer();await loadStories();return}if(storyGroupIndex>=storyGroups.length)storyGroupIndex=storyGroups.length-1;if(storyItemIndex>=storyGroups[storyGroupIndex].items.length)storyItemIndex=Math.max(0,storyGroups[storyGroupIndex].items.length-1);await showCurrentStory();await loadStories();alert("Story delete ho gayi.")}catch(e){alert("Story delete nahi hui: "+e.message)}}
-window.addEventListener("beforeunload",()=>{if(onlineChannel)supabaseClient.removeChannel(onlineChannel);if(notificationChannel)supabaseClient.removeChannel(notificationChannel);if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());if(voiceTimerInterval)clearInterval(voiceTimerInterval);clearStoryProgress()});
-window.addEventListener("online",()=>{if(currentUser){loadFeed();loadStories()}});
-init();
-</script>
-</body>
-</html>
+    async function connectSupabase() {
+      if (!window.supabase || SUPABASE_URL.includes("YOUR_") || SUPABASE_ANON_KEY.includes("YOUR_")) {
+        showStatus("Supabase keys add karein — demo design abhi show ho raha hai.");
+        return;
+      }
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        currentUser = session?.user || null;
+        if (currentUser) {
+          const avatar = currentUser.user_metadata?.avatar_url;
+          if (avatar) { $("headerAvatar").src = avatar; $("composerAvatar").src = avatar; }
+        }
+        await loadPosts();
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
+          currentUser = session?.user || null;
+        });
+        showStatus("Supabase connected successfully.");
+      } catch (error) {
+        console.error(error);
+        showStatus("Supabase connection error. URL/key check karein.");
+      }
+    }
+
+    function renderPosts(posts) {
+      const feed = $("feed");
+      if (!posts || !posts.length) {
+        feed.innerHTML = '<div class="panel empty">Abhi is section mein koi post nahi. Pehli post aap share karein! 💜</div>';
+        return;
+      }
+      feed.innerHTML = posts.map(post => {
+        const name = escapeHTML(post.username || "ChatZone User");
+        const content = escapeHTML(post.content || "");
+        const avatar = escapeHTML(post.avatar_url || "https://i.pravatar.cc/120?img=12");
+        const image = post.image_url ? `<img class="post-image" src="${escapeHTML(post.image_url)}" alt="Post image" loading="lazy">` : "";
+        const category = escapeHTML(post.category || "All");
+        return `<article class="panel post" data-post-id="${escapeHTML(post.id)}">
+          <div class="post-head"><img class="post-avatar" src="${avatar}" alt=""><div class="post-user"><strong>${name} ${post.has_red_star ? '<span class="verified">⭐</span>' : ''}</strong><div class="post-meta">${category} · ${timeAgo(post.created_at)}</div></div><button class="dots" aria-label="More options">•••</button></div>
+          <div class="post-content">${content}</div>${image}
+          <div class="post-actions"><button class="action follow"><span>👥</span>Follow</button><button class="action like"><span>❤️</span>Like</button><button class="action chat"><span>💬</span>1 ON 1</button><button class="action replies"><span>↪</span>Replies ${Number(post.replies_count || 0)}</button><button class="action report"><span>⚠️</span>Report</button></div>
+        </article>`;
+      }).join("");
+      bindPostActions();
+    }
+
+    async function loadPosts() {
+      if (!supabaseClient) return;
+      let query = supabaseClient.from("posts").select("*").order("created_at", { ascending: selectedSort === "latest" }).limit(40);
+      if (selectedCategory !== "All") query = query.eq("category", selectedCategory);
+      if (selectedFeed === "stars") query = query.eq("has_red_star", true);
+      if (selectedFeed === "for-me" && currentUser) {
+        // Optional: create a followed_users table and apply your own follower filter here.
+      }
+      const { data, error } = await query;
+      if (error) {
+        console.error(error);
+        showStatus("Posts load nahi huay. Table/columns check karein.");
+        return;
+      }
+      renderPosts(data);
+    }
+
+    async function publishPost() {
+      const content = $("postText").value.trim();
+      const imageUrl = $("imageUrl").value.trim();
+      if (!content && !imageUrl) { showStatus("Pehle post text ya image URL add karein."); return; }
+      if (!supabaseClient) { showStatus("Pehle Supabase URL aur anon key add karein."); return; }
+      if (!currentUser) { showStatus("Post karne ke liye user ko sign in karna hoga."); return; }
+      const payload = {
+        user_id: currentUser.id,
+        username: currentUser.user_metadata?.username || currentUser.user_metadata?.full_name || currentUser.email?.split("@")[0] || "User",
+        avatar_url: currentUser.user_metadata?.avatar_url || null,
+        content,
+        image_url: imageUrl || null,
+        category: selectedCategory === "All" ? "General" : selectedCategory,
+        post_type: postType,
+        has_red_star: false
+      };
+      const { error } = await supabaseClient.from("posts").insert(payload);
+      if (error) { console.error(error); showStatus("Post publish nahi hui. Database policy check karein."); return; }
+      $("postText").value = ""; $("imageUrl").value = "";
+      await loadPosts();
+      showStatus("Your post is live! 💜");
+    }
+
+    function bindPostActions() {
+      document.querySelectorAll(".action.like").forEach(btn => btn.addEventListener("click", () => {
+        btn.classList.toggle("liked");
+        btn.innerHTML = btn.classList.contains("liked") ? "<span>❤️</span>Liked" : "<span>❤️</span>Like";
+      }));
+      document.querySelectorAll(".action.chat").forEach(btn => btn.addEventListener("click", () => showStatus("1 ON 1 chat ke liye Inbox/Auth feature connect karein.")));
+      document.querySelectorAll(".action.follow").forEach(btn => btn.addEventListener("click", () => { btn.textContent = btn.textContent.includes("Following") ? "Follow" : "Following"; }));
+      document.querySelectorAll(".action.report").forEach(btn => btn.addEventListener("click", () => showStatus("Report feature ko moderation table/API se connect karna hoga.")));
+      document.querySelectorAll(".action.replies").forEach(btn => btn.addEventListener("click", () => showStatus("Replies feature ke liye comments table add karein.")));
+    }
+
+    document.querySelectorAll(".top-tab").forEach(btn => btn.addEventListener("click", () => {
+      document.querySelectorAll(".top-tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active"); selectedFeed = btn.dataset.feed; loadPosts();
+    }));
+    document.querySelectorAll(".category").forEach(btn => btn.addEventListener("click", () => {
+      document.querySelectorAll(".category").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active"); selectedCategory = btn.dataset.category; loadPosts();
+    }));
+    document.querySelectorAll(".sort").forEach(btn => btn.addEventListener("click", () => {
+      document.querySelectorAll(".sort").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active"); selectedSort = btn.dataset.sort; loadPosts();
+    }));
+    document.querySelectorAll(".bottom button").forEach(btn => btn.addEventListener("click", () => {
+      document.querySelectorAll(".bottom button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const section = btn.dataset.bottom;
+      if(section !== "Home") showStatus(section + " section ko next backend step mein connect kiya ja sakta hai.");
+    }));
+    $("publishBtn").addEventListener("click", publishPost);
+    $("imageMode").addEventListener("click", () => { postType="image"; $("imageUrl").classList.toggle("hidden"); $("imageUrl").focus(); });
+    $("starMode").addEventListener("click", () => { postType="star"; showStatus("Star post type selected."); });
+    $("textMode").addEventListener("click", () => { postType="text"; $("imageUrl").classList.add("hidden"); $("postText").focus(); });
+
+    connectSupabase();
+    </script>
+    </body>
+    </html>
